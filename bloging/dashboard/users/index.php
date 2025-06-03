@@ -8,85 +8,78 @@ if (!isset($_SESSION['author_id']) || $_SESSION['author_type'] !== 'user') {
     exit;
 }
 
-$author_id = $_SESSION['author_id'];
+$user_id = (int) $_SESSION['author_id']; // PENTING: definisikan user_id dari session
 
-// Ambil artikel milik user ini
-$query = $conn->prepare("SELECT * FROM blogs WHERE author_id = ? AND author_type = 'user' ORDER BY created_at DESC");
-$query->bind_param("i", $author_id);
-$query->execute();
-$result = $query->get_result();
+// Ambil data profil user
+$result = $conn->query("SELECT * FROM users WHERE id = $user_id");
+$user = $result->fetch_assoc();
 
-// Statistik
-$count_query = $conn->prepare("SELECT status, COUNT(*) as total FROM blogs WHERE author_id = ? AND author_type = 'user' GROUP BY status");
-$count_query->bind_param("i", $author_id);
-$count_query->execute();
-$count_result = $count_query->get_result();
-
-$stats = ['draft' => 0, 'published' => 0];
-while ($row = $count_result->fetch_assoc()) {
-    $stats[$row['status']] = $row['total'];
+if (!$user) {
+    // Jika user tidak ditemukan, logout atau redirect
+    session_destroy();
+    header("Location: ../../login.php");
+    exit;
 }
-?>
 
+// Jumlah blog oleh user
+$blog_count = $conn->query("SELECT COUNT(*) as total FROM blogs WHERE author_id = $user_id AND author_type = 'user'")->fetch_assoc()['total'];
+
+// Jumlah komentar
+$comment_count = $conn->query("SELECT COUNT(*) as total FROM comment WHERE user_id = $user_id")->fetch_assoc()['total'];
+
+// Jumlah like
+$like_count = $conn->query("SELECT COUNT(*) as total FROM post_like WHERE liked_by = $user_id")->fetch_assoc()['total'];
+
+// Daftar blog user
+$blogs = $conn->query("SELECT * FROM blogs WHERE author_id = $user_id AND author_type = 'user'");
+
+?>
 <!DOCTYPE html>
 <html lang="id">
 
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard Pengguna</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <title>Dashboard User</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
 
-
-<body class="bg-light">
+        .box {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
     <?php include '../components/navbar.php' ?>
     <?php include '../components/user-sidebar.php' ?>
-    <div class="container py-4">
-        <h2>Dashboard Pengguna</h2>
-        <p>Selamat datang! Berikut daftar artikel milikmu:</p>
+<body>
 
-        <div class="mb-4">
-            <a href="../../add_blog.php" class="btn btn-primary">+ Tulis Artikel Baru</a>
-            <a href="../../../index.php" class="btn btn-outline-secondary d-inline-flex align-items-center gap-2">
-                <i class="bi bi-house-door-fill"></i> HOME
-            </a>
-        </div>
+    <h2>Selamat Datang, <?= htmlspecialchars($user['fname']) ?>!</h2>
 
-        <!-- Statistik -->
-        <div class="mb-3">
-            <strong>Statistik:</strong>
-            <p>Draft: <?= $stats['draft'] ?> | Published: <?= $stats['published'] ?></p>
-        </div>
-
-        <!-- Daftar Artikel -->
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead class="table-secondary">
-                    <tr>
-                        <th>Judul</th>
-                        <th>Status</th>
-                        <th>Tanggal Dibuat</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php while ($blog = $result->fetch_assoc()): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($blog['title']) ?></td>
-                            <td><?= ucfirst($blog['status']) ?></td>
-                            <td><?= $blog['created_at'] ?></td>
-                            <td>
-                                <a href="../../edit_blog.php?id=<?= $blog['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
-                                <a href="../../delete_blog.php?id=<?= $blog['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus?')">Hapus</a>
-                                <a href="../../../view_detail.php?id=<?= $blog['id'] ?>" class="btn btn-sm btn-info">Lihat</a>
-                            </td>
-                        </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
-        </div>
+    <div class="box">
+        <h3>Statistik Anda</h3>
+        <p>Jumlah Blog: <strong><?= $blog_count ?></strong></p>
+        <p>Jumlah Komentar: <strong><?= $comment_count ?></strong></p>
+        <p>Jumlah Like yang Diberikan: <strong><?= $like_count ?></strong></p>
     </div>
+
+    <div class="box">
+        <h3>Daftar Blog Anda</h3>
+        <?php if ($blogs->num_rows > 0): ?>
+            <ul>
+                <?php while ($blog = $blogs->fetch_assoc()): ?>
+                    <li><strong><?= htmlspecialchars($blog['title']) ?></strong> - Status: <?= $blog['status'] ?></li>
+                <?php endwhile; ?>
+            </ul>
+        <?php else: ?>
+            <p>Anda belum memiliki blog.</p>
+        <?php endif; ?>
+    </div>
+
 </body>
 
 </html>

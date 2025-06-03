@@ -33,7 +33,7 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
         <div class="mb-4 d-flex justify-content-between">
             <!-- Tombol Add User -->
             <a href="add_user.php" class="btn btn-success">+ Tambah User Baru</a>
-            <a href="../../../../index.php" class="btn btn-outline-secondary d-inline-flex align-items-center gap-2">
+            <a href="../../../index.php" class="btn btn-outline-secondary d-inline-flex align-items-center gap-2">
                 <i class="bi bi-house-door-fill"></i> HOME
             </a>
         </div>

@@ -13,17 +13,17 @@
     <div class="offcanvas-body">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link active" href="#">
+                <a class="nav-link active" href="../../dashboard/users/index.php">
                     <i class="bi bi-speedometer2"></i> Dashboard
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="../users/profile/profile.php">
+                <a class="nav-link" href="../../dashboard/users/profile.php">
                     <i class="bi bi-journal-text"></i> Edit Profile
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="../../users/index.php">
+                <a class="nav-link" href="../../dashboard/users/blog_management.php">
                     <i class="bi bi-people"></i> Manajemen Blog
                 </a>
             </li>

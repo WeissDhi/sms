@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../../config.php';
+include '../../config.php';
 
 if (!isset($_SESSION['author_id']) || $_SESSION['author_type'] !== 'user') {
     header("Location: ../../login.php");
@@ -63,8 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body class="bg-light">
-    <?php include '../../components/navbar.php' ?>
-    <?php include '../../components/user-sidebar.php' ?>
+    <?php include '../components/navbar.php' ?>
+    <?php include '../components/user-sidebar.php' ?>
     <div class="container py-4">
         <h2>Profil Saya</h2>
         <?php if ($update_message): ?>
