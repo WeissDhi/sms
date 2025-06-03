@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../../config.php';
+include '../../config.php';
 
 // Cek apakah login sebagai admin
 if (!isset($_SESSION['author_id']) || $_SESSION['author_type'] !== 'admin') {
@@ -24,8 +24,8 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
 </head>
 
 <body class="bg-light">
-    <?php include '../../components/navbar.php'; ?>
-    <?php include '../../components/sidebar.php'; ?>
+    <?php include '../components/navbar.php'; ?>
+    <?php include '../components/sidebar.php'; ?>
     <div class="container py-4">
         <h2>Dashboard Admin</h2>
         <p>Kelola seluruh pengguna dan artikel.</p>

@@ -12,17 +12,17 @@
     <div class="offcanvas-body">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link active" href="#">
+                <a class="nav-link active" href="../../dashboard/admin/index.php">
                     <i class="bi bi-speedometer2"></i> Dashboard
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="../../admin/index.php">
+                <a class="nav-link" href="../../dashboard/admin/blogs_management.php">
                     <i class="bi bi-journal-text"></i> Manajemen Blog
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="../admin/users/management_user.php">
+                <a class="nav-link" href="../../dashboard/admin/users_management.php">
                     <i class="bi bi-people"></i> Manajemen User
                 </a>
             </li>

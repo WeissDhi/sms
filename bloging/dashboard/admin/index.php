@@ -2,100 +2,112 @@
 session_start();
 include '../../config.php';
 
-// Cek apakah login sebagai admin
 if (!isset($_SESSION['author_id']) || $_SESSION['author_type'] !== 'admin') {
-    header("Location: ../../login.php");
+    header("Location: ../../../login.php");
     exit;
 }
 
-// Ambil semua artikel
-$result = $conn->query("
-    SELECT blogs.*, 
-           category.category AS category_name,
-           users.fname AS user_name,
-           admin.first_name AS admin_first,
-           admin.last_name AS admin_last
-    FROM blogs
-    LEFT JOIN category ON blogs.category_id = category.id
-    LEFT JOIN users ON blogs.author_type = 'user' AND blogs.author_id = users.id
-    LEFT JOIN admin ON blogs.author_type = 'admin' AND blogs.author_id = admin.id
-    ORDER BY blogs.created_at DESC
+// Total artikel
+$total_artikel = $conn->query("SELECT COUNT(*) AS total FROM blogs")->fetch_assoc()['total'];
+
+// Total komentar
+$total_komentar = $conn->query("SELECT COUNT(*) AS total FROM comment")->fetch_assoc()['total'];
+
+// Total likes
+$total_likes = $conn->query("SELECT COUNT(*) AS total FROM post_like")->fetch_assoc()['total'];
+
+// Artikel per kategori
+$kategori_data = $conn->query("
+    SELECT category.category AS nama_kategori, COUNT(blogs.id) AS jumlah
+    FROM category
+    LEFT JOIN blogs ON blogs.category_id = category.id
+    GROUP BY category.id
 ");
+
+$kategori_labels = [];
+$kategori_values = [];
+while ($row = $kategori_data->fetch_assoc()) {
+    $kategori_labels[] = $row['nama_kategori'];
+    $kategori_values[] = $row['jumlah'];
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <title>Dashboard Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-
 <body class="bg-light">
     <?php include '../components/navbar.php'; ?>
     <?php include '../components/sidebar.php'; ?>
+
     <div class="container py-4">
-        <h2>Dashboard Admin</h2>
-        <p>Kelola seluruh artikel dan pengguna.</p>
+        <h2 class="mb-4">Dashboard Admin</h2>
 
-        <div class="mb-4 d-flex justify-content-between">
-            <a href="../../add_blog.php" class="btn btn-success">+ Tulis Artikel Baru</a>
-            <a href="../../../index.php" class="btn btn-outline-secondary d-inline-flex align-items-center gap-2">
-                <i class="bi bi-house-door-fill"></i> HOME
-            </a>
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card border-start border-primary border-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Artikel</h5>
+                        <p class="display-6 fw-bold text-primary"><?= $total_artikel ?></p>
+                    </div>
+                </div>
+            </div>
 
+            <div class="col-md-4">
+                <div class="card border-start border-success border-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Komentar</h5>
+                        <p class="display-6 fw-bold text-success"><?= $total_komentar ?></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-start border-warning border-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Likes</h5>
+                        <p class="display-6 fw-bold text-warning"><?= $total_likes ?></p>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead class="table-secondary">
-                    <tr>
-                        <th>Judul</th>
-                        <th>Kategori</th>
-                        <th>Status</th>
-                        <th>Gambar</th>
-                        <th>Penulis</th>
-                        <th>Tanggal Dibuat</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php while ($row = $result->fetch_assoc()): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($row['title']) ?></td>
-                            <td><?= htmlspecialchars($row['category_name']) ?></td>
-                            <td><?= ucfirst($row['status']) ?></td>
-                            <td style="max-width: 150px;">
-                                <?php
-                                $imagePath = "../../" . $row['image']; // sudah termasuk 'uploads/xxx.png'
-                                if (!empty($row['image']) && file_exists($imagePath)): ?>
-                                    <img src="<?= $imagePath ?>" alt="Thumbnail" class="img-thumbnail" style="max-width: 100px;">
-                                <?php else: ?>
-                                    <span class="text-muted">Tidak ada gambar</span>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <?= $row['author_type'] === 'admin'
-                                    ? htmlspecialchars($row['admin_first'] . ' ' . $row['admin_last'])
-                                    : htmlspecialchars($row['user_name']) ?>
-                            </td>
-                            <td><?= $row['created_at'] ?></td>
-                            <td>
-                                <a href="../../edit_blog.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
-                                <a href="../../delete_blog.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus?')">Hapus</a>
-                                <a href="../../../view_detail.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-info">Lihat</a>
-                            </td>
-                        </tr>
-                    <?php endwhile; ?>
-                </tbody>
-
-            </table>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Jumlah Artikel per Kategori</h5>
+                <canvas id="categoryChart" height="100"></canvas>
+            </div>
         </div>
     </div>
-</body>
 
+    <script>
+        const ctx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: <?= json_encode($kategori_labels) ?>,
+                datasets: [{
+                    label: 'Jumlah Artikel',
+                    data: <?= json_encode($kategori_values) ?>,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        precision: 0
+                    }
+                }
+            }
+        });
+    </script>
+</body>
 </html>
