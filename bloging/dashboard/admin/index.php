@@ -34,17 +34,22 @@ while ($row = $kategori_data->fetch_assoc()) {
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Dashboard Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body class="bg-light">
     <?php include '../components/navbar.php'; ?>
     <?php include '../components/sidebar.php'; ?>
 
     <div class="container py-4">
+        <a href="../../../index.php" class="btn btn-outline-secondary d-inline-flex align-items-center gap-2">
+            <i class="bi bi-house-door-fill"></i> HOME
+        </a>
         <h2 class="mb-4">Dashboard Admin</h2>
 
         <div class="row g-3 mb-4">
@@ -110,4 +115,5 @@ while ($row = $kategori_data->fetch_assoc()) {
         });
     </script>
 </body>
+
 </html>
