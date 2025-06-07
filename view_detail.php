@@ -6,6 +6,10 @@ if (!isset($_GET['id'])) {
 }
 
 $id = intval($_GET['id']);
+
+// Update views dulu, agar langsung bertambah saat halaman diakses
+$conn->query("UPDATE blogs SET views = views + 1 WHERE id = $id");
+
 $result = $conn->query("SELECT * FROM blogs WHERE id = $id");
 
 if ($result->num_rows == 0) {

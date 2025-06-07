@@ -1,7 +1,29 @@
 <?php
 session_start();
 include './bloging/config.php';
+
+// Latest articles
+$query_latest = "SELECT * FROM blogs 
+                --  WHERE status = 'published' 
+                 ORDER BY created_at DESC 
+                 LIMIT 6";
+$result_latest = mysqli_query($conn, $query_latest);
+
+// Trending this week (7 hari terakhir berdasarkan views)
+$seven_days_ago = date('Y-m-d H:i:s', strtotime('-7 days'));
+$query_trending = "SELECT * FROM blogs 
+                   WHERE created_at >= '$seven_days_ago' 
+                   AND status = 'published'
+                   ORDER BY views DESC 
+                   LIMIT 5";
+$result_trending = mysqli_query($conn, $query_trending);
+
+if (!$result_trending) {
+    echo "Trending Query Error: " . mysqli_error($conn);
+}
 ?>
+
+
 <!DOCTYPE html>
 <html lang="zxx" class="no-js">
 
@@ -81,7 +103,7 @@ include './bloging/config.php';
       <div class="row d-flex justify-content-center">
         <div class="menu-content pb-70 col-lg-8">
           <div class="title text-center">
-            <h1 class="mb-10">Latest News from all categories</h1>
+            <h1 class="mb-10">Latest blogs from all categories</h1>
             <p>
               Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
               eiusmod tempor incididunt ut labore et dolore magna aliqua.
@@ -90,196 +112,50 @@ include './bloging/config.php';
         </div>
       </div>
       <div class="active-cat-carusel">
-        <div class="item single-cat">
-          <img src="img/c1.jpg" alt="" />
-          <p class="date">10 Jan 2018</p>
-          <h4><a href="#">It S Hurricane Season Visiting Hilton</a></h4>
-        </div>
-        <div class="item single-cat">
-          <img src="img/c2.jpg" alt="" />
-          <p class="date">10 Jan 2018</p>
-          <h4><a href="#">What Makes A Hotel Boutique</a></h4>
-        </div>
-        <div class="item single-cat">
-          <img src="img/c3.jpg" alt="" />
-          <p class="date">10 Jan 2018</p>
-          <h4><a href="#">Les Houches The Hidden Gem Valley</a></h4>
-        </div>
+        <?php while ($row = mysqli_fetch_assoc($result_latest)): ?>
+          <div class="item single-cat">
+            <img src="bloging/uploads/<?= htmlspecialchars(basename($row['image'])) ?>" alt="gambar" />
+
+            <p class="date"><?= date('d M Y', strtotime($row['created_at'])); ?></p>
+            <h4><a href="view_detail.php?id=<?= $row['id']; ?>"><?= $row['title']; ?></a></h4>
+          </div>
+        <?php endwhile; ?>
       </div>
     </div>
   </section>
   <!-- End category Area -->
 
-  <!-- Start travel Area -->
-  <section class="travel-area section-gap" id="travel">
-    <div class="container">
-      <div class="row d-flex justify-content-center">
-        <div class="menu-content pb-70 col-lg-8">
-          <div class="title text-center">
-            <h1 class="mb-10">Hot topics from Travel Section</h1>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-6 travel-left">
-          <div class="single-travel media pb-70">
-            <img class="img-fluid d-flex mr-3" src="img/t1.jpg" alt="" />
-            <div class="dates">
-              <span>20</span>
-              <p>Dec</p>
-            </div>
-            <div class="media-body align-self-center">
-              <h4 class="mt-0">
-                <a href="#">Addiction When Gambling Becomes A Problem</a>
-              </h4>
-              <p>
-                inappropriate behavior Lorem ipsum dolor sit amet,
-                consectetur.
-              </p>
-              <div class="meta-bottom d-flex justify-content-between">
-                <p><span class="lnr lnr-heart"></span> 15 Likes</p>
-                <p><span class="lnr lnr-bubble"></span> 02 Comments</p>
-              </div>
-            </div>
-          </div>
-          <div class="single-travel media">
-            <img class="img-fluid d-flex mr-3" src="img/t3.jpg" alt="" />
-            <div class="dates">
-              <span>20</span>
-              <p>Dec</p>
-            </div>
-            <div class="media-body align-self-center">
-              <h4 class="mt-0">
-                <a href="#">Addiction When Gambling Becomes A Problem</a>
-              </h4>
-              <p>
-                inappropriate behavior Lorem ipsum dolor sit amet,
-                consectetur.
-              </p>
-              <div class="meta-bottom d-flex justify-content-between">
-                <p><span class="lnr lnr-heart"></span> 15 Likes</p>
-                <p><span class="lnr lnr-bubble"></span> 02 Comments</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-6 travel-right">
-          <div class="single-travel media pb-70">
-            <img class="img-fluid d-flex mr-3" src="img/t2.jpg" alt="" />
-            <div class="dates">
-              <span>20</span>
-              <p>Dec</p>
-            </div>
-            <div class="media-body align-self-center">
-              <h4 class="mt-0">
-                <a href="#">Addiction When Gambling Becomes A Problem</a>
-              </h4>
-              <p>
-                inappropriate behavior Lorem ipsum dolor sit amet,
-                consectetur.
-              </p>
-              <div class="meta-bottom d-flex justify-content-between">
-                <p><span class="lnr lnr-heart"></span> 15 Likes</p>
-                <p><span class="lnr lnr-bubble"></span> 02 Comments</p>
-              </div>
-            </div>
-          </div>
-          <div class="single-travel media">
-            <img class="img-fluid d-flex mr-3" src="img/t4.jpg" alt="" />
-            <div class="dates">
-              <span>20</span>
-              <p>Dec</p>
-            </div>
-            <div class="media-body align-self-center">
-              <h4 class="mt-0">
-                <a href="#">Addiction When Gambling Becomes A Problem</a>
-              </h4>
-              <p>
-                inappropriate behavior Lorem ipsum dolor sit amet,
-                consectetur.
-              </p>
-              <div class="meta-bottom d-flex justify-content-between">
-                <p><span class="lnr lnr-heart"></span> 15 Likes</p>
-                <p><span class="lnr lnr-bubble"></span> 02 Comments</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <a
-          href="#"
-          class="primary-btn load-more pbtn-2 text-uppercase mx-auto mt-60">Load More
-        </a>
-      </div>
-    </div>
-  </section>
-  <!-- End travel Area -->
-
+  
   <!-- Start fashion Area -->
-  <section class="fashion-area section-gap" id="fashion">
+ <section class="fashion-area section-gap" id="fashion">
     <div class="container">
-      <div class="row d-flex justify-content-center">
-        <div class="menu-content pb-70 col-lg-8">
-          <div class="title text-center">
-            <h1 class="mb-10">Fashion News This Week</h1>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </p>
-          </div>
+        <div class="row d-flex justify-content-center">
+            <div class="menu-content pb-60 col-lg-10">
+                <div class="title text-center">
+                    <h1 class="mb-10">Bacaan Trending di Minggu Ini</h1>
+                    <p>Temukan artikel-artikel yang paling banyak dibaca dalam seminggu terakhir.</p>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-3 col-md-6 single-fashion">
-          <img class="img-fluid" src="img/f1.jpg" alt="" />
-          <p class="date">10 Jan 2018</p>
-          <h4><a href="#">Addiction When Gambling Becomes A Problem</a></h4>
-          <p>inappropriate behavior ipsum dolor sit amet, consectetur.</p>
-          <div class="meta-bottom d-flex justify-content-between">
-            <p><span class="lnr lnr-heart"></span> 15 Likes</p>
-            <p><span class="lnr lnr-bubble"></span> 02 Comments</p>
-          </div>
+        <div class="row">
+            <?php if ($result_trending && mysqli_num_rows($result_trending) > 0): ?>
+                <?php while ($row = mysqli_fetch_assoc($result_trending)): ?>
+                    <div class="col-lg-4 col-md-6 single-fashion">
+                    <img src="bloging/uploads/<?= htmlspecialchars(basename($row['image'])) ?>" alt="gambar" />
+                        <h4><?= $row['title'] ?></h4>
+                        <p class="card-text">
+                            <?= mb_strimwidth(strip_tags($row['content']), 0, 120, '...') ?>
+                        </p>
+                        <a href="view_detail.php?id=<?= $row['id'] ?>">Baca selengkapnya</a>
+                    </div>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <p class="text-center">Belum ada artikel trending minggu ini.</p>
+            <?php endif; ?>
         </div>
-        <div class="col-lg-3 col-md-6 single-fashion">
-          <img class="img-fluid" src="img/f2.jpg" alt="" />
-          <p class="date">10 Jan 2018</p>
-          <h4><a href="#">Addiction When Gambling Becomes A Problem</a></h4>
-          <p>inappropriate behavior ipsum dolor sit amet, consectetur.</p>
-          <div class="meta-bottom d-flex justify-content-between">
-            <p><span class="lnr lnr-heart"></span> 15 Likes</p>
-            <p><span class="lnr lnr-bubble"></span> 02 Comments</p>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 single-fashion">
-          <img class="img-fluid" src="img/f3.jpg" alt="" />
-          <p class="date">10 Jan 2018</p>
-          <h4><a href="#">Addiction When Gambling Becomes A Problem</a></h4>
-          <p>inappropriate behavior ipsum dolor sit amet, consectetur.</p>
-          <div class="meta-bottom d-flex justify-content-between">
-            <p><span class="lnr lnr-heart"></span> 15 Likes</p>
-            <p><span class="lnr lnr-bubble"></span> 02 Comments</p>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 single-fashion">
-          <img class="img-fluid" src="img/f4.jpg" alt="" />
-          <p class="date">10 Jan 2018</p>
-          <h4><a href="#">Addiction When Gambling Becomes A Problem</a></h4>
-          <p>inappropriate behavior ipsum dolor sit amet, consectetur.</p>
-          <div class="meta-bottom d-flex justify-content-between">
-            <p><span class="lnr lnr-heart"></span> 15 Likes</p>
-            <p><span class="lnr lnr-bubble"></span> 02 Comments</p>
-          </div>
-        </div>
-        <a
-          href="#"
-          class="primary-btn load-more pbtn-2 text-uppercase mx-auto mt-60">Load More
-        </a>
-      </div>
     </div>
-  </section>
+</section>
+
   <!-- End fashion Area -->
 
   <!-- Start team Area -->
