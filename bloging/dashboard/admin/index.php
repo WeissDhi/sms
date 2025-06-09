@@ -217,7 +217,7 @@ $recent_articles = $conn->query("
                                 <div class="d-flex mb-3 pb-3 border-bottom">
                                     <div class="flex-grow-1">
                                         <div class="d-flex justify-content-between">
-                                            <h6 class="mb-1"><?= htmlspecialchars($article['title']) ?></h6>
+                                            <h6 class="mb-1"><?= strip_tags($article['title']) ?></h6>
                                             <span class="badge bg-primary"><?= number_format($article['views']) ?> views</span>
                                         </div>
                                         <p class="mb-1 small text-muted">
@@ -242,7 +242,7 @@ $recent_articles = $conn->query("
                                 <div class="d-flex mb-3 pb-3 border-bottom">
                                     <div class="flex-grow-1">
                                         <div class="d-flex justify-content-between">
-                                            <h6 class="mb-1"><?= htmlspecialchars($article['title']) ?></h6>
+                                            <h6 class="mb-1"><?= strip_tags($article['title']) ?></h6>
                                             <small class="text-muted"><?= date('d M Y', strtotime($article['created_at'])) ?></small>
                                         </div>
                                         <p class="mb-1 small text-muted">
