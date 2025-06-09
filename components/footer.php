@@ -1,94 +1,106 @@
-<!-- start footer Area -->
-<footer class="footer-area section-gap">
+<!-- footer.php -->
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+
+<!-- Bootstrap 5 (jika belum dipakai) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<footer class="footer-area bg-dark text-white py-5 mt-5">
   <div class="container">
-    <div class="row g-4"><!-- gunakan g-4 untuk memberi jarak antar kolom -->
+    <div class="row g-4">
+      
       <!-- Tentang Kami -->
       <div class="col-md-4">
-        <div class="single-footer-widget">
-          <h6>Tentang Kami</h6>
-          <p>
-            IKDAR CAIRO adalah platform yang dikelola oleh mahasiswa Indonesia di Kairo, bertujuan untuk menyebarkan informasi dan pemikiran dalam berbagai bidang seperti humaniora, Islamologi, dan sastra.
-          </p>
-        </div>
+        <h5 class="fw-bold mb-3">Tentang Kami</h5>
+        <p class="small text-light">
+          IKDAR CAIRO adalah platform yang dikelola oleh mahasiswa Indonesia di Kairo, bertujuan untuk menyebarkan informasi dan pemikiran dalam berbagai bidang seperti humaniora, Islamologi, dan sastra.
+        </p>
       </div>
 
       <!-- Kategori -->
       <div class="col-md-4">
-        <div class="single-footer-widget">
-          <h6>Kategori</h6>
-          <ul class="footer-nav">
-            <li><a href="#">Esai</a></li>
-            <li><a href="#">Humaniora</a></li>
-            <li><a href="#">Islamologi</a></li>
-            <li><a href="#">Opini</a></li>
-            <li><a href="#">Resensi</a></li>
-            <li><a href="#">Sastra</a></li>
-            <li><a href="#">Warta</a></li>
-          </ul>
-        </div>
+        <h5 class="fw-bold mb-3">Kategori</h5>
+        <ul class="list-unstyled">
+          <li><a href="#" class="footer-link">Esai</a></li>
+          <li><a href="#" class="footer-link">Humaniora</a></li>
+          <li><a href="#" class="footer-link">Islamologi</a></li>
+          <li><a href="#" class="footer-link">Opini</a></li>
+          <li><a href="#" class="footer-link">Resensi</a></li>
+          <li><a href="#" class="footer-link">Sastra</a></li>
+          <li><a href="#" class="footer-link">Warta</a></li>
+        </ul>
       </div>
 
-      <!-- Sosial Media -->
+      <!-- Sosial Media + Scroll Top -->
       <div class="col-md-4">
-        <div class="single-footer-widget">
-          <h6>Sosial Media</h6>
-          <div class="footer-social d-flex mt-3">
-            <a href="https://www.facebook.com/ikdar.cairo?locale=id_ID"><i class="fa fa-facebook"></i></a>
-            <a href="https://www.instagram.com/ikdar_cairo/"><i class="fa fa-instagram"></i></a>
-          </div>
+        <h5 class="fw-bold mb-3">Ikuti Kami</h5>
+        <div class="d-flex gap-3">
+          <a href="https://facebook.com/ikdar.cairo" class="social-icon bg-light text-dark rounded-circle d-flex align-items-center justify-content-center facebook-icon">
+            <i class="fa fa-facebook"></i>
+          </a>
+          <a href="https://instagram.com/ikdar_cairo" class="social-icon bg-light text-dark rounded-circle d-flex align-items-center justify-content-center instagram-icon">
+            <i class="fa fa-instagram"></i>
+          </a>
         </div>
+
+        <button onclick="scrollToTop()" class="btn btn-outline-light btn-sm mt-4">
+          ↑ Kembali ke atas
+        </button>
       </div>
     </div>
 
-    <!-- Footer Bottom -->
-    <div class="row footer-bottom d-flex justify-content-center mt-4">
-      <p class="col-auto footer-text text-center mb-2">
-        Dikelola oleh IKDAR CAIRO
-      </p>
+    <!-- Copyright -->
+    <div class="row mt-4 pt-3 border-top border-secondary">
+      <div class="col text-center">
+        <p class="mb-0 small text-secondary">
+          &copy; <?= date('Y') ?> IKDAR CAIRO. All rights reserved.
+        </p>
+      </div>
     </div>
   </div>
 </footer>
 
 <style>
-  .footer-area {
-    padding: 40px 0 20px; 
-  }
-
-  .single-footer-widget h6 {
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-
-  .footer-nav {
-    padding-left: 0;
-  }
-
-  .footer-nav li {
-    list-style: none;
-    margin-bottom: 8px;
-  }
-
-  .footer-nav li a {
-    color: #555;
+  .footer-link {
+    color: #bbb;
+    display: block;
+    margin-bottom: 6px;
+    transition: 0.3s ease;
     text-decoration: none;
   }
 
-  .footer-nav li a:hover {
-    text-decoration: underline;
+  .footer-link:hover {
+    color: #fff;
+    transform: translateX(5px);
   }
 
-  .footer-social a {
-    margin-right: 15px;
+  .social-icon {
+    width: 40px;
+    height: 40px;
     font-size: 18px;
-    color: #333;
+    transition: all 0.3s ease;
   }
 
-  .footer-social a:last-child {
-    margin-right: 0;
+  .social-icon:hover {
+    background-color: #8fc333; /* hijau */
+    color: #fff !important;
   }
 
-  .footer-text {
-    font-size: 14px;
-    color: #666;
+  .facebook-icon:hover {
+    color: #1877f2 !important;
+  }
+
+  .instagram-icon:hover {
+    color: #e1306c !important;
+  }
+
+  .footer-area {
+    background: linear-gradient(to right, #1d1d1d, #111);
   }
 </style>
+
+<script>
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
