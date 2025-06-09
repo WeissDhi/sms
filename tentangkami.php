@@ -42,7 +42,7 @@ include './components/navbar.php';
 
     <div class="container py-5">
         <div class="text-center mb-4">
-            <h1 class="display-5 fw-bold">Tentang Syukron Makmun Mesir</h1>
+            <h1 class="display-5 fw-bold">Tentang Syukron Makmun Society-Mesir</h1>
             <p class="lead text-muted">Blog Islami dari Negeri Para Ulama</p>
         </div>
 
@@ -51,7 +51,7 @@ include './components/navbar.php';
                 <div class="card shadow-sm border-0">
                     <div class="card-body">
                         <p>
-                            <strong>Syukron Makmun Mesir</strong> adalah sebuah blog Islami yang bertujuan menyebarkan hikmah, ilmu, dan inspirasi dari negeri Mesir. Blog ini menjadi wadah untuk berbagi catatan spiritual, kisah para ulama, serta pengalaman belajar Islam di salah satu pusat peradaban Islam terbesar.
+                            <strong>Syukron Makmun Society-Mesir</strong> adalah sebuah blog Islami yang bertujuan menyebarkan hikmah, ilmu, dan inspirasi dari negeri Mesir. Blog ini menjadi wadah untuk berbagi catatan spiritual, kisah para ulama, serta pengalaman belajar Islam di salah satu pusat peradaban Islam terbesar.
                         </p>
 
                         <p>

@@ -73,28 +73,30 @@ if (!$result_trending) {
         <div
           class="banner-content d-flex align-items-center col-lg-12 col-md-12">
           <h1>
-            A Discount Toner Cartridge <br />
-            Is Better Than Ever.
+           Syukron Ma’mun Society-Mesir hadir sebagai media digital yang mendokumentasikan pemikiran, karya tulis, dan kegiatan para alumni Daarul Rahman Cabang Kairo dalam bentuk blog.
           </h1>
         </div>
         <div
           class="head-bottom-meta d-flex justify-content-between align-items-end col-lg-12">
           <div class="col-lg-6 flex-row d-flex meta-left no-padding">
-            <p><span class="lnr lnr-heart"></span> 15 Likes</p>
-            <p><span class="lnr lnr-bubble"></span> 02 Comments</p>
           </div>
           <div
             class="col-lg-6 flex-row d-flex meta-right no-padding justify-content-end">
             <div class="user-meta">
-              <h4 class="text-white">Mark wiens</h4>
-              <p>12 Dec, 2017 11:21 am</p>
             </div>
-            <img class="img-fluid user-img" src="img/user.jpg" alt="" />
           </div>
         </div>
       </div>
     </div>
   </section>
+  
+  <style>
+    .banner-area .banner-content h1 {
+  font-size: 32px; 
+  line-height: 1.5;
+  font-weight: 600;
+}
+  </style>
   <!-- End banner Area -->
 
   <!-- Start category Area -->
@@ -105,8 +107,7 @@ if (!$result_trending) {
           <div class="title text-center">
             <h1 class="mb-10">Blog Terbaru dari Semua Kategori</h1>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              Jelajahi tulisan-tulisan terbaru dari semua kategori blog, mulai dari informasi ringan hingga topik mendalam.
             </p>
           </div>
         </div>
@@ -239,5 +240,37 @@ if (!$result_trending) {
   <script src="js/jquery.sticky.js"></script>
   <script src="js/main.js"></script>
 </body>
+
+<?php if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+} ?>
+<!-- Tombol Tambah Artikel -->
+<a href="<?= isset($_SESSION['author_id']) && $_SESSION['author_type'] === 'user' ? 'bloging/add_blog.php' : 'login.php' ?>"
+   class="btn-tambah-artikel">
+  + Tambah Artikel
+</a>
+
+<style>
+  .btn-tambah-artikel {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #28a745;
+    color: white;
+    padding: 14px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    transition: background-color 0.3s ease;
+  }
+
+  .btn-tambah-artikel:hover {
+    background-color: #218838;
+  }
+</style>
+
+
 
 </html>
