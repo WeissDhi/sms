@@ -8,9 +8,9 @@ $showDashboard = false;
 if (isset($_SESSION['author_type'])) {
     $showDashboard = true;
     if ($_SESSION['author_type'] === 'admin') {
-        $dashboardLink = './dashboard/admin/index.php';
+        $dashboardLink = './bloging/dashboard/admin/index.php';
     } elseif ($_SESSION['author_type'] === 'user') {
-        $dashboardLink = './dashboard/users/index.php';
+        $dashboardLink = './bloging/dashboard/users/index.php';
     }
 }
 
@@ -52,12 +52,16 @@ $result = $conn->query($sql);
     <meta charset="UTF-8">
     <title>Daftar Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- BOOTSTRAP + GOOGLE FONTS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/linearicons.css" />
+    <link rel="stylesheet" href="css/font-awesome.min.css" />
+    <link rel="stylesheet" href="css/owl.carousel.css" />
+    <link rel="stylesheet" href="css/main.css" />
+</head>
 
-    <!-- CUSTOM STYLE -->
+<body>
+    <?php include './components/navbar.php'; ?>
+
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -86,21 +90,17 @@ $result = $conn->query($sql);
         .card {
             transition: all 0.4s ease;
             border: 3px solid #8fc333;
-            /* Lebih tebal dan hijau terang */
             border-radius: 20px;
             overflow: hidden;
             background: rgba(255, 255, 255, 0.98);
-            /* Hampir solid agar kontras lebih tinggi */
             backdrop-filter: blur(6px);
             box-shadow: 0 8px 25px rgba(143, 195, 51, 0.45);
-            /* Bayangan lebih gelap dan tebal */
             position: relative;
         }
 
         .card:hover {
             transform: translateY(-8px) scale(1.02);
             box-shadow: 0 15px 35px rgba(143, 195, 51, 0.6);
-            /* Bayangan lebih pekat saat hover */
         }
 
         .card-img-top {
@@ -185,10 +185,6 @@ $result = $conn->query($sql);
             transform: translateX(5px);
         }
     </style>
-</head>
-
-<body>
-    <?php include './components/navbar.php'; ?>
 
     <div class="container py-4">
 
