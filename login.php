@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $admin = $admin_result->fetch_assoc();
         $_SESSION['author_id'] = $admin['id'];
         $_SESSION['author_type'] = 'admin';
+        $_SESSION['username'] = $admin['username'];
         header("Location: index.php");
         exit;
     }
@@ -30,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $user_result->fetch_assoc();
         $_SESSION['author_id'] = $user['id'];
         $_SESSION['author_type'] = 'user';
+        $_SESSION['username'] = $user['username'];
         header("Location: index.php");
         exit;
     }
