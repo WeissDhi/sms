@@ -2,18 +2,33 @@
 session_start();
 include '../../config.php';
 
-if (!isset($_SESSION['author_id']) || $_SESSION['author_type'] !== 'user') {
+// Check if user is logged in
+if (!isset($_SESSION['author_id'])) {
     header("Location: ../../login.php");
     exit;
 }
 
-$user_id = $_SESSION['author_id'];
+// Get user ID from URL or session
+$user_id = isset($_GET['id']) ? (int)$_GET['id'] : $_SESSION['author_id'];
+$is_admin = isset($_SESSION['author_type']) && $_SESSION['author_type'] === 'admin';
+$is_own_profile = $user_id === $_SESSION['author_id'];
+
+// If not admin and trying to view other user's profile, redirect to own profile
+if (!$is_admin && !$is_own_profile) {
+    header("Location: user_detail.php");
+    exit;
+}
 
 // Get user details
 $user_query = $conn->prepare("SELECT * FROM users WHERE id = ?");
 $user_query->bind_param("i", $user_id);
 $user_query->execute();
 $user = $user_query->get_result()->fetch_assoc();
+
+if (!$user) {
+    header("Location: " . ($is_admin ? "user_management.php" : "../index.php"));
+    exit;
+}
 
 // Get user statistics
 $stats_query = "
@@ -70,48 +85,13 @@ $top_articles_stmt = $conn->prepare($top_articles_query);
 $top_articles_stmt->bind_param("i", $user_id);
 $top_articles_stmt->execute();
 $top_articles = $top_articles_stmt->get_result();
-
-// Handle form update
-$update_message = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['update_profile'])) {
-        $new_fname = trim($_POST['fname']);
-        $new_username = trim($_POST['username']);
-
-        $update_stmt = $conn->prepare("UPDATE users SET fname = ?, username = ? WHERE id = ?");
-        $update_stmt->bind_param("ssi", $new_fname, $new_username, $user_id);
-        if ($update_stmt->execute()) {
-            $update_message = 'Profil berhasil diperbarui!';
-            $user['fname'] = $new_fname;
-            $user['username'] = $new_username;
-        } else {
-            $update_message = 'Gagal memperbarui profil.';
-        }
-        $update_stmt->close();
-    }
-
-    // Ubah password
-    if (isset($_POST['update_password'])) {
-        $new_password = password_hash($_POST['new_password'], PASSWORD_BCRYPT);
-
-        $pass_stmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
-        $pass_stmt->bind_param("si", $new_password, $user_id);
-        if ($pass_stmt->execute()) {
-            $update_message = 'Password berhasil diubah!';
-        } else {
-            $update_message = 'Gagal mengubah password.';
-        }
-        $pass_stmt->close();
-    }
-}
 ?>
 
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
-    <title>Profil Saya</title>
+    <title>Profil Pengguna - <?= htmlspecialchars($user['fname']) ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -217,33 +197,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             height: 100%;
             object-fit: cover;
         }
-
-        .edit-profile-modal .modal-content {
-            border-radius: 1rem;
-        }
-
-        .edit-profile-modal .modal-header {
-            border-bottom: 2px solid #f0f0f0;
-        }
-
-        .edit-profile-modal .modal-title {
-            color: var(--primary-color);
-            font-weight: 600;
-        }
     </style>
 </head>
 
 <body class="bg-light">
-    <?php include '../components/navbar.php' ?>
-    <?php include '../components/user-sidebar.php' ?>
+    <?php include '../components/navbar.php'; ?>
+    <?php if ($is_admin) include '../components/sidebar.php'; ?>
     
-    <?php if ($update_message): ?>
-        <div class="alert alert-info alert-dismissible fade show m-3" role="alert">
-            <?= htmlspecialchars($update_message) ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <?php endif; ?>
-
     <div class="profile-header">
         <div class="container">
             <div class="row align-items-center">
@@ -251,13 +211,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <h1 class="mb-2"><?= htmlspecialchars($user['fname']) ?></h1>
                     <p class="mb-0">
                         <i class="bi bi-person-circle"></i> <?= htmlspecialchars($user['username']) ?>
-                        <button type="button" class="btn btn-light btn-sm ms-3" data-bs-toggle="modal" data-bs-target="#editProfileModal">
-                            <i class="bi bi-pencil"></i> Edit Profil
-                        </button>
+                        <?php if ($is_admin): ?>
+                            <a href="edit_user.php?id=<?= $user_id ?>" class="btn btn-light btn-sm ms-3">
+                                <i class="bi bi-pencil"></i> Edit Profil
+                            </a>
+                        <?php endif; ?>
                     </p>
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <a href="../index.php" class="btn btn-light">
+                    <a href="<?= $is_admin ? 'user_management.php' : '../index.php' ?>" class="btn btn-light">
                         <i class="bi bi-arrow-left"></i> Kembali
                     </a>
                 </div>
@@ -319,7 +281,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
                                         <h5 class="mb-1">
-                                            <a href="../../view_detail.php?id=<?= $article['id'] ?>" class="text-decoration-none">
+                                            <a href="../../../view_detail.php?id=<?= $article['id'] ?>" class="text-decoration-none">
                                                 <?= htmlspecialchars($article['title']) ?>
                                             </a>
                                         </h5>
@@ -340,14 +302,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     </div>
                                     <?php if (!empty($article['image'])): ?>
                                         <div class="thumbnail-container ms-3">
-                                            <img src="../../uploads/<?= basename($article['image']) ?>" alt="Thumbnail">
+                                            <img src="../../../uploads/<?= basename($article['image']) ?>" alt="Thumbnail">
                                         </div>
                                     <?php endif; ?>
                                 </div>
                             </div>
                         <?php endwhile; ?>
                         <div class="text-center mt-3">
-                            <a href="blog_management.php" class="btn btn-outline-primary">
+                            <a href="<?= $is_admin ? '../../blogs_management.php' : '../blog_management.php' ?>" class="btn btn-outline-primary">
                                 Lihat Semua Artikel
                             </a>
                         </div>
@@ -372,7 +334,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <p class="mb-1"><?= htmlspecialchars($comment['comment']) ?></p>
                                         <small class="text-muted">
                                             Pada artikel: 
-                                            <a href="../../view_detail.php?id=<?= $comment['post_id'] ?>" class="text-decoration-none">
+                                            <a href="../../../view_detail.php?id=<?= $comment['post_id'] ?>" class="text-decoration-none">
                                                 <?= htmlspecialchars($comment['blog_title']) ?>
                                             </a>
                                         </small>
@@ -403,7 +365,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?php while ($article = $top_articles->fetch_assoc()): ?>
                             <div class="article-item">
                                 <h6 class="mb-1">
-                                    <a href="../../view_detail.php?id=<?= $article['id'] ?>" class="text-decoration-none">
+                                    <a href="../../../view_detail.php?id=<?= $article['id'] ?>" class="text-decoration-none">
                                         <?= htmlspecialchars($article['title']) ?>
                                     </a>
                                 </h6>
@@ -457,43 +419,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
-    <!-- Edit Profile Modal -->
-    <div class="modal fade edit-profile-modal" id="editProfileModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Profil</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" id="profileForm">
-                        <div class="mb-3">
-                            <label class="form-label">Nama Lengkap</label>
-                            <input type="text" class="form-control" name="fname" value="<?= htmlspecialchars($user['fname']) ?>" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Username</label>
-                            <input type="text" class="form-control" name="username" value="<?= htmlspecialchars($user['username']) ?>" required>
-                        </div>
-                        <button type="submit" name="update_profile" class="btn btn-primary">Simpan Perubahan</button>
-                    </form>
-
-                    <hr class="my-4">
-
-                    <form method="POST" id="passwordForm">
-                        <h6 class="mb-3">Ubah Password</h6>
-                        <div class="mb-3">
-                            <label class="form-label">Password Baru</label>
-                            <input type="password" class="form-control" name="new_password" required minlength="6">
-                        </div>
-                        <button type="submit" name="update_password" class="btn btn-warning">Ubah Password</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
-</html>
+</html> 

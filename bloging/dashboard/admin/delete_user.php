@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../../config.php';
+include '../../config.php';
 
 if (!isset($_SESSION['author_id']) || $_SESSION['author_type'] !== 'admin') {
     header("Location: ../../login.php");
@@ -14,6 +14,6 @@ if (isset($_GET['id'])) {
     $stmt->execute();
 }
 
-header("Location: user_management.php");
+header("Location: users_management.php");
 exit;
 ?>

@@ -1,24 +1,9 @@
-<?php
-session_start();
-include '../../config.php';
-
-// Cek apakah login sebagai admin
-if (!isset($_SESSION['author_id']) || $_SESSION['author_type'] !== 'admin') {
-    header("Location: ../../login.php");
-    exit;
-}
-
-// Ambil semua user
-$result = $conn->query("SELECT * FROM users ORDER BY id DESC");
-?>
-
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin</title>
+    <title>Manajemen Pengguna</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
@@ -29,7 +14,6 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
         :root {
@@ -90,33 +74,21 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
             color: #495057;
         }
         
+        .user-name {
+            font-weight: 500;
+            color: var(--accent-color);
+        }
+        
         .action-buttons .btn {
             padding: 0.5rem;
             border-radius: 0.5rem;
-            margin: 0 0.15rem;
+            margin: 0 0.2rem;
             transition: all 0.2s;
-            width: 32px;
-            height: 32px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
         }
         
-        .action-buttons .btn i {
-            font-size: 0.9rem;
-        }
-        
-        .btn-info {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            border: none;
-            color: white;
-        }
-        
-        .btn-info:hover {
-            background: linear-gradient(135deg, #2980b9, #2471a3);
-            color: white;
+        .action-buttons .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 2px 4px rgba(52, 152, 219, 0.2);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .btn-success {
@@ -132,9 +104,22 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
             box-shadow: 0 4px 8px rgba(46,204,113,0.2);
         }
         
-        /* DataTables Styling */
+        .badge {
+            padding: 0.5rem 0.8rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+        }
+        
+        .badge i {
+            margin-right: 0.3rem;
+        }
+        
         .dataTables_wrapper {
             padding: 1rem 0;
+        }
+        
+        .dataTables_filter {
+            margin-bottom: 1rem;
         }
         
         .dataTables_filter input {
@@ -163,6 +148,29 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
             border-color: var(--accent-color) !important;
             box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25) !important;
             outline: none !important;
+        }
+        
+        .table thead th {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .table thead th:after {
+            content: '↕';
+            position: absolute;
+            right: 8px;
+            color: #999;
+            font-size: 0.8rem;
+        }
+        
+        .table thead th.sorting_asc:after {
+            content: '↑';
+            color: var(--accent-color);
+        }
+        
+        .table thead th.sorting_desc:after {
+            content: '↓';
+            color: var(--accent-color);
         }
         
         .dataTables_info {
@@ -195,6 +203,11 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
             border-color: #dee2e6 !important;
             color: var(--primary-color) !important;
         }
+        
+        .paginate_button.disabled {
+            color: #6c757d !important;
+            cursor: not-allowed !important;
+        }
     </style>
 </head>
 
@@ -202,77 +215,67 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
     <?php include '../components/navbar.php'; ?>
     <?php include '../components/sidebar.php'; ?>
     
-    <?php if(isset($_SESSION['success'])): ?>
-    <script>
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: '<?php echo $_SESSION['success']; ?>',
-            timer: 3000,
-            showConfirmButton: false
-        });
-    </script>
-    <?php unset($_SESSION['success']); endif; ?>
-
-    <?php if(isset($_SESSION['error'])): ?>
-    <script>
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: '<?php echo $_SESSION['error']; ?>',
-            timer: 3000,
-            showConfirmButton: false
-        });
-    </script>
-    <?php unset($_SESSION['error']); endif; ?>
-
     <div class="page-header">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h2>Dashboard Admin</h2>
-                    <p>Kelola seluruh pengguna dan artikel</p>
+                    <h2>Manajemen Pengguna</h2>
+                    <p>Kelola akun pengguna blog dengan mudah</p>
                 </div>
-                <div>
-                    <a href="add_user.php" class="btn btn-success">
-                        <i class="bi bi-person-plus"></i> Tambah User Baru
-                    </a>
-                    <a href="../../../index.php" class="btn btn-outline-light ms-2">
-                        <i class="bi bi-house-door-fill"></i> HOME
-                    </a>
-                </div>
+                <a href="add_user.php" class="btn btn-success">
+                    <i class="bi bi-person-plus"></i> Tambah Pengguna
+                </a>
             </div>
         </div>
     </div>
 
     <div class="container">
+        <?php if (isset($error)): ?>
+            <div class="alert alert-danger"><?= $error ?></div>
+        <?php endif; ?>
+
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
                     <table id="userTable" class="table table-hover">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Nama Lengkap</th>
-                                <th>Username</th>
-                                <th>Aksi</th>
+                                <th data-sortable="true">Nama</th>
+                                <th data-sortable="true">Username</th>
+                                <th data-sortable="true">Jumlah Artikel</th>
+                                <th data-sortable="true">Status</th>
+                                <th data-sortable="false">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php while ($row = $result->fetch_assoc()): ?>
+                            <?php while ($row = $result->fetch_assoc()): 
+                                $article_query = $conn->prepare("SELECT COUNT(*) as article_count FROM blogs WHERE author_id = ? AND author_type = 'user'");
+                                $article_query->bind_param("i", $row['id']);
+                                $article_query->execute();
+                                $article_count = $article_query->get_result()->fetch_assoc()['article_count'];
+                            ?>
                                 <tr>
-                                    <td><?= $row['id'] ?></td>
                                     <td><?= htmlspecialchars($row['fname']) ?></td>
                                     <td><?= htmlspecialchars($row['username']) ?></td>
+                                    <td data-order="<?= $article_count ?>">
+                                        <span class="badge bg-info">
+                                            <i class="bi bi-file-text"></i> <?= number_format($article_count) ?>
+                                        </span>
+                                    </td>
+                                    <td data-order="<?= $article_count > 0 ? 'Aktif' : 'Belum Aktif' ?>">
+                                        <span class="badge bg-<?= $article_count > 0 ? 'success' : 'secondary' ?>">
+                                            <?= $article_count > 0 ? 'Aktif' : 'Belum Aktif' ?>
+                                        </span>
+                                    </td>
                                     <td>
                                         <div class="action-buttons">
-                                            <a href="user_detail.php?id=<?= $row['id'] ?>" class="btn btn-info btn-sm" title="Detail">
-                                                <i class="bi bi-eye"></i>
+                                            <a href="user_detail.php?id=<?= $row['id'] ?>" class="btn btn-info btn-sm" title="Lihat Detail">
+                                                <i class="bi bi-person-lines-fill"></i>
                                             </a>
                                             <a href="edit_user.php?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm" title="Edit">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
-                                            <a href="#" class="btn btn-danger btn-sm delete-user" data-id="<?php echo $row['id']; ?>" data-name="<?php echo htmlspecialchars($row['username']); ?>" title="Hapus">
+                                            <a href="delete_user.php?id=<?= $row['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus user ini?')" title="Hapus">
                                                 <i class="bi bi-trash"></i>
                                             </a>
                                         </div>
@@ -306,41 +309,20 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
                         previous: "Sebelumnya"
                     }
                 },
-                order: [[0, 'desc']], // Sort by ID column by default
+                order: [[0, 'asc']], // Sort by name column by default
                 pageLength: 10,
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Semua"]],
                 dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
                      '<"row"<"col-sm-12"tr>>' +
                      '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
                 initComplete: function() {
+                    // Add custom class to search input
                     $('.dataTables_filter input').addClass('form-control');
+                    // Add custom class to length select
                     $('.dataTables_length select').addClass('form-select');
                 }
-            });
-
-            // Sweet Alert Delete Confirmation
-            $('.delete-user').on('click', function(e) {
-                e.preventDefault();
-                const userId = $(this).data('id');
-                const userName = $(this).data('name');
-                
-                Swal.fire({
-                    title: 'Apakah Anda yakin?',
-                    text: `Anda akan menghapus user "${userName}"`,
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Ya, hapus!',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = `delete_user.php?id=${userId}`;
-                    }
-                });
             });
         });
     </script>
 </body>
-
-</html>
+</html> 

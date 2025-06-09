@@ -69,6 +69,7 @@ $recent_articles = $conn->query("
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Dashboard Admin</title>
@@ -77,25 +78,91 @@ $recent_articles = $conn->query("
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .stat-card {
-            border-radius: 10px;
+            border-radius: 15px;
             border: none;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            height: 100%;
         }
+
         .stat-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
         }
+
         .stat-icon {
-            font-size: 2rem;
-            opacity: 0.8;
+            font-size: 2.5rem;
+            opacity: 0.9;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 12px;
         }
+
         .recent-activity {
             max-height: 400px;
             overflow-y: auto;
+            scrollbar-width: thin;
         }
+
+        .recent-activity::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .recent-activity::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
         .chart-container {
             position: relative;
-            height: 300px;
+            height: 350px;
+            padding: 1rem;
+        }
+
+        .dashboard-card {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .dashboard-card .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #f8f9fa;
+        }
+
+        .activity-item {
+            transition: all 0.2s ease;
+            border-radius: 10px;
+            padding: 0.75rem;
+        }
+
+        .activity-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .badge-view {
+            font-size: 0.85rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 20px;
+        }
+
+        .home-btn {
+            border-radius: 10px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+
+        .home-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
@@ -104,62 +171,68 @@ $recent_articles = $conn->query("
     <?php include '../components/navbar.php'; ?>
     <?php include '../components/sidebar.php'; ?>
 
-    <div class="container-fluid py-4">
+    <div class="container-fluid py-5 px-4">
         <div class="row mb-4">
-            <div class="col-12">
-                <h2 class="mb-4">Dashboard Admin</h2>
+            <div class="col-12 d-flex justify-content-between align-items-center">
+                <h2 class="mb-0 fw-bold text-dark">Dashboard Admin</h2>
+                <a href="../../../index.php" class="btn btn-outline-primary home-btn d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-house-door-fill"></i> Kembali ke Home
+                </a>
             </div>
         </div>
 
         <!-- Statistics Cards -->
-        <div class="row mb-4">
-            <div class="col-md-3 mb-3">
-                <div class="card stat-card bg-primary text-white">
-                    <div class="card-body">
+        <div class="row g-4 mb-5">
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card stat-card bg-primary bg-gradient text-white h-100">
+                    <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="card-title">Total Pengguna</h6>
-                                <h2 class="mb-0"><?= $stats['total_users'] ?></h2>
+                                <h6 class="card-title text-white-50 mb-2">Total Pengguna</h6>
+                                <h2 class="mb-0 fw-bold"><?= number_format($stats['total_users']) ?></h2>
                             </div>
                             <i class="bi bi-people-fill stat-icon"></i>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <div class="card stat-card bg-success text-white">
-                    <div class="card-body">
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card stat-card bg-success bg-gradient text-white h-100">
+                    <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="card-title">Total Artikel</h6>
-                                <h2 class="mb-0"><?= $stats['total_articles'] ?></h2>
-                                <small>Published: <?= $stats['published_articles'] ?> | Draft: <?= $stats['draft_articles'] ?></small>
+                                <h6 class="card-title text-white-50 mb-2">Total Artikel</h6>
+                                <h2 class="mb-0 fw-bold"><?= number_format($stats['total_articles']) ?></h2>
+                                <div class="mt-2">
+                                    <span class="badge bg-white bg-opacity-25 me-2">Published: <?= number_format($stats['published_articles']) ?></span>
+                                    <span class="badge bg-white bg-opacity-25">Draft: <?= number_format($stats['draft_articles']) ?></span>
+                                </div>
                             </div>
                             <i class="bi bi-file-text-fill stat-icon"></i>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <div class="card stat-card bg-info text-white">
-                    <div class="card-body">
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card stat-card bg-info bg-gradient text-white h-100">
+                    <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="card-title">Total Komentar</h6>
-                                <h2 class="mb-0"><?= $stats['total_comments'] ?></h2>
+                                <h6 class="card-title text-white-50 mb-2">Total Komentar</h6>
+                                <h2 class="mb-0 fw-bold"><?= number_format($stats['total_comments']) ?></h2>
                             </div>
                             <i class="bi bi-chat-dots-fill stat-icon"></i>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <div class="card stat-card bg-warning text-white">
-                    <div class="card-body">
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card stat-card bg-warning bg-gradient text-white h-100">
+                    <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h6 class="card-title">Total Likes</h6>
-                                <h2 class="mb-0"><?= $stats['total_likes'] ?></h2>
+                                <h6 class="card-title text-white-50 mb-2">Total Likes</h6>
+                                <h2 class="mb-0 fw-bold"><?= number_format($stats['total_likes']) ?></h2>
                             </div>
                             <i class="bi bi-heart-fill stat-icon"></i>
                         </div>
@@ -168,12 +241,15 @@ $recent_articles = $conn->query("
             </div>
         </div>
 
-        <div class="row">
+        <div class="row g-4">
             <!-- Articles by Category Chart -->
-            <div class="col-md-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Artikel per Kategori</h5>
+            <div class="col-12 col-lg-6">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body p-4">
+                        <h5 class="card-title d-flex align-items-center">
+                            <i class="bi bi-pie-chart-fill me-2 text-primary"></i>
+                            Artikel per Kategori
+                        </h5>
                         <div class="chart-container">
                             <canvas id="categoryChart"></canvas>
                         </div>
@@ -182,23 +258,33 @@ $recent_articles = $conn->query("
             </div>
 
             <!-- Recent Comments -->
-            <div class="col-md-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Komentar Terbaru</h5>
+            <div class="col-12 col-lg-6">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body p-4">
+                        <h5 class="card-title d-flex align-items-center">
+                            <i class="bi bi-chat-square-text-fill me-2 text-primary"></i>
+                            Komentar Terbaru
+                        </h5>
                         <div class="recent-activity">
                             <?php while ($comment = $recent_comments->fetch_assoc()): ?>
-                                <div class="d-flex mb-3 pb-3 border-bottom">
-                                    <div class="flex-shrink-0">
-                                        <i class="bi bi-person-circle fs-4"></i>
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <div class="d-flex justify-content-between">
-                                            <h6 class="mb-1"><?= htmlspecialchars($comment['user_name']) ?></h6>
-                                            <small class="text-muted"><?= date('d M Y H:i', strtotime($comment['crated_at'])) ?></small>
+                                <div class="activity-item mb-3">
+                                    <div class="d-flex">
+                                        <div class="flex-shrink-0">
+                                            <div class="bg-light rounded-circle p-2">
+                                                <i class="bi bi-person-circle fs-4 text-primary"></i>
+                                            </div>
                                         </div>
-                                        <p class="mb-1"><?= htmlspecialchars($comment['comment']) ?></p>
-                                        <small class="text-muted">Pada artikel: <?= htmlspecialchars($comment['post_title']) ?></small>
+                                        <div class="flex-grow-1 ms-3">
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <h6 class="mb-0 fw-semibold"><?= htmlspecialchars($comment['user_name']) ?></h6>
+                                                <small class="text-muted"><?= date('d M Y H:i', strtotime($comment['crated_at'])) ?></small>
+                                            </div>
+                                            <p class="mb-1 text-dark"><?= htmlspecialchars($comment['comment']) ?></p>
+                                            <small class="text-muted d-block">
+                                                <i class="bi bi-link-45deg"></i>
+                                                <?= htmlspecialchars($comment['post_title']) ?>
+                                            </small>
+                                        </div>
                                     </div>
                                 </div>
                             <?php endwhile; ?>
@@ -208,22 +294,33 @@ $recent_articles = $conn->query("
             </div>
 
             <!-- Most Viewed Articles -->
-            <div class="col-md-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Artikel Terpopuler</h5>
+            <div class="col-12 col-lg-6">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body p-4">
+                        <h5 class="card-title d-flex align-items-center">
+                            <i class="bi bi-graph-up-arrow me-2 text-primary"></i>
+                            Artikel Terpopuler
+                        </h5>
                         <div class="recent-activity">
                             <?php while ($article = $most_viewed->fetch_assoc()): ?>
-                                <div class="d-flex mb-3 pb-3 border-bottom">
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex justify-content-between">
-                                            <h6 class="mb-1"><?= strip_tags($article['title']) ?></h6>
-                                            <span class="badge bg-primary"><?= number_format($article['views']) ?> views</span>
+                                <div class="activity-item mb-3">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1 fw-semibold"><?= strip_tags($article['title']) ?></h6>
+                                            <div class="d-flex align-items-center gap-2 mb-1">
+                                                <span class="badge bg-primary badge-view">
+                                                    <i class="bi bi-eye-fill me-1"></i>
+                                                    <?= number_format($article['views']) ?> views
+                                                </span>
+                                                <span class="badge bg-<?= $article['status'] === 'published' ? 'success' : 'warning' ?> bg-opacity-10 text-<?= $article['status'] === 'published' ? 'success' : 'warning' ?>">
+                                                    <?= ucfirst($article['status']) ?>
+                                                </span>
+                                            </div>
+                                            <small class="text-muted">
+                                                <i class="bi bi-person-fill me-1"></i>
+                                                <?= htmlspecialchars($article['author_name']) ?>
+                                            </small>
                                         </div>
-                                        <p class="mb-1 small text-muted">
-                                            Oleh: <?= htmlspecialchars($article['author_name']) ?> | 
-                                            Status: <?= ucfirst($article['status']) ?>
-                                        </p>
                                     </div>
                                 </div>
                             <?php endwhile; ?>
@@ -233,22 +330,33 @@ $recent_articles = $conn->query("
             </div>
 
             <!-- Recent Articles -->
-            <div class="col-md-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Artikel Terbaru</h5>
+            <div class="col-12 col-lg-6">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body p-4">
+                        <h5 class="card-title d-flex align-items-center">
+                            <i class="bi bi-clock-history me-2 text-primary"></i>
+                            Artikel Terbaru
+                        </h5>
                         <div class="recent-activity">
                             <?php while ($article = $recent_articles->fetch_assoc()): ?>
-                                <div class="d-flex mb-3 pb-3 border-bottom">
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex justify-content-between">
-                                            <h6 class="mb-1"><?= strip_tags($article['title']) ?></h6>
-                                            <small class="text-muted"><?= date('d M Y', strtotime($article['created_at'])) ?></small>
+                                <div class="activity-item mb-3">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1 fw-semibold"><?= strip_tags($article['title']) ?></h6>
+                                            <div class="d-flex align-items-center gap-2 mb-1">
+                                                <small class="text-muted">
+                                                    <i class="bi bi-calendar3 me-1"></i>
+                                                    <?= date('d M Y', strtotime($article['created_at'])) ?>
+                                                </small>
+                                                <span class="badge bg-<?= $article['status'] === 'published' ? 'success' : 'warning' ?> bg-opacity-10 text-<?= $article['status'] === 'published' ? 'success' : 'warning' ?>">
+                                                    <?= ucfirst($article['status']) ?>
+                                                </span>
+                                            </div>
+                                            <small class="text-muted">
+                                                <i class="bi bi-person-fill me-1"></i>
+                                                <?= htmlspecialchars($article['author_name']) ?>
+                                            </small>
                                         </div>
-                                        <p class="mb-1 small text-muted">
-                                            Oleh: <?= htmlspecialchars($article['author_name']) ?> | 
-                                            Status: <?= ucfirst($article['status']) ?>
-                                        </p>
                                     </div>
                                 </div>
                             <?php endwhile; ?>
@@ -264,7 +372,7 @@ $recent_articles = $conn->query("
         // Prepare data for category chart
         const categoryData = {
             labels: [
-                <?php 
+                <?php
                 $category_stats->data_seek(0);
                 while ($cat = $category_stats->fetch_assoc()) {
                     echo "'" . addslashes($cat['category']) . "',";
@@ -274,7 +382,7 @@ $recent_articles = $conn->query("
             datasets: [{
                 label: 'Jumlah Artikel',
                 data: [
-                    <?php 
+                    <?php
                     $category_stats->data_seek(0);
                     while ($cat = $category_stats->fetch_assoc()) {
                         echo $cat['article_count'] . ",";
@@ -314,4 +422,5 @@ $recent_articles = $conn->query("
         });
     </script>
 </body>
+
 </html>

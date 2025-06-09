@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../../config.php';
+include '../../config.php';
 
 // Cek apakah login sebagai admin
 if (!isset($_SESSION['author_id']) || $_SESSION['author_type'] !== 'admin') {
@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("sss", $fname, $username, $password);
 
         if ($stmt->execute()) {
-            header("Location: management_user.php");
+            header("Location: users_management.php");
             exit;
         } else {
             $error = "Gagal menambahkan user baru!";
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="password" name="password" class="form-control" required>
             </div>
             <button type="submit" class="btn btn-primary">Tambah User</button>
-            <a href="user_management.php" class="btn btn-secondary">Kembali</a>
+            <a href="users_management.php" class="btn btn-secondary">Kembali</a>
         </form>
     </div>
 </body>
