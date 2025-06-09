@@ -1,32 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1:3306
--- Generation Time: Apr 25, 2025 at 04:19 PM
--- Server version: 8.2.0
--- PHP Version: 7.4.33
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `blog_db`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `admin`
---
-
 DROP TABLE IF EXISTS `admin`;
 CREATE TABLE IF NOT EXISTS `admin` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -35,14 +6,13 @@ CREATE TABLE IF NOT EXISTS `admin` (
   `username` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`)
-);
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `admin`
 --
 
 INSERT INTO `admin` (`id`, `first_name`, `last_name`, `username`, `password`) VALUES
-(1, 'Elias', 'A', 'admin', '$2y$10$kggeKkIs6rEWf.p/6muJCOepa8zY4DcDU3CBZua8iNc9SBM3MMGym'),
 (2, 'Elias', 'A', 'admin', 'admin123');
 
 -- --------------------------------------------------------
@@ -62,16 +32,13 @@ CREATE TABLE IF NOT EXISTS `blogs` (
   `author_id` int DEFAULT NULL,
   `author_type` enum('admin','user') DEFAULT NULL,
   `status` enum('draft','published') DEFAULT 'draft',
+  `views` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-);
+) ENGINE=MyISAM AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `blogs`
---
-
-
-
--- --------------------------------------------------------
+------------------------
 
 --
 -- Table structure for table `category`
@@ -84,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `category` (
   `parent_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `parent_id` (`parent_id`)
-);
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `category`
@@ -117,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `comment` (
   `post_id` int NOT NULL,
   `crated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`comment_id`)
-);
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `comment`
@@ -147,12 +114,11 @@ CREATE TABLE IF NOT EXISTS `post` (
   `cover_url` varchar(255) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'default.jpg',
   `crated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`post_id`)
-);
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `post`
 --
--- --------------------------------------------------------
 
 --
 -- Table structure for table `post_like`
@@ -165,7 +131,7 @@ CREATE TABLE IF NOT EXISTS `post_like` (
   `post_id` int NOT NULL,
   `liked_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`like_id`)
-);
+) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `post_like`
@@ -195,7 +161,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-);
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
