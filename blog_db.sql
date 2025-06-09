@@ -79,12 +79,21 @@ INSERT INTO `category` (`id`, `category`, `parent_id`) VALUES
 DROP TABLE IF EXISTS `comment`;
 CREATE TABLE IF NOT EXISTS `comment` (
   `comment_id` int NOT NULL AUTO_INCREMENT,
-  `comment` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `comment` text COLLATE utf8mb4_general_ci NOT NULL,
   `user_id` int NOT NULL,
-  `post_id` int NOT NULL,
-  `crated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`comment_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `blog_id` int NOT NULL,
+  `parent_id` int DEFAULT NULL,
+  `status` enum('active','deleted') NOT NULL DEFAULT 'active',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`comment_id`),
+  KEY `blog_id` (`blog_id`),
+  KEY `user_id` (`user_id`),
+  KEY `parent_id` (`parent_id`),
+  CONSTRAINT `comment_ibfk_1` FOREIGN KEY (`blog_id`) REFERENCES `blogs` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `comment_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `comment_ibfk_3` FOREIGN KEY (`parent_id`) REFERENCES `comment` (`comment_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `comment`
