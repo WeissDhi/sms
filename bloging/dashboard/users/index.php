@@ -325,7 +325,7 @@ $recent_comments = $comments_stmt->get_result();
                                     <div>
                                         <h5 class="mb-1">
                                             <a href="../../view_detail.php?id=<?= $article['id'] ?>" class="text-decoration-none">
-                                                <?= htmlspecialchars($article['title']) ?>
+                                                <?= strip_tags($article['title']) ?>
                                             </a>
                                         </h5>
                                         <div class="mb-2">
@@ -409,7 +409,7 @@ $recent_comments = $comments_stmt->get_result();
                                         <small class="text-muted">
                                             Pada artikel: 
                                             <a href="../../view_detail.php?id=<?= $comment['blog_id'] ?>" class="text-decoration-none">
-                                                <?= htmlspecialchars($comment['blog_title']) ?>
+                                                <?= strip_tags($comment['blog_title']) ?>
                                             </a>
                                         </small>
                                     </div>

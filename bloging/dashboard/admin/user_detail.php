@@ -62,9 +62,9 @@ $recent_articles = $articles_stmt->get_result();
 $comments_query = "
     SELECT c.*, b.title as blog_title 
     FROM comment c 
-    JOIN blogs b ON c.post_id = b.id 
+    JOIN blogs b ON c.blog_id = b.id 
     WHERE c.user_id = ? 
-    ORDER BY c.crated_at DESC 
+    ORDER BY c.created_at DESC 
     LIMIT 5
 ";
 $comments_stmt = $conn->prepare($comments_query);
@@ -334,13 +334,13 @@ $top_articles = $top_articles_stmt->get_result();
                                         <p class="mb-1"><?= htmlspecialchars($comment['comment']) ?></p>
                                         <small class="text-muted">
                                             Pada artikel: 
-                                            <a href="../../../view_detail.php?id=<?= $comment['post_id'] ?>" class="text-decoration-none">
-                                                <?= htmlspecialchars($comment['blog_title']) ?>
+                                            <a href="../../../view_detail.php?id=<?= $comment['blog_id'] ?>" class="text-decoration-none">
+                                                <?= strip_tags($comment['blog_title']) ?>
                                             </a>
                                         </small>
                                     </div>
                                     <small class="text-muted">
-                                        <?= date('d M Y H:i', strtotime($comment['crated_at'])) ?>
+                                        <?= date('d M Y H:i', strtotime($comment['created_at'])) ?>
                                     </small>
                                 </div>
                             </div>

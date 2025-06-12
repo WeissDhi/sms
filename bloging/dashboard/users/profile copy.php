@@ -29,20 +29,6 @@ $stats_stmt->bind_param("iiiii", $user_id, $user_id, $user_id, $user_id, $user_i
 $stats_stmt->execute();
 $stats = $stats_stmt->get_result()->fetch_assoc();
 
-// Get user's own comments
-$recent_comments_query = "
-    SELECT c.*, b.title as blog_title 
-    FROM comment c 
-    JOIN blogs b ON c.blog_id = b.id 
-    WHERE c.user_id = ? AND c.status = 'active'
-    ORDER BY c.created_at DESC 
-    LIMIT 10
-";
-$recent_comments_stmt = $conn->prepare($recent_comments_query);
-$recent_comments_stmt->bind_param("i", $user_id);
-$recent_comments_stmt->execute();
-$recent_comments = $recent_comments_stmt->get_result();
-
 // Get recent articles
 $articles_query = "
     SELECT b.*, c.category as category_name 
@@ -356,7 +342,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <div>
                                         <h5 class="mb-1">
                                             <a href="../../view_detail.php?id=<?= $article['id'] ?>" class="text-decoration-none">
-                                                <?= strip_tags($article['title']) ?>
+                                                <?= htmlspecialchars($article['title']) ?>
                                             </a>
                                         </h5>
                                         <div class="mb-2">
@@ -532,7 +518,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="article-item">
                                 <h6 class="mb-1">
                                     <a href="../../view_detail.php?id=<?= $article['id'] ?>" class="text-decoration-none">
-                                        <?= strip_tags($article['title']) ?>
+                                        <?= htmlspecialchars($article['title']) ?>
                                     </a>
                                 </h6>
                                 <div class="d-flex justify-content-between align-items-center">

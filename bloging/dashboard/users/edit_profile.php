@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Ubah password
     if (isset($_POST['update_password'])) {
-        $new_password = password_hash($_POST['new_password'], PASSWORD_BCRYPT);
+        $new_password = $_POST['new_password'];
 
         $pass_stmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
         $pass_stmt->bind_param("si", $new_password, $user_id);

@@ -20,9 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
 
     if (!empty($password)) {
-        $hashed = password_hash($password, PASSWORD_DEFAULT);
         $stmt = $conn->prepare("UPDATE users SET fname=?, username=?, password=? WHERE id=?");
-        $stmt->bind_param("sssi", $fname, $username, $hashed, $id);
+        $stmt->bind_param("sssi", $fname, $username, $password, $id);
     } else {
         $stmt = $conn->prepare("UPDATE users SET fname=?, username=? WHERE id=?");
         $stmt->bind_param("ssi", $fname, $username, $id);

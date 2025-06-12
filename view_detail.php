@@ -251,7 +251,7 @@ if (!$blog) {
             const formData = new FormData(form);
             formData.append('action', 'add');
 
-            fetch('comment_actions.php', {
+            fetch('bloging/comment_actions.php', {
                 method: 'POST',
                 body: formData
             })
@@ -275,7 +275,7 @@ if (!$blog) {
             formData.append('action', 'delete');
             formData.append('comment_id', commentId);
 
-            fetch('comment_actions.php', {
+            fetch('bloging/comment_actions.php', {
                 method: 'POST',
                 body: formData
             })
@@ -299,7 +299,7 @@ if (!$blog) {
             formData.append('action', 'get_replies');
             formData.append('comment_id', commentId);
 
-            fetch('comment_actions.php', {
+            fetch('bloging/comment_actions.php', {
                 method: 'POST',
                 body: formData
             })

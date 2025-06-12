@@ -368,7 +368,7 @@ $result = $stmt->get_result();
                                 <tr>
                                     <td>
                                         <a href="../../view_detail.php?id=<?= $row['id'] ?>" class="blog-title text-decoration-none">
-                                            <?= htmlspecialchars($row['title']) ?>
+                                            <?= strip_tags($row['title']) ?>
                                         </a>
                                     </td>
                                     <td>

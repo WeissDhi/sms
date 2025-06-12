@@ -30,13 +30,25 @@ $category_stats = $conn->query("
 
 // Get recent comments with user info
 $recent_comments = $conn->query("
-    SELECT c.*, u.fname as user_name, b.title as post_title 
+    SELECT c.*, 
+           CASE 
+               WHEN a.id IS NOT NULL THEN a.first_name
+               ELSE u.fname 
+           END as user_name,
+           b.title as post_title,
+           c.created_at
     FROM comment c 
-    JOIN users u ON c.user_id = u.id 
-    JOIN blogs b ON c.post_id = b.id 
-    ORDER BY c.crated_at DESC 
+    LEFT JOIN users u ON c.user_id = u.id
+    LEFT JOIN admin a ON c.user_id = a.id
+    JOIN blogs b ON c.blog_id = b.id 
+    WHERE c.status = 'active'
+    ORDER BY c.created_at DESC 
     LIMIT 5
 ");
+
+if (!$recent_comments) {
+    die("Error in recent comments query: " . $conn->error);
+}
 
 // Get most viewed articles
 $most_viewed = $conn->query("
@@ -277,12 +289,12 @@ $recent_articles = $conn->query("
                                         <div class="flex-grow-1 ms-3">
                                             <div class="d-flex justify-content-between align-items-center mb-1">
                                                 <h6 class="mb-0 fw-semibold"><?= htmlspecialchars($comment['user_name']) ?></h6>
-                                                <small class="text-muted"><?= date('d M Y H:i', strtotime($comment['crated_at'])) ?></small>
+                                                <small class="text-muted"><?= date('d M Y H:i', strtotime($comment['created_at'])) ?></small>
                                             </div>
                                             <p class="mb-1 text-dark"><?= htmlspecialchars($comment['comment']) ?></p>
                                             <small class="text-muted d-block">
                                                 <i class="bi bi-link-45deg"></i>
-                                                <?= htmlspecialchars($comment['post_title']) ?>
+                                                <?= strip_tags($comment['post_title']) ?>
                                             </small>
                                         </div>
                                     </div>
