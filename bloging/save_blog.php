@@ -24,8 +24,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             mkdir($target_dir, 0755, true);
         }
 
-        $image = $target_dir . time() . '_' . basename($_FILES["image"]["name"]);
-        move_uploaded_file($_FILES["image"]["tmp_name"], $image);
+        $image = time() . '_' . basename($_FILES["image"]["name"]);
+        move_uploaded_file($_FILES["image"]["tmp_name"], $target_dir . $image);
     }
 
     $stmt = $conn->prepare("INSERT INTO blogs (title, content, image, category_id, author_id, author_type, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");

@@ -17,7 +17,7 @@ if (isset($_GET['id'])) {
 
     // Hapus gambar dari direktori jika ada
     if ($row && !empty($row['image']) && file_exists('uploads/' . $row['image'])) {
-        unlink('uploads' . $row['image']);
+        unlink('uploads/' . $row['image']);
     }
 
     // Hapus data blog dari database
@@ -32,5 +32,10 @@ if (isset($_GET['id'])) {
     $_SESSION['error'] = "ID blog tidak ditemukan.";
 }
 
-header("Location: ./dashboard/index.php");
+// Redirect based on author type
+if ($_SESSION['author_type'] === 'admin') {
+    header("Location: ./dashboard/admin/blogs_management.php");
+} else {
+    header("Location: ./dashboard/users/blog_management.php");
+}
 exit;

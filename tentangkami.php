@@ -24,7 +24,7 @@ include './components/navbar.php';
     <!-- meta character set -->
     <meta charset="UTF-8" />
     <!-- Site Title -->
-    <title>Blogger</title>
+    <title>Syukron Makmun Society-Mesir - Tentang Kami</title>
 
     <link
         href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700"
@@ -36,35 +36,176 @@ include './components/navbar.php';
     <link rel="stylesheet" href="css/owl.carousel.css" />
     <link rel="stylesheet" href="css/main.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('img/mesir-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 0;
+            margin-bottom: 50px;
+            position: relative;
+        }
+        
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(to top, #fff, transparent);
+        }
+
+        .feature-card {
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+            margin-bottom: 30px;
+            background: #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+
+        .quote-section {
+            background-color: #f8f9fa;
+            padding: 60px 0;
+            margin: 50px 0;
+        }
+
+        .arabic-text {
+            font-family: 'Traditional Arabic', serif;
+            font-size: 2rem;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+
+        .mission-card {
+            border-left: 4px solid #28a745;
+            padding: 20px;
+            margin: 20px 0;
+            background: #f8f9fa;
+            border-radius: 0 15px 15px 0;
+        }
+
+        .team-section {
+            padding: 50px 0;
+        }
+
+        .team-member {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .team-member img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            object-fit: cover;
+            border: 5px solid #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 
 <body>
 
-    <div class="container py-5">
-        <div class="text-center mb-4">
-            <h1 class="display-5 fw-bold">Tentang Syukron Makmun Society-Mesir</h1>
-            <p class="lead text-muted">Blog Islami dari Negeri Para Ulama</p>
+    <!-- Hero Section -->
+    <section class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-3 fw-bold mb-4">Syukron Makmun Society-Mesir</h1>
+            <p class="lead fs-4">Blog Islami dari Negeri Para Ulama</p>
+            <div class="mt-4">
+                <span class="badge bg-success p-2 px-4 fs-6">Sejak 2024</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Vision & Mission -->
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <div class="mission-card">
+                    <h3 class="h4 mb-3">Visi Kami</h3>
+                    <p class="mb-0">Menjadi wadah inspirasi dan pembelajaran Islam yang terpercaya, menghubungkan umat dengan khazanah keilmuan dari negeri Mesir.</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mission-card">
+                    <h3 class="h4 mb-3">Misi Kami</h3>
+                    <p class="mb-0">Menyebarkan ilmu dan hikmah Islam melalui konten berkualitas, menginspirasi generasi muda, dan memperkuat ukhuwah islamiyah.</p>
+                </div>
+            </div>
         </div>
 
-        <div class="row justify-content-center">
-            <div class="col-md-10">
-                <div class="card shadow-sm border-0">
-                    <div class="card-body">
-                        <p>
+        <!-- Features -->
+        <div class="row mb-5">
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h4>Konten Berkualitas</h4>
+                    <p>Artikel dan tulisan yang disusun berdasarkan sumber-sumber terpercaya dalam Islam.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon">
+                        <i class="fas fa-mosque"></i>
+                    </div>
+                    <h4>Inspirasi Islami</h4>
+                    <p>Kisah-kisah inspiratif dari para ulama dan pengalaman spiritual di negeri Mesir.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon">
+                        <i class="fas fa-hands-helping"></i>
+                    </div>
+                    <h4>Ukhuwah Islamiyah</h4>
+                    <p>Mempererat tali silaturahmi antar umat Islam melalui konten yang membangun.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quote Section -->
+        <section class="quote-section text-center">
+            <div class="container">
+                <div class="arabic-text">بَلِّغُوا عَنِّي وَلَوْ آيَةً</div>
+                <blockquote class="blockquote">
+                    <p class="mb-0 fs-4 fst-italic">"Sampaikan dariku walau hanya satu ayat."</p>
+                    <footer class="blockquote-footer mt-2">HR. Bukhari</footer>
+                </blockquote>
+            </div>
+        </section>
+
+        <!-- About Content -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-10">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-5">
+                        <h2 class="h3 mb-4 text-center">Tentang Kami</h2>
+                        <p class="lead mb-4">
                             <strong>Syukron Makmun Society-Mesir</strong> adalah sebuah blog Islami yang bertujuan menyebarkan hikmah, ilmu, dan inspirasi dari negeri Mesir. Blog ini menjadi wadah untuk berbagi catatan spiritual, kisah para ulama, serta pengalaman belajar Islam di salah satu pusat peradaban Islam terbesar.
                         </p>
-
-                        <p>
-                            Kami berharap setiap konten yang kami hadirkan dapat menambah wawasan, menenangkan hati, dan memperkuat keimanan para pembaca. Semua tulisan disusun dengan semangat dakwah dan berbasis pada sumber-sumber Islam yang terpercaya seperti Al-Qur’an, Hadis, dan penjelasan para ulama.
+                        <p class="mb-4">
+                            Kami berharap setiap konten yang kami hadirkan dapat menambah wawasan, menenangkan hati, dan memperkuat keimanan para pembaca. Semua tulisan disusun dengan semangat dakwah dan berbasis pada sumber-sumber Islam yang terpercaya seperti Al-Qur'an, Hadis, dan penjelasan para ulama.
                         </p>
-
-                        <p>
+                        <p class="mb-0">
                             Terima kasih atas kunjungan dan dukungan Anda. Semoga kehadiran blog ini menjadi amal jariyah yang terus mengalir manfaatnya.
                         </p>
-
-                        <blockquote class="blockquote mt-4">
-                            <p class="mb-0 fst-italic">"Sampaikan dariku walau hanya satu ayat." (HR. Bukhari)</p>
-                        </blockquote>
                     </div>
                 </div>
             </div>
@@ -73,6 +214,8 @@ include './components/navbar.php';
 
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
 
     <?php include './components/footer.php'; ?>
 </body>

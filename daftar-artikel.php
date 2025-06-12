@@ -233,10 +233,6 @@ $result = $conn->query($sql);
                                             #<?= htmlspecialchars($row['category_name']) ?>
                                         </a>
                                     <?php endif; ?>
-
-                                    <span class="badge <?= $row['author_type'] === 'admin' ? 'bg-danger' : 'bg-secondary' ?>">
-                                        <?= $row['author_type'] === 'admin' ? 'Admin' : 'User' ?>
-                                    </span>
                                 </div>
 
                                 <!-- Konten Ringkas -->

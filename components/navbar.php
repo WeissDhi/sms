@@ -43,20 +43,22 @@ while ($row = $query->fetch_assoc()) {
 }
 
 // Build kategori tree (rekursif)
-function buildCategoryTree(array $elements, $parentId = null)
-{
-    $branch = [];
-    foreach ($elements as $element) {
-        $pid = ($element['parent_id'] === null || strtolower($element['parent_id']) === 'null') ? null : $element['parent_id'];
-        if ($pid === $parentId) {
-            $children = buildCategoryTree($elements, $element['id']);
-            if ($children) {
-                $element['children'] = $children;
+if (!function_exists('buildCategoryTree')) {
+    function buildCategoryTree(array $elements, $parentId = null)
+    {
+        $branch = [];
+        foreach ($elements as $element) {
+            $pid = ($element['parent_id'] === null || strtolower($element['parent_id']) === 'null') ? null : $element['parent_id'];
+            if ($pid === $parentId) {
+                $children = buildCategoryTree($elements, $element['id']);
+                if ($children) {
+                    $element['children'] = $children;
+                }
+                $branch[] = $element;
             }
-            $branch[] = $element;
         }
+        return $branch;
     }
-    return $branch;
 }
 
 $categoryTree = buildCategoryTree($categories);
@@ -65,19 +67,21 @@ $categoryTree = buildCategoryTree($categories);
 $currentCategoryId = isset($_GET['id']) ? (int)$_GET['id'] : null;
 
 // Fungsi cari semua parent kategori aktif supaya submenu yang terkait bisa otomatis dibuka
-function findActiveParents($elements, $currentId, &$parents = []) {
-    foreach ($elements as $el) {
-        if ($el['id'] == $currentId) {
-            return true;
-        }
-        if (isset($el['children'])) {
-            if (findActiveParents($el['children'], $currentId, $parents)) {
-                $parents[] = $el['id'];
+if (!function_exists('findActiveParents')) {
+    function findActiveParents($elements, $currentId, &$parents = []) {
+        foreach ($elements as $el) {
+            if ($el['id'] == $currentId) {
                 return true;
             }
+            if (isset($el['children'])) {
+                if (findActiveParents($el['children'], $currentId, $parents)) {
+                    $parents[] = $el['id'];
+                    return true;
+                }
+            }
         }
+        return false;
     }
-    return false;
 }
 
 $activeParents = [];
@@ -86,20 +90,22 @@ if ($currentCategoryId !== null) {
 }
 
 // Render dropdown kategori (rekursif), menampilkan submenu langsung jika termasuk parent chain aktif
-function renderCategoryDropdown($categories, $activeParents = [], $currentCategoryId = null)
-{
-    foreach ($categories as $cat) {
-        $isActiveParent = in_array($cat['id'], $activeParents);
-        $isCurrent = $cat['id'] === $currentCategoryId;
+if (!function_exists('renderCategoryDropdown')) {
+    function renderCategoryDropdown($categories, $activeParents = [], $currentCategoryId = null)
+    {
+        foreach ($categories as $cat) {
+            $isActiveParent = in_array($cat['id'], $activeParents);
+            $isCurrent = $cat['id'] === $currentCategoryId;
 
-        if (isset($cat['children'])) {
-            echo '<li class="dropdown-submenu ' . ($isActiveParent ? 'show' : '') . '">';
-            echo '<a class="dropdown-item dropdown-toggle" href="#">' . htmlspecialchars($cat['category']) . '</a>';
-            echo '<ul class="dropdown-menu" style="' . ($isActiveParent ? 'display:block;' : 'display:none;') . '">';
-            renderCategoryDropdown($cat['children'], $activeParents, $currentCategoryId);
-            echo '</ul></li>';
-        } else {
-            echo '<li><a class="dropdown-item ' . ($isCurrent ? 'active' : '') . '" href="category.php?id=' . $cat['id'] . '">' . htmlspecialchars($cat['category']) . '</a></li>';
+            if (isset($cat['children'])) {
+                echo '<li class="dropdown-submenu ' . ($isActiveParent ? 'show' : '') . '">';
+                echo '<a class="dropdown-item dropdown-toggle" href="#">' . htmlspecialchars($cat['category']) . '</a>';
+                echo '<ul class="dropdown-menu" style="' . ($isActiveParent ? 'display:block;' : 'display:none;') . '">';
+                renderCategoryDropdown($cat['children'], $activeParents, $currentCategoryId);
+                echo '</ul></li>';
+            } else {
+                echo '<li><a class="dropdown-item ' . ($isCurrent ? 'active' : '') . '" href="category.php?id=' . $cat['id'] . '">' . htmlspecialchars($cat['category']) . '</a></li>';
+            }
         }
     }
 }

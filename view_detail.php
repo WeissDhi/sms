@@ -53,6 +53,108 @@ if (!$blog) {
             });
         });
     </script>
+    <style>
+        .card {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            background: #fff;
+            border-radius: 15px;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .blog-content {
+            overflow: visible;
+            word-wrap: break-word;
+        }
+
+        .blog-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .blog-content p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            color: #2c3e50;
+        }
+
+        .blog-content h1, 
+        .blog-content h2, 
+        .blog-content h3, 
+        .blog-content h4, 
+        .blog-content h5, 
+        .blog-content h6 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .blog-content ul, 
+        .blog-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+
+        .blog-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .blog-content blockquote {
+            border-left: 4px solid #3498db;
+            padding-left: 1rem;
+            margin: 1.5rem 0;
+            color: #666;
+            font-style: italic;
+        }
+
+        .blog-content pre {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .blog-content code {
+            background: #f8f9fa;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .blog-content table {
+            width: 100%;
+            margin: 1.5rem 0;
+            border-collapse: collapse;
+        }
+
+        .blog-content table th,
+        .blog-content table td {
+            padding: 0.75rem;
+            border: 1px solid #dee2e6;
+        }
+
+        .blog-content table th {
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            .blog-content p {
+                font-size: 1rem;
+            }
+        }
+    </style>
 </head>
 <body class="bg-light">
     <div class="container py-4">
@@ -74,11 +176,16 @@ if (!$blog) {
                 </div>
 
                 <?php if (!empty($blog['image'])): ?>
-                    <img src="bloging/uploads/<?= htmlspecialchars($blog['image']) ?>" alt="Blog Thumbnail" class="img-fluid rounded mb-4" style="max-height: 400px; width: auto;">
+                    <img src="bloging/uploads/<?= htmlspecialchars($blog['image']) ?>" alt="Blog Thumbnail" class="img-fluid rounded mb-4" style="max-height: 400px; width: auto; object-fit: cover;">
                 <?php endif; ?>
 
-                <div class="blog-content mb-4">
-                    <?= $blog['content'] ?>
+                <div class="blog-content">
+                    <?php
+                    // Replace image paths in content to include bloging/ prefix
+                    $content = $blog['content'];
+                    $content = preg_replace('/src="uploads\/([^"]+)"/', 'src="bloging/uploads/$1"', $content);
+                    echo $content;
+                    ?>
                 </div>
 
                 <div class="text-muted">

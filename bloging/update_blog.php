@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!empty($_FILES['image']['name'])) {
         $targetDir = "uploads/";
-        $fileName = uniqid() . "_" . basename($_FILES["image"]["name"]);
+        $fileName = time() . '_' . basename($_FILES["image"]["name"]);
         $targetFilePath = $targetDir . $fileName;
         move_uploaded_file($_FILES["image"]["tmp_name"], $targetFilePath);
         $image = $fileName;
@@ -31,7 +31,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("sssisssi", $title, $content, $image, $category_id, $author_id, $author_type, $status, $id);
 
     if ($stmt->execute()) {
-        header("Location: ./dashboard/index.php?edit=success");
+        // Redirect based on author type
+        if ($author_type === 'admin') {
+            header("Location: ./dashboard/admin/blogs_management.php?edit=success");
+        } else {
+            header("Location: ./dashboard/users/blog_management.php?edit=success");
+        }
         exit;
     } else {
         echo "Gagal menyimpan perubahan.";
