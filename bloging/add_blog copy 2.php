@@ -631,44 +631,6 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
             font-size: 2.2rem;
             color: var(--secondary-color);
         }
-
-        .document-section {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-top: 2rem;
-            border: 2px dashed #dee2e6;
-            transition: all 0.3s ease;
-        }
-
-        .document-section:hover {
-            border-color: var(--secondary-color);
-            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-        }
-
-        #documentPreview {
-            margin-top: 1rem;
-        }
-
-        #documentPreview .alert {
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 0;
-        }
-
-        #documentPreview .btn-close {
-            padding: 0.5rem;
-            margin: -0.5rem;
-        }
-
-        #documentName {
-            font-size: 1rem;
-            margin-bottom: 0.25rem;
-        }
-
-        #documentSize {
-            font-size: 0.875rem;
-        }
     </style>
     <script>
         // TinyMCE Title
@@ -742,7 +704,6 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
         });
 
         let cropper;
-        let croppedImageData = null;
 
         // Add image validation
         function validateImage(file) {
@@ -786,179 +747,30 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                     image.src = e.target.result;
                     image.style.display = "block";
 
-                    if (cropper) {
-                        cropper.destroy();
-                    }
+                    if (cropper) cropper.destroy();
 
                     cropper = new Cropper(image, {
-                        aspectRatio: 16/9,
+                        aspectRatio: 16 / 9,
                         viewMode: 1,
-                        ready: function() {
-                            // Set initial crop data
-                            updateCropData();
-                        },
-                        crop: function() {
-                            // Update crop data on every crop event
-                            updateCropData();
+                        autoCropArea: 0.65,
+                        crop: function(event) {
+                            const canvas = cropper.getCroppedCanvas({
+                                width: 800,
+                                height: 450
+                            });
+                            
+                            canvas.toBlob(function(blob) {
+                                croppedImageData = new File([blob], file.name, {
+                                    type: 'image/jpeg',
+                                    lastModified: new Date().getTime()
+                                });
+                            }, 'image/jpeg', 0.9);
                         }
                     });
                 };
                 reader.readAsDataURL(file);
             }
         }
-
-        function updateCropData() {
-            if (cropper) {
-                const canvas = cropper.getCroppedCanvas({
-                    maxWidth: 800,
-                    maxHeight: 800,
-                    fillColor: '#fff',
-                    imageSmoothingEnabled: true,
-                    imageSmoothingQuality: 'high'
-                });
-                
-                if (canvas) {
-                    // Create a hidden input if it doesn't exist
-                    let hiddenInput = document.getElementById('cropped_image');
-                    if (!hiddenInput) {
-                        hiddenInput = document.createElement('input');
-                        hiddenInput.type = 'hidden';
-                        hiddenInput.id = 'cropped_image';
-                        hiddenInput.name = 'cropped_image';
-                        document.getElementById('addBlogForm').appendChild(hiddenInput);
-                    }
-                    hiddenInput.value = canvas.toDataURL('image/png');
-                }
-            }
-        }
-
-        // Document handling
-        function validateDocument(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const validTypes = [
-                'application/pdf',
-                'application/msword',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'text/plain',
-                'application/vnd.ms-powerpoint',
-                'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-            ];
-            const maxSize = 10 * 1024 * 1024; // 10MB
-
-            if (!validTypes.includes(file.type)) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Format File Tidak Valid',
-                    text: 'Gunakan format PDF, DOC, DOCX, TXT, PPT, atau PPTX.',
-                    confirmButtonColor: '#3498db'
-                });
-                event.target.value = '';
-                return;
-            }
-
-            if (file.size > maxSize) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Ukuran File Terlalu Besar',
-                    text: 'Maksimal ukuran file adalah 10MB.',
-                    confirmButtonColor: '#3498db'
-                });
-                event.target.value = '';
-                return;
-            }
-
-            // Show document preview
-            const preview = document.getElementById('documentPreview');
-            const nameElement = document.getElementById('documentName');
-            const sizeElement = document.getElementById('documentSize');
-
-            nameElement.textContent = file.name;
-            sizeElement.textContent = formatFileSize(file.size);
-            preview.style.display = 'block';
-        }
-
-        function removeDocument() {
-            const input = document.getElementById('document');
-            const preview = document.getElementById('documentPreview');
-            input.value = '';
-            preview.style.display = 'none';
-        }
-
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
-        // Modify form submission to include document
-        document.getElementById('addBlogForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const croppedImage = document.getElementById('cropped_image');
-            if (!croppedImage || !croppedImage.value) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gambar Belum Di-crop',
-                    text: 'Silakan crop gambar terlebih dahulu sebelum menyimpan',
-                    confirmButtonColor: '#3498db'
-                });
-                return;
-            }
-
-            // Convert base64 to blob
-            fetch(croppedImage.value)
-                .then(res => res.blob())
-                .then(blob => {
-                    // Create new FormData
-                    const formData = new FormData(this);
-                    
-                    // Replace original image with cropped image
-                    formData.delete('image');
-                    formData.append('image', blob, 'cropped_image.jpg');
-
-                    // Add document if exists
-                    const documentInput = document.getElementById('document');
-                    if (documentInput.files.length > 0) {
-                        formData.append('document', documentInput.files[0]);
-                    }
-
-                    // Submit form
-                    fetch('save_blog.php', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.text())
-                    .then(result => {
-                        if (result.includes('berhasil')) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Berhasil!',
-                                text: 'Blog berhasil disimpan',
-                                confirmButtonColor: '#3498db'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    window.location.href = '<?= $_SESSION['author_type'] === 'admin' ? './dashboard/admin/blogs_management.php' : './dashboard/users/blog_management.php' ?>';
-                                }
-                            });
-                        } else {
-                            throw new Error('Gagal menyimpan blog');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal!',
-                            text: 'Terjadi kesalahan saat menyimpan blog',
-                            confirmButtonColor: '#3498db'
-                        });
-                    });
-                });
-        });
 
         // Form validation
         (function () {
@@ -1048,36 +860,6 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                                 Format: JPG, PNG, GIF, WEBP (Max. 5MB)
                             </div>
                             <img id="thumbnailPreview" src="#" alt="Preview Thumbnail" style="display: none;">
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <div class="section-title">
-                            <i class="fas fa-file-alt"></i>
-                            Materi Tambahan
-                        </div>
-                        <div class="document-section">
-                            <div class="custom-file-upload">
-                                <label class="file-upload-label">
-                                    <i class="fas fa-file-upload"></i>
-                                    <span>Upload File Materi (PDF, DOC, DOCX, TXT, PPT, PPTX)</span>
-                                </label>
-                                <input type="file" id="document" name="document" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx" onchange="validateDocument(event)">
-                            </div>
-                            <div class="preview-label">
-                                <i class="fas fa-info-circle"></i>
-                                Format: PDF, DOC, DOCX, TXT, PPT, PPTX (Max. 10MB)
-                            </div>
-                            <div id="documentPreview" class="mt-3" style="display: none;">
-                                <div class="alert alert-info d-flex align-items-center">
-                                    <i class="fas fa-file-alt me-2"></i>
-                                    <div>
-                                        <strong id="documentName"></strong>
-                                        <div class="small text-muted" id="documentSize"></div>
-                                    </div>
-                                    <button type="button" class="btn-close ms-auto" onclick="removeDocument()"></button>
-                                </div>
-                            </div>
                         </div>
                     </div>
 

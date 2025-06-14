@@ -6,7 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $title = $_POST["title"];
     $content = $_POST["content"];
     $category_id = $_POST["category"];
-    $status = $_POST["status"];
+    $status = $_POST["status"]; // Tambahan
 
     // Ambil dari session
     $author_id = $_SESSION['author_id'] ?? null;
@@ -17,9 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $image = "";
-    $document = "";
 
-    // Handle image upload
     if (!empty($_FILES["image"]["name"])) {
         $target_dir = "uploads/";
         if (!is_dir($target_dir)) {
@@ -30,20 +28,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         move_uploaded_file($_FILES["image"]["tmp_name"], $target_dir . $image);
     }
 
-    // Handle document upload
-    if (!empty($_FILES["document"]["name"])) {
-        $target_dir = "uploads/documents/";
-        if (!is_dir($target_dir)) {
-            mkdir($target_dir, 0755, true);
-        }
-
-        $document = time() . '_' . basename($_FILES["document"]["name"]);
-        move_uploaded_file($_FILES["document"]["tmp_name"], $target_dir . $document);
-    }
-
-    // Modify the SQL query to include document field
-    $stmt = $conn->prepare("INSERT INTO blogs (title, content, image, document, category_id, author_id, author_type, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-    $stmt->bind_param("ssssisss", $title, $content, $image, $document, $category_id, $author_id, $author_type, $status);
+    $stmt = $conn->prepare("INSERT INTO blogs (title, content, image, category_id, author_id, author_type, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
+    $stmt->bind_param("sssisss", $title, $content, $image, $category_id, $author_id, $author_type, $status);
 
     if ($stmt->execute()) {
         echo "Blog berhasil disimpan. <a href='../daftar-artikel.php'>Lihat Blog</a>";

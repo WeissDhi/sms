@@ -80,6 +80,22 @@ if (!$blog) {
                     <?= $blog['content'] ?>
                 </div>
 
+                <?php if (!empty($blog['document'])): ?>
+                <div class="attachment-section mb-4">
+                    <div class="alert alert-info d-flex align-items-center">
+                        <i class="fas fa-file-alt me-2"></i>
+                        <div>
+                            <strong>Lampiran:</strong>
+                            <div class="mt-1">
+                                <a href="uploads/documents/<?= htmlspecialchars($blog['document']) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-download"></i> Unduh <?= htmlspecialchars($blog['document']) ?>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+
                 <div class="text-muted">
                     <small>
                         <i class="bi bi-person-fill"></i> <?= htmlspecialchars($blog['author_name']) ?> |

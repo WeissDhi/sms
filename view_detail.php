@@ -37,6 +37,7 @@ if (!$blog) {
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -85,18 +86,18 @@ if (!$blog) {
             color: #2c3e50;
         }
 
-        .blog-content h1, 
-        .blog-content h2, 
-        .blog-content h3, 
-        .blog-content h4, 
-        .blog-content h5, 
+        .blog-content h1,
+        .blog-content h2,
+        .blog-content h3,
+        .blog-content h4,
+        .blog-content h5,
         .blog-content h6 {
             margin-top: 2rem;
             margin-bottom: 1rem;
             color: #2c3e50;
         }
 
-        .blog-content ul, 
+        .blog-content ul,
         .blog-content ol {
             margin-bottom: 1.5rem;
             padding-left: 2rem;
@@ -156,12 +157,13 @@ if (!$blog) {
         }
     </style>
 </head>
+
 <body class="bg-light">
     <div class="container py-4">
         <div class="card">
             <div class="card-body">
                 <h1 class="card-title mb-4"><?= strip_tags($blog['title']) ?></h1>
-                
+
                 <div class="d-flex gap-3 mb-4">
                     <span class="badge bg-primary">
                         <i class="bi bi-eye-fill"></i> <?= number_format($blog['views']) ?> views
@@ -187,6 +189,21 @@ if (!$blog) {
                     echo $content;
                     ?>
                 </div>
+                <?php if (!empty($blog['document'])): ?>
+                    <div class="attachment-section mb-4">
+                        <div class="alert alert-info d-flex align-items-center">
+                            <i class="fas fa-file-alt me-2"></i>
+                            <div>
+                                <strong>Lampiran:</strong>
+                                <div class="mt-1">
+                                    <a href="uploads/documents/<?= htmlspecialchars($blog['document']) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-download"></i> Unduh <?= htmlspecialchars($blog['document']) ?>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endif; ?>
 
                 <div class="text-muted">
                     <small>
@@ -240,7 +257,7 @@ if (!$blog) {
                     $stmt->bind_param("i", $id);
                     $stmt->execute();
                     $comments = $stmt->get_result();
-                    
+
                     while ($comment = $comments->fetch_assoc()):
                     ?>
                         <div class="comment mb-3" data-comment-id="<?= $comment['comment_id'] ?>">
@@ -343,11 +360,11 @@ if (!$blog) {
                     const commentDiv = this.closest('.comment');
                     const repliesContainer = commentDiv.querySelector('.replies-container');
                     const commentId = commentDiv.dataset.commentId;
-                    
+
                     if (repliesContainer.children.length === 0) {
                         loadReplies(commentId, repliesContainer);
                     } else {
-                        repliesContainer.style.display = 
+                        repliesContainer.style.display =
                             repliesContainer.style.display === 'none' ? 'block' : 'none';
                     }
                 });
@@ -359,22 +376,22 @@ if (!$blog) {
             formData.append('action', 'add');
 
             fetch('bloging/comment_actions.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    alert('Komentar berhasil ditambahkan');
-                    location.reload();
-                } else {
-                    alert(data.message || 'Gagal menambahkan komentar');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Terjadi kesalahan saat mengirim komentar');
-            });
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('Komentar berhasil ditambahkan');
+                        location.reload();
+                    } else {
+                        alert(data.message || 'Gagal menambahkan komentar');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat mengirim komentar');
+                });
         }
 
         function deleteComment(commentId) {
@@ -383,22 +400,22 @@ if (!$blog) {
             formData.append('comment_id', commentId);
 
             fetch('bloging/comment_actions.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    alert('Komentar berhasil dihapus');
-                    location.reload();
-                } else {
-                    alert(data.message || 'Gagal menghapus komentar');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Terjadi kesalahan saat menghapus komentar');
-            });
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('Komentar berhasil dihapus');
+                        location.reload();
+                    } else {
+                        alert(data.message || 'Gagal menghapus komentar');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat menghapus komentar');
+                });
         }
 
         function loadReplies(commentId, container) {
@@ -407,13 +424,13 @@ if (!$blog) {
             formData.append('comment_id', commentId);
 
             fetch('bloging/comment_actions.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    container.innerHTML = data.replies.map(reply => `
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        container.innerHTML = data.replies.map(reply => `
                         <div class="reply ms-4 mt-2 p-2 border-start">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h6 class="mb-1">${reply.author_name}</h6>
@@ -429,25 +446,26 @@ if (!$blog) {
                         </div>
                     `).join('');
 
-                    // Add event listeners to delete buttons
-                    container.querySelectorAll('.delete-reply-btn').forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            if (confirm('Apakah Anda yakin ingin menghapus balasan ini?')) {
-                                deleteComment(this.dataset.replyId);
-                            }
+                        // Add event listeners to delete buttons
+                        container.querySelectorAll('.delete-reply-btn').forEach(btn => {
+                            btn.addEventListener('click', function() {
+                                if (confirm('Apakah Anda yakin ingin menghapus balasan ini?')) {
+                                    deleteComment(this.dataset.replyId);
+                                }
+                            });
                         });
-                    });
 
-                    container.style.display = 'block';
-                } else {
-                    alert(data.message || 'Gagal memuat balasan');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Terjadi kesalahan saat memuat balasan');
-            });
+                        container.style.display = 'block';
+                    } else {
+                        alert(data.message || 'Gagal memuat balasan');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat memuat balasan');
+                });
         }
     </script>
 </body>
-</html> 
+
+</html>

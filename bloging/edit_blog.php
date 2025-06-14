@@ -898,6 +898,80 @@ if (!$blog) {
                 }, false)
             })
         })()
+
+        // Document handling functions
+        function validateDocument(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const validTypes = ['.pdf', '.doc', '.docx', '.txt', '.ppt', '.pptx'];
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            const fileExt = '.' + file.name.split('.').pop().toLowerCase();
+
+            if (!validTypes.includes(fileExt)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Format File Tidak Valid',
+                    text: 'Gunakan format PDF, DOC, DOCX, TXT, PPT, atau PPTX.',
+                    confirmButtonColor: '#3498db'
+                });
+                event.target.value = '';
+                return;
+            }
+
+            if (file.size > maxSize) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ukuran File Terlalu Besar',
+                    text: 'Maksimal ukuran file adalah 10MB.',
+                    confirmButtonColor: '#3498db'
+                });
+                event.target.value = '';
+                return;
+            }
+
+            // Show preview
+            const preview = document.getElementById('documentPreview');
+            const nameElement = document.getElementById('documentName');
+            const sizeElement = document.getElementById('documentSize');
+
+            nameElement.textContent = file.name;
+            sizeElement.textContent = formatFileSize(file.size);
+            preview.style.display = 'block';
+        }
+
+        function removeDocument() {
+            const input = document.getElementById('document');
+            const preview = document.getElementById('documentPreview');
+            input.value = '';
+            preview.style.display = 'none';
+        }
+
+        function removeCurrentDocument() {
+            if (confirm('Apakah Anda yakin ingin menghapus lampiran saat ini?')) {
+                // Add a hidden input to indicate document removal
+                const form = document.getElementById('editBlogForm');
+                let hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'remove_document';
+                hiddenInput.value = '1';
+                form.appendChild(hiddenInput);
+                
+                // Hide the current document preview
+                const currentDoc = document.querySelector('.document-section .alert');
+                if (currentDoc) {
+                    currentDoc.style.display = 'none';
+                }
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
     </script>
     
     <?php if(isset($_SESSION['success'])): ?>
@@ -993,6 +1067,54 @@ if (!$blog) {
                                 Format: JPG, PNG, GIF, WEBP (Max. 5MB)
                             </div>
                             <img id="thumbnailPreview" src="#" alt="Preview Thumbnail" style="display: none;">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-file-alt"></i>
+                            Lampiran
+                        </div>
+                        <div class="document-section">
+                            <?php if ($blog['document']): ?>
+                            <div class="mb-4">
+                                <label class="form-label">Lampiran Saat Ini:</label>
+                                <div class="alert alert-info d-flex align-items-center">
+                                    <i class="fas fa-file-alt me-2"></i>
+                                    <div>
+                                        <strong><?= htmlspecialchars($blog['document']) ?></strong>
+                                        <div class="small text-muted">
+                                            <a href="uploads/documents/<?= htmlspecialchars($blog['document']) ?>" target="_blank" class="text-decoration-none">
+                                                <i class="fas fa-download"></i> Unduh Lampiran
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn-close ms-auto" onclick="removeCurrentDocument()"></button>
+                                </div>
+                            </div>
+                            <?php endif; ?>
+
+                            <div class="custom-file-upload">
+                                <label class="file-upload-label">
+                                    <i class="fas fa-file-upload"></i>
+                                    <span>Upload File Lampiran (PDF, DOC, DOCX, TXT, PPT, PPTX)</span>
+                                </label>
+                                <input type="file" id="document" name="document" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx" onchange="validateDocument(event)">
+                            </div>
+                            <div class="preview-label">
+                                <i class="fas fa-info-circle"></i>
+                                Format: PDF, DOC, DOCX, TXT, PPT, PPTX (Max. 10MB)
+                            </div>
+                            <div id="documentPreview" class="mt-3" style="display: none;">
+                                <div class="alert alert-info d-flex align-items-center">
+                                    <i class="fas fa-file-alt me-2"></i>
+                                    <div>
+                                        <strong id="documentName"></strong>
+                                        <div class="small text-muted" id="documentSize"></div>
+                                    </div>
+                                    <button type="button" class="btn-close ms-auto" onclick="removeDocument()"></button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
