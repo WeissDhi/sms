@@ -281,7 +281,7 @@ $top_articles = $top_articles_stmt->get_result();
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <h5 class="mb-1">
-                                            <a href="../../../view_detail.php?id=<?= $article['id'] ?>" class="text-decoration-none">
+                                            <a href="../../../<?= htmlspecialchars($article['slug']) ?>" class="text-decoration-none">
                                                 <?= htmlspecialchars(strip_tags($article['title'])) ?>
                                             </a>
                                         </h5>
@@ -334,7 +334,7 @@ $top_articles = $top_articles_stmt->get_result();
                                         <div class="mb-1"><?= htmlspecialchars($comment['comment']) ?></div>
                                         <small class="text-muted">
                                             Pada artikel: 
-                                            <a href="../../../view_detail.php?id=<?= $comment['blog_id'] ?>" class="text-decoration-none">
+                                            <a href="../../../<?= htmlspecialchars($comment['slug']) ?>" class="text-decoration-none">
                                                 <?= strip_tags($comment['blog_title']) ?>
                                             </a>
                                         </small>
@@ -366,7 +366,7 @@ $top_articles = $top_articles_stmt->get_result();
                             <div class="article-item">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h6 class="mb-1">
-                                        <a href="../../../view_detail.php?id=<?= $article['id'] ?>" class="text-decoration-none">
+                                        <a href="../../../<?= htmlspecialchars($article['slug']) ?>" class="text-decoration-none">
                                             <?= htmlspecialchars(strip_tags($article['title'])) ?>
                                         </a>
                                     </h6>

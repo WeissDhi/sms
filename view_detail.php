@@ -2,28 +2,42 @@
 session_start();
 include 'bloging/config.php';
 
-if (!isset($_GET['id'])) {
+if (isset($_GET['slug'])) {
+    $slug = $_GET['slug'];
+    $stmt = $conn->prepare("
+        SELECT b.*, 
+               c.category as category_name,
+               CASE 
+                   WHEN b.author_type = 'admin' THEN a.first_name
+                   ELSE u.fname 
+               END as author_name
+        FROM blogs b
+        LEFT JOIN category c ON b.category_id = c.id
+        LEFT JOIN admin a ON b.author_type = 'admin' AND b.author_id = a.id
+        LEFT JOIN users u ON b.author_type = 'user' AND b.author_id = u.id
+        WHERE b.slug = ?
+    ");
+    $stmt->bind_param("s", $slug);
+} else if (isset($_GET['id'])) {
+    $id = intval($_GET['id']);
+    $stmt = $conn->prepare("
+        SELECT b.*, 
+               c.category as category_name,
+               CASE 
+                   WHEN b.author_type = 'admin' THEN a.first_name
+                   ELSE u.fname 
+               END as author_name
+        FROM blogs b
+        LEFT JOIN category c ON b.category_id = c.id
+        LEFT JOIN admin a ON b.author_type = 'admin' AND b.author_id = a.id
+        LEFT JOIN users u ON b.author_type = 'user' AND b.author_id = u.id
+        WHERE b.id = ?
+    ");
+    $stmt->bind_param("i", $id);
+} else {
     header("Location: index.php");
     exit;
 }
-
-$id = intval($_GET['id']);
-
-// Get blog details
-$stmt = $conn->prepare("
-    SELECT b.*, 
-           c.category as category_name,
-           CASE 
-               WHEN b.author_type = 'admin' THEN a.first_name
-               ELSE u.fname 
-           END as author_name
-    FROM blogs b
-    LEFT JOIN category c ON b.category_id = c.id
-    LEFT JOIN admin a ON b.author_type = 'admin' AND b.author_id = a.id
-    LEFT JOIN users u ON b.author_type = 'user' AND b.author_id = u.id
-    WHERE b.id = ?
-");
-$stmt->bind_param("i", $id);
 $stmt->execute();
 $result = $stmt->get_result();
 $blog = $result->fetch_assoc();
@@ -32,6 +46,9 @@ if (!$blog) {
     header("Location: index.php");
     exit;
 }
+
+// Gunakan id dari $blog untuk view counter
+$id = $blog['id'];
 
 // Prevent duplicate view counting in the same session
 $viewed_key = 'viewed_blog_' . $id;

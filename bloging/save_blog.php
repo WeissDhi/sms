@@ -41,9 +41,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         move_uploaded_file($_FILES["document"]["tmp_name"], $target_dir . $document);
     }
 
+    function slugify($text) {
+        $text = strtolower(trim($text));
+        $text = preg_replace('/[^a-z0-9]+/i', '-', $text);
+        $text = preg_replace('/-+/', '-', $text);
+        $text = trim($text, '-');
+        return $text;
+    }
+    $title_clean = strip_tags($title);
+    $slug = slugify($title_clean);
+    // Pastikan slug unik
+    $base_slug = $slug;
+    $counter = 1;
+    while ($conn->query("SELECT id FROM blogs WHERE slug='$slug'")->num_rows > 0) {
+        $slug = $base_slug . '-' . $counter;
+        $counter++;
+    }
+
     // Modify the SQL query to include document field
-    $stmt = $conn->prepare("INSERT INTO blogs (title, content, image, document, category_id, author_id, author_type, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())");
-    $stmt->bind_param("ssssisss", $title, $content, $image, $document, $category_id, $author_id, $author_type, $status);
+    $stmt = $conn->prepare("INSERT INTO blogs (title, slug, content, image, document, category_id, author_id, author_type, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+    $stmt->bind_param("ssssissss", $title, $slug, $content, $image, $document, $category_id, $author_id, $author_type, $status);
 
     if ($stmt->execute()) {
         echo "success";

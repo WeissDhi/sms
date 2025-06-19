@@ -2,6 +2,14 @@
 include 'config.php';
 session_start();
 
+function slugify($text) {
+    $text = strtolower(trim($text));
+    $text = preg_replace('/[^a-z0-9]+/i', '-', $text);
+    $text = preg_replace('/-+/', '-', $text);
+    $text = trim($text, '-');
+    return $text;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = intval($_POST['id']);
     $title = $_POST['title'];
@@ -14,6 +22,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $image = $old_image;
     $document = $blog['document']; // Get current document
+
+    $title_clean = strip_tags($title);
+    $slug = slugify($title_clean);
+    // Pastikan slug unik (kecuali untuk blog ini)
+    $base_slug = $slug;
+    $counter = 1;
+    while ($conn->query("SELECT id FROM blogs WHERE slug='$slug' AND id != $id")->num_rows > 0) {
+        $slug = $base_slug . '-' . $counter;
+        $counter++;
+    }
 
     if (!empty($_FILES['image']['name'])) {
         $targetDir = "uploads/";
@@ -54,8 +72,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $document = null;
     }
 
-    $stmt = $conn->prepare("UPDATE blogs SET title = ?, content = ?, image = ?, document = ?, category_id = ?, author_id = ?, author_type = ?, status = ? WHERE id = ?");
-    $stmt->bind_param("ssssisssi", $title, $content, $image, $document, $category_id, $author_id, $author_type, $status, $id);
+    $stmt = $conn->prepare("UPDATE blogs SET title = ?, slug = ?, content = ?, image = ?, document = ?, category_id = ?, author_id = ?, author_type = ?, status = ? WHERE id = ?");
+    $stmt->bind_param("ssssissssi", $title, $slug, $content, $image, $document, $category_id, $author_id, $author_type, $status, $id);
 
     if ($stmt->execute()) {
         // Redirect based on author type

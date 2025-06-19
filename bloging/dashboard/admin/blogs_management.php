@@ -389,7 +389,7 @@ $stats = $stats_result->fetch_assoc();
                                         <a href="../../delete_blog.php?id=<?= $row['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')" title="Hapus">
                                             <i class="bi bi-trash"></i>
                                         </a>
-                                        <a href="../../../view_detail.php?id=<?= $row['id'] ?>" class="btn btn-info btn-sm" title="Lihat">
+                                        <a href="../../../<?= htmlspecialchars($row['slug']) ?>" class="btn btn-info btn-sm" title="Lihat">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                     </div>

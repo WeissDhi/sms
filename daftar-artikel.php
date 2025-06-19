@@ -267,7 +267,7 @@ $result = $conn->query($sql);
                                 <p class="card-text mb-3"><?= mb_strimwidth(strip_tags($row['content']), 0, 100, '...') ?></p>
 
                                 <!-- Tombol -->
-                                <a href="view_detail.php?id=<?= $row['id'] ?>" class="btn btn-read-more mt-auto">
+                                <a href="/smsblog/<?= htmlspecialchars($row['slug']) ?>" class="btn btn-read-more mt-auto">
                                     Baca Selengkapnya <span>&rarr;</span>
                                 </a>
                             </div>
