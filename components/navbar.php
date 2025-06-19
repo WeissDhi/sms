@@ -113,12 +113,13 @@ if (!function_exists('renderCategoryDropdown')) {
 
 <!-- Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
 <header>
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
+    <nav class="navbar navbar-expand-lg navbar-light custom-navbar shadow-sm py-3">
         <div class="container">
-            <a class="navbar-brand" href="index.php">
-                <img src="img/sms.png" alt="Logo" style="height:40px;">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.php">
+                <img src="img/sms.png" alt="Logo" style="height:48px;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
                 aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -127,35 +128,36 @@ if (!function_exists('renderCategoryDropdown')) {
 
             <div class="collapse navbar-collapse" id="navbarContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-3">
-                    <li class="nav-item"><a class="nav-link" href="index.php">Beranda</a></li>
-                    <li class="nav-item"><a class="nav-link" href="daftar-artikel.php">Daftar Artikel</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold d-flex align-items-center gap-1" href="index.php"><i class="bi bi-house-door"></i> Beranda</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold d-flex align-items-center gap-1" href="daftar-artikel.php"><i class="bi bi-journal-text"></i> Daftar Artikel</a></li>
 
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="kategoriDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Kategori
+                        <a class="nav-link dropdown-toggle fw-semibold" href="#" id="kategoriDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-grid me-1"></i>Kategori
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="kategoriDropdown">
-                            <?php renderCategoryDropdown($categoryTree, $activeParents, $currentCategoryId); ?>
+                        <ul class="dropdown-menu p-2" aria-labelledby="kategoriDropdown" style="min-width:240px;">
+                            <?php renderCategoryDropdown($categoryTree, [], null); ?>
                         </ul>
                     </li>
 
-                    <li class="nav-item"><a class="nav-link" href="tentangkami.php">Tentang Kami</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold d-flex align-items-center gap-1" href="tentangkami.php"><i class="bi bi-info-circle"></i> Tentang Kami</a></li>
                 </ul>
 
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-center gap-2">
                     <?php if ($showDashboard): ?>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Hi, <?= htmlspecialchars($displayName) ?>
+                            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle fs-5 text-success"></i>
+                                <span class="fw-semibold text-dark">Hi, <?= htmlspecialchars($displayName) ?></span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                                <li><a class="dropdown-item" href="<?= $dashboardLink ?>">Dashboard</a></li>
-                                <li><a class="dropdown-item text-danger" href="logout.php">Logout</a></li>
+                                <li><a class="dropdown-item" href="<?= $dashboardLink ?>"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
+                                <li><a class="dropdown-item text-danger" href="logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
                             </ul>
                         </li>
                     <?php else: ?>
                         <li class="nav-item">
-                            <a class="btn btn-primary px-4 py-2" href="login.php" style="min-width: 120px; text-align: center;">Login</a>
+                            <a class="btn btn-success px-4 py-2 rounded-pill fw-semibold" href="login.php" style="min-width: 120px; text-align: center;">Login</a>
                         </li>
                     <?php endif; ?>
                 </ul>
@@ -165,92 +167,134 @@ if (!function_exists('renderCategoryDropdown')) {
 </header>
 
 <style>
+    .custom-navbar {
+        background: #fff !important;
+        border-bottom: 3px solid #8fc333;
+        box-shadow: 0 2px 12px rgba(143, 195, 51, 0.08);
+        z-index: 100;
+    }
+    .navbar-brand span {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+    .navbar-nav .nav-link {
+        color: #222 !important;
+        font-size: 1.08rem;
+        position: relative;
+        transition: color 0.2s;
+        display: flex;
+        align-items: center;
+    }
+    .navbar-nav .nav-link:hover, .navbar-nav .nav-link.active {
+        color: #8fc333 !important;
+    }
+    .navbar-nav .nav-link::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 2px;
+        height: 2px;
+        background: #8fc333;
+        transition: width 0.3s;
+        width: 0;
+        z-index: 1;
+    }
+    .navbar-nav .nav-link:hover::after, .navbar-nav .nav-link.active::after {
+        width: 100%;
+    }
+    .dropdown-menu {
+        border-radius: 14px;
+        box-shadow: 0 4px 18px rgba(143, 195, 51, 0.10);
+        border: 1.5px solid #e6f3d6;
+        font-size: 1rem;
+    }
+    .dropdown-item.active, .dropdown-item:active {
+        background: #8fc333;
+        color: #fff !important;
+    }
+    .dropdown-item:hover {
+        background: #f8faf5;
+        color: #8fc333;
+    }
+    .btn-success {
+        background: linear-gradient(90deg, #8fc333 70%, #00c6ff 100%);
+        border: none;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 8px rgba(143, 195, 51, 0.10);
+    }
+    .btn-success:hover {
+        background: #8fc333;
+        color: #fff;
+    }
+    .navbar-toggler {
+        border-radius: 8px;
+        border: 2px solid #8fc333;
+        padding: 6px 10px;
+    }
+    .navbar-toggler:focus {
+        box-shadow: 0 0 0 2px #8fc33333;
+    }
+    @media (max-width: 991px) {
+        .navbar-nav {
+            gap: 0.5rem !important;
+        }
+        .navbar-brand span {
+            font-size: 1.1rem;
+        }
+    }
+    @media (max-width: 576px) {
+        .navbar-brand img {
+            height: 36px !important;
+        }
+        .navbar-brand span {
+            font-size: 1rem;
+        }
+        .custom-navbar {
+            padding: 0.5rem 0.2rem !important;
+        }
+    }
     /* Submenu posisi dan display */
     .dropdown-submenu {
         position: relative;
     }
-
     .dropdown-submenu > .dropdown-menu {
         top: 0;
         left: 100%;
         margin-top: -1px;
         position: absolute;
-        display: none;
         min-width: 200px;
+        border-radius: 12px;
+        box-shadow: 0 4px 18px rgba(143, 195, 51, 0.10);
+        border: 1.5px solid #e6f3d6;
+        background: #fff;
     }
-
-    /* Tampilkan submenu yang punya class .show */
-    .dropdown-submenu.show > .dropdown-menu {
-        display: block !important;
-    }
-
-    /* Tampilkan submenu saat hover di desktop */
+    /* Tampilkan submenu hanya saat hover tepat di atas menu utama */
     @media (min-width: 992px) {
-        .dropdown-submenu:hover > .dropdown-menu {
-            display: block;
+        .dropdown-submenu > .dropdown-menu {
+            pointer-events: none;
+        }
+        .dropdown-submenu:hover > .dropdown-menu,
+        .dropdown-submenu.show > .dropdown-menu {
+            display: block !important;
+            pointer-events: auto;
         }
     }
-
-    /* Hover dan fokus untuk tombol utama */
-    .btn-primary:hover,
-    .btn-primary:focus,
-    .btn-primary:active {
-        background-color: #8fc333 !important;
-        border-color: #fff !important;
+    /* Hover warna hijau pada dropdown */
+    .dropdown-menu .dropdown-item:hover,
+    .dropdown-menu .dropdown-item:focus {
+        background: #e6f3d6;
+        color: #8fc333 !important;
+    }
+    .dropdown-menu .dropdown-item.active, .dropdown-menu .dropdown-item:active {
+        background: #8fc333;
         color: #fff !important;
-        box-shadow: none !important;
-    }
-
-    /* Hover link navbar */
-    .navbar-nav .nav-link:hover {
-        color: #8fc333 !important;
-        text-decoration: underline;
-    }
-
-    /* Hover submenu item */
-    .dropdown-menu .dropdown-item:hover {
-        color: #8fc333 !important;
-        background-color: transparent !important;
-        text-decoration: underline;
-    }
-
-    /* Highlight kategori aktif */
-    .dropdown-item.active {
-        font-weight: 600;
-        color: #8fc333 !important;
-        text-decoration: underline;
     }
 </style>
 
 <!-- Bootstrap JS Bundle (Popper + Bootstrap) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
-    // Toggle submenu on click untuk mobile (dan touch devices)
-    document.querySelectorAll('.dropdown-submenu > a').forEach(function(element) {
-        element.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            const submenu = this.nextElementSibling;
-            if (!submenu) return;
-
-            if (submenu.style.display === 'block') {
-                submenu.style.display = 'none';
-            } else {
-                // Tutup submenu lain yang terbuka
-                document.querySelectorAll('.dropdown-submenu .dropdown-menu').forEach(function(menu) {
-                    menu.style.display = 'none';
-                });
-                submenu.style.display = 'block';
-            }
-        });
-    });
-
-    // Tutup submenu saat klik di luar dropdown
-    document.addEventListener('click', function() {
-        document.querySelectorAll('.dropdown-submenu .dropdown-menu').forEach(function(menu) {
-            menu.style.display = 'none';
-        });
-    });
-</script>
+<!-- Tidak ada JS submenu bertahan, submenu hanya muncul saat hover (desktop) -->

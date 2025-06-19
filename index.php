@@ -4,7 +4,7 @@ include './bloging/config.php';
 
 // Latest articles
 $query_latest = "SELECT * FROM blogs 
-                --  WHERE status = 'published' 
+                WHERE status = 'published' 
                  ORDER BY created_at DESC 
                  LIMIT 6";
 $result_latest = mysqli_query($conn, $query_latest);
@@ -48,6 +48,13 @@ $query_most_viewed = "SELECT b.*,
                       LIMIT 1";
 $result_most_viewed = mysqli_query($conn, $query_most_viewed);
 $most_viewed_article = mysqli_fetch_assoc($result_most_viewed);
+
+// Ambil semua kategori untuk mapping id -> data
+$allCategories = [];
+$resCat = $conn->query("SELECT id, category, parent_id FROM category");
+while ($cat = $resCat->fetch_assoc()) {
+    $allCategories[$cat['id']] = $cat;
+}
 
 if (!$result_trending) {
     echo "Trending Query Error: " . mysqli_error($conn);
@@ -122,11 +129,49 @@ if (!$result_trending) {
   </section>
   
   <style>
+    body {
+      background: #f8faf5;
+      font-family: 'Poppins', Arial, sans-serif;
+      color: #222;
+    }
+    /* Container Section Card */
+    .category-area,
+    .fashion-area,
+    .statistics-area,
+    .categories-area,
+    .featured-article-area,
+    .team-area {
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 4px 16px rgba(143, 195, 51, 0.08);
+      padding: 36px 24px 32px 24px;
+      margin-bottom: 48px;
+      position: relative;
+    }
+    @media (max-width: 768px) {
+      .category-area,
+      .fashion-area,
+      .statistics-area,
+      .categories-area,
+      .featured-article-area,
+      .team-area {
+        padding: 18px 6px 18px 6px;
+        margin-bottom: 24px;
+      }
+    }
     .banner-area .banner-content h1 {
   font-size: 32px; 
   line-height: 1.5;
   font-weight: 600;
 }
+    /* Section Divider */
+    .section-divider {
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, #8fc333 60%, #00c6ff 100%);
+      border-radius: 2px;
+      margin: 24px auto 0 auto;
+    }
   </style>
   <!-- End banner Area -->
 
@@ -140,6 +185,7 @@ if (!$result_trending) {
             <p>
               Jelajahi tulisan-tulisan terbaru dari semua kategori blog, mulai dari informasi ringan hingga topik mendalam.
             </p>
+            <div class="section-divider"></div>
           </div>
         </div>
       </div>
@@ -162,6 +208,32 @@ if (!$result_trending) {
                 <!-- Meta Info -->
                 <div class="meta-info mb-2">
                   <span class="icon">📅</span><?= date('d M Y', strtotime($row['created_at'])) ?>
+                </div>
+
+                <!-- Badge Kategori -->
+                <div class="mb-2">
+                  <?php
+                  if (!empty($row['category_id']) && isset($allCategories[$row['category_id']])) {
+                      $cat = $allCategories[$row['category_id']];
+                      if ($cat['parent_id'] && isset($allCategories[$cat['parent_id']])) {
+                          $parent = $allCategories[$cat['parent_id']];
+                          ?>
+                          <a href="category.php?id=<?= $parent['id'] ?>" class="badge bg-success text-white text-decoration-none me-1">
+                              #<?= htmlspecialchars($parent['category']) ?>
+                          </a>
+                          <a href="category.php?id=<?= $cat['id'] ?>" class="badge bg-light text-success text-decoration-none">
+                              #<?= htmlspecialchars($cat['category']) ?>
+                          </a>
+                          <?php
+                      } else {
+                          ?>
+                          <a href="category.php?id=<?= $cat['id'] ?>" class="badge bg-success text-white text-decoration-none">
+                              #<?= htmlspecialchars($cat['category']) ?>
+                          </a>
+                          <?php
+                      }
+                  }
+                  ?>
                 </div>
 
                 <!-- Konten Ringkas -->
@@ -189,6 +261,7 @@ if (!$result_trending) {
                 <div class="title text-center">
                     <h1 class="mb-10">Bacaan Trending di Minggu Ini</h1>
                     <p>Temukan artikel-artikel yang paling banyak dibaca dalam seminggu terakhir.</p>
+                    <div class="section-divider"></div>
                 </div>
             </div>
         </div>
@@ -245,6 +318,7 @@ if (!$result_trending) {
           <div class="title text-center">
             <h1 class="mb-10">Statistik Blog Kami</h1>
             <p>Lihat seberapa berkembang komunitas blog kami dalam berbagi pengetahuan dan informasi.</p>
+            <div class="section-divider"></div>
           </div>
         </div>
       </div>
@@ -289,6 +363,7 @@ if (!$result_trending) {
           <div class="title text-center">
             <h1 class="mb-10">Kategori Unggulan</h1>
             <p>Jelajahi berbagai kategori artikel yang telah kami sediakan untuk memenuhi kebutuhan informasi Anda.</p>
+            <div class="section-divider"></div>
           </div>
         </div>
       </div>
@@ -329,6 +404,7 @@ if (!$result_trending) {
           <div class="title text-center">
             <h1 class="mb-10">Artikel Terpopuler Sepanjang Masa</h1>
             <p>Artikel yang paling banyak dibaca oleh pembaca setia kami.</p>
+            <div class="section-divider"></div>
           </div>
         </div>
       </div>
@@ -381,6 +457,7 @@ if (!$result_trending) {
           <div class="title text-center">
             <h1 class="mb-10">Tentang Syukron Ma'mun Society</h1>
             <p>Komunitas alumni Daarul Rahman Cabang Kairo yang berkomitmen untuk berbagi pengetahuan dan pengalaman.</p>
+            <div class="section-divider"></div>
           </div>
         </div>
       </div>

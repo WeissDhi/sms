@@ -57,6 +57,13 @@ if (!isset($_SESSION[$viewed_key])) {
     $update_stmt->close();
     $view_stmt->close();
 }
+
+// Ambil semua kategori untuk mapping id -> data
+$allCategories = [];
+$resCat = $conn->query("SELECT id, category, parent_id FROM category");
+while ($cat = $resCat->fetch_assoc()) {
+    $allCategories[$cat['id']] = $cat;
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -190,33 +197,76 @@ if (!isset($_SESSION[$viewed_key])) {
                 font-size: 1rem;
             }
         }
+
+        .blog-detail-card {
+            border: 3px solid #8fc333;
+            border-radius: 24px;
+            box-shadow: 0 8px 25px rgba(143, 195, 51, 0.18);
+            background: #fff;
+            margin-bottom: 2rem;
+        }
+        .blog-detail-card .card-body {
+            padding: 2.5rem 2rem;
+        }
+        @media (max-width: 768px) {
+            .blog-detail-card .card-body {
+                padding: 1.2rem 0.7rem;
+            }
+        }
     </style>
 </head>
 
 <body class="bg-light">
     <div class="container py-4">
-        <div class="card">
+        <div class="card blog-detail-card">
             <div class="card-body">
-                <h1 class="card-title mb-4"><?= strip_tags($blog['title']) ?></h1>
+                <h1 class="card-title mb-4" style="font-weight:700; color:#333; font-size:2rem;"><?= strip_tags($blog['title']) ?></h1>
 
-                <div class="d-flex gap-3 mb-4">
-                    <span class="badge bg-primary">
-                        <i class="bi bi-eye-fill"></i> <?= number_format($current_views) ?> views
-                    </span>
-                    <span class="badge bg-secondary">
-                        <i class="bi bi-folder-fill"></i> <?= htmlspecialchars($blog['category_name']) ?>
-                    </span>
-                    <span class="badge bg-<?= $blog['status'] === 'published' ? 'success' : 'warning' ?>">
-                        <i class="bi bi-<?= $blog['status'] === 'published' ? 'check-circle' : 'clock' ?>-fill"></i>
-                        <?= ucfirst($blog['status']) ?>
-                    </span>
+                <!-- Meta Info & Badge Kategori -->
+                <div class="d-flex flex-wrap gap-2 mb-4 align-items-center">
+                  <span class="badge bg-primary">
+                    <i class="bi bi-eye-fill"></i> <?= number_format($current_views) ?> views
+                  </span>
+                  <?php
+                  // Badge kategori & subkategori
+                  if (!empty($blog['category_id']) && isset($allCategories[$blog['category_id']])) {
+                      $cat = $allCategories[$blog['category_id']];
+                      if ($cat['parent_id'] && isset($allCategories[$cat['parent_id']])) {
+                          $parent = $allCategories[$cat['parent_id']];
+                          ?>
+                          <a href="category.php?id=<?= $parent['id'] ?>" class="badge bg-success text-white text-decoration-none me-1">
+                              #<?= htmlspecialchars($parent['category']) ?>
+                          </a>
+                          <a href="category.php?id=<?= $cat['id'] ?>" class="badge bg-light text-success text-decoration-none">
+                              #<?= htmlspecialchars($cat['category']) ?>
+                          </a>
+                          <?php
+                      } else {
+                          ?>
+                          <a href="category.php?id=<?= $cat['id'] ?>" class="badge bg-success text-white text-decoration-none">
+                              #<?= htmlspecialchars($cat['category']) ?>
+                          </a>
+                          <?php
+                      }
+                  }
+                  ?>
+                  <span class="badge bg-<?= $blog['status'] === 'published' ? 'success' : 'warning' ?>">
+                    <i class="bi bi-<?= $blog['status'] === 'published' ? 'check-circle' : 'clock' ?>-fill"></i>
+                    <?= ucfirst($blog['status']) ?>
+                  </span>
+                  <span class="badge bg-secondary">
+                    <i class="bi bi-person-fill"></i> <?= htmlspecialchars($blog['author_name']) ?>
+                  </span>
+                  <span class="badge bg-info text-dark">
+                    <i class="bi bi-calendar3"></i> <?= date('d M Y H:i', strtotime($blog['created_at'])) ?>
+                  </span>
                 </div>
 
                 <?php if (!empty($blog['image'])): ?>
-                    <img src="bloging/uploads/<?= htmlspecialchars($blog['image']) ?>" alt="Blog Thumbnail" class="img-fluid rounded mb-4" style="max-height: 400px; width: auto; object-fit: cover;">
+                    <img src="bloging/uploads/<?= htmlspecialchars($blog['image']) ?>" alt="Blog Thumbnail" class="img-fluid rounded mb-4" style="max-height: 400px; width: 100%; object-fit: cover; border-radius:16px; box-shadow:0 4px 16px rgba(143,195,51,0.18);">
                 <?php endif; ?>
 
-                <div class="blog-content">
+                <div class="blog-content" style="margin-bottom:2rem;">
                     <?php
                     // Replace image paths in content to include bloging/ prefix
                     $content = $blog['content'];
@@ -239,19 +289,12 @@ if (!isset($_SESSION[$viewed_key])) {
                         </div>
                     </div>
                 <?php endif; ?>
-
-                <div class="text-muted">
-                    <small>
-                        <i class="bi bi-person-fill"></i> <?= htmlspecialchars($blog['author_name']) ?> |
-                        <i class="bi bi-calendar3"></i> <?= date('d M Y H:i', strtotime($blog['created_at'])) ?>
-                    </small>
-                </div>
             </div>
         </div>
 
         <div class="mt-3">
-            <a href="index.php" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i> Kembali ke Daftar Artikel
+            <a href="javascript:window.history.back()" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Kembali
             </a>
         </div>
 

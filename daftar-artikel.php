@@ -16,10 +16,18 @@ if (isset($_SESSION['author_type'])) {
 
 $keyword = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
 
+// Ambil semua kategori untuk mapping id -> data
+$allCategories = [];
+$resCat = $conn->query("SELECT id, category, parent_id FROM category");
+while ($cat = $resCat->fetch_assoc()) {
+    $allCategories[$cat['id']] = $cat;
+}
+
 $sql = "
     SELECT 
         blogs.*, 
         category.category AS category_name,
+        category.parent_id AS category_parent_id,
         admin.first_name AS admin_first,
         admin.last_name AS admin_last,
         users.fname AS user_name
@@ -228,11 +236,31 @@ $result = $conn->query($sql);
 
                                 <!-- Badge Kategori -->
                                 <div class="mb-2">
-                                    <?php if (!empty($row['category_name'])): ?>
-                                        <a href="?search=<?= urlencode($row['category_name']) ?>" class="badge bg-gradient bg-info text-dark text-decoration-none">
-                                            #<?= htmlspecialchars($row['category_name']) ?>
-                                        </a>
-                                    <?php endif; ?>
+                                    <?php
+                                    if (!empty($row['category_name'])) {
+                                        $cat_id = $row['category_id'];
+                                        $cat = isset($allCategories[$cat_id]) ? $allCategories[$cat_id] : null;
+                                        if ($cat && $cat['parent_id'] && isset($allCategories[$cat['parent_id']])) {
+                                            // Ada parent, tampilkan dua badge
+                                            $parent = $allCategories[$cat['parent_id']];
+                                            ?>
+                                            <a href="?search=<?= urlencode($parent['category']) ?>" class="badge bg-success text-white text-decoration-none me-1">
+                                                #<?= htmlspecialchars($parent['category']) ?>
+                                            </a>
+                                            <a href="?search=<?= urlencode($cat['category']) ?>" class="badge bg-light text-success text-decoration-none">
+                                                #<?= htmlspecialchars($cat['category']) ?>
+                                            </a>
+                                            <?php
+                                        } else {
+                                            // Tidak ada parent, tampilkan satu badge
+                                            ?>
+                                            <a href="?search=<?= urlencode($cat['category']) ?>" class="badge bg-success text-white text-decoration-none">
+                                                #<?= htmlspecialchars($cat['category']) ?>
+                                            </a>
+                                            <?php
+                                        }
+                                    }
+                                    ?>
                                 </div>
 
                                 <!-- Konten Ringkas -->

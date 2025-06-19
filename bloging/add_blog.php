@@ -1088,19 +1088,87 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                         </div>
                         <div class="mb-4">
                             <label for="category" class="form-label">Kategori</label>
-                            <select class="form-select" name="category" id="category" required>
-                                <option value="">-- Pilih Kategori --</option>
-                                <?php
-                                $res = $conn->query("SELECT * FROM category ORDER BY category ASC");
-                                while ($row = $res->fetch_assoc()) {
-                                    echo '<option value="' . $row['id'] . '">' . htmlspecialchars($row['category']) . '</option>';
-                                }
-                                ?>
+                            <?php
+                            // Ambil semua kategori dan subkategori
+                            $categories = [];
+                            $res = $conn->query("SELECT id, category, parent_id FROM category ORDER BY category ASC");
+                            while ($row = $res->fetch_assoc()) {
+                                $categories[] = $row;
+                            }
+                            // Pisahkan parent dan child
+                            $parentCategories = array_filter($categories, function($cat) { return $cat['parent_id'] === null; });
+                            $categoriesByParent = [];
+                            foreach ($categories as $cat) {
+                                $categoriesByParent[$cat['parent_id']][] = $cat;
+                            }
+                            ?>
+                            <select class="form-select" name="category_parent" id="category_parent" required>
+                                <option value="">-- Pilih Kategori Utama --</option>
+                                <?php foreach ($parentCategories as $cat): ?>
+                                    <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['category']) ?></option>
+                                <?php endforeach; ?>
                             </select>
                             <div class="invalid-feedback">
                                 <i class="fas fa-exclamation-circle"></i>
                                 Kategori harus dipilih
                             </div>
+                            <select class="form-select mt-3" name="category" id="category_child" style="display:none;">
+                                <option value="">-- Pilih Subkategori --</option>
+                            </select>
+                            <div id="category-tags" class="mt-3"></div>
+                            <script>
+                                // Data kategori dari PHP ke JS
+                                const categories = <?= json_encode($categories) ?>;
+                                const categoriesByParent = {};
+                                categories.forEach(cat => {
+                                    if (!categoriesByParent[cat.parent_id]) categoriesByParent[cat.parent_id] = [];
+                                    categoriesByParent[cat.parent_id].push(cat);
+                                });
+                                const parentSelect = document.getElementById('category_parent');
+                                const childSelect = document.getElementById('category_child');
+                                const tagsDiv = document.getElementById('category-tags');
+                                parentSelect.addEventListener('change', function() {
+                                    const parentId = this.value;
+                                    childSelect.innerHTML = '<option value="">-- Pilih Subkategori --</option>';
+                                    tagsDiv.innerHTML = '';
+                                    if (categoriesByParent[parentId]) {
+                                        childSelect.style.display = '';
+                                        categoriesByParent[parentId].forEach(cat => {
+                                            childSelect.innerHTML += `<option value="${cat.id}">${cat.category}</option>`;
+                                        });
+                                    } else {
+                                        childSelect.style.display = 'none';
+                                    }
+                                    // Tag visual
+                                    if (parentId) {
+                                        const parentCat = categories.find(c => c.id == parentId);
+                                        tagsDiv.innerHTML = `<span class='badge bg-success me-1'>#${parentCat.category}</span>`;
+                                    }
+                                });
+                                childSelect.addEventListener('change', function() {
+                                    const parentId = parentSelect.value;
+                                    const childId = this.value;
+                                    tagsDiv.innerHTML = '';
+                                    if (parentId) {
+                                        const parentCat = categories.find(c => c.id == parentId);
+                                        tagsDiv.innerHTML += `<span class='badge bg-success me-1'>#${parentCat.category}</span>`;
+                                    }
+                                    if (childId) {
+                                        const childCat = categories.find(c => c.id == childId);
+                                        tagsDiv.innerHTML += `<span class='badge bg-info text-dark'>#${childCat.category}</span>`;
+                                    }
+                                });
+                                // Saat submit, pastikan value category diisi sesuai child jika ada, atau parent jika tidak ada child
+                                document.getElementById('addBlogForm').addEventListener('submit', function(e) {
+                                    if (childSelect.style.display !== 'none' && childSelect.value) {
+                                        childSelect.setAttribute('name', 'category');
+                                        parentSelect.removeAttribute('name');
+                                    } else {
+                                        parentSelect.setAttribute('name', 'category');
+                                        childSelect.removeAttribute('name');
+                                    }
+                                });
+                            </script>
                         </div>
 
                         <div class="mb-4">
