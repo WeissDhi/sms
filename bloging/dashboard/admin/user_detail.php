@@ -278,11 +278,11 @@ $top_articles = $top_articles_stmt->get_result();
                     <?php if ($recent_articles->num_rows > 0): ?>
                         <?php while ($article = $recent_articles->fetch_assoc()): ?>
                             <div class="article-item">
-                                <div class="d-flex justify-content-between align-items-start">
+                                <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <h5 class="mb-1">
                                             <a href="../../../view_detail.php?id=<?= $article['id'] ?>" class="text-decoration-none">
-                                                <?= htmlspecialchars($article['title']) ?>
+                                                <?= htmlspecialchars(strip_tags($article['title'])) ?>
                                             </a>
                                         </h5>
                                         <div class="mb-2">
@@ -302,7 +302,7 @@ $top_articles = $top_articles_stmt->get_result();
                                     </div>
                                     <?php if (!empty($article['image'])): ?>
                                         <div class="thumbnail-container ms-3">
-                                            <img src="../../../uploads/<?= basename($article['image']) ?>" alt="Thumbnail">
+                                            <img src="../../uploads/<?= basename($article['image']) ?>" alt="Thumbnail">
                                         </div>
                                     <?php endif; ?>
                                 </div>
@@ -316,7 +316,7 @@ $top_articles = $top_articles_stmt->get_result();
                     <?php else: ?>
                         <div class="text-center text-muted py-4">
                             <i class="bi bi-file-text" style="font-size: 3rem;"></i>
-                            <p class="mt-3">Belum ada artikel yang ditulis</p>
+                            <div class="mt-3">Belum ada artikel yang ditulis</div>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -331,7 +331,7 @@ $top_articles = $top_articles_stmt->get_result();
                             <div class="comment-item">
                                 <div class="d-flex justify-content-between">
                                     <div>
-                                        <p class="mb-1"><?= htmlspecialchars($comment['comment']) ?></p>
+                                        <div class="mb-1"><?= htmlspecialchars($comment['comment']) ?></div>
                                         <small class="text-muted">
                                             Pada artikel: 
                                             <a href="../../../view_detail.php?id=<?= $comment['blog_id'] ?>" class="text-decoration-none">
@@ -348,7 +348,7 @@ $top_articles = $top_articles_stmt->get_result();
                     <?php else: ?>
                         <div class="text-center text-muted py-4">
                             <i class="bi bi-chat-dots" style="font-size: 3rem;"></i>
-                            <p class="mt-3">Belum ada komentar</p>
+                            <div class="mt-3">Belum ada komentar</div>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -364,25 +364,22 @@ $top_articles = $top_articles_stmt->get_result();
                     <?php if ($top_articles->num_rows > 0): ?>
                         <?php while ($article = $top_articles->fetch_assoc()): ?>
                             <div class="article-item">
-                                <h6 class="mb-1">
-                                    <a href="../../../view_detail.php?id=<?= $article['id'] ?>" class="text-decoration-none">
-                                        <?= htmlspecialchars($article['title']) ?>
-                                    </a>
-                                </h6>
                                 <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-1">
+                                        <a href="../../../view_detail.php?id=<?= $article['id'] ?>" class="text-decoration-none">
+                                            <?= htmlspecialchars(strip_tags($article['title'])) ?>
+                                        </a>
+                                    </h6>
                                     <span class="badge bg-info">
-                                        <i class="bi bi-eye-fill"></i> <?= number_format($article['views']) ?> views
+                                        <i class="bi bi-eye-fill"></i> <?= number_format($article['views']) ?>
                                     </span>
-                                    <small class="text-muted">
-                                        <?= date('d M Y', strtotime($article['created_at'])) ?>
-                                    </small>
                                 </div>
                             </div>
                         <?php endwhile; ?>
                     <?php else: ?>
                         <div class="text-center text-muted py-4">
                             <i class="bi bi-trophy" style="font-size: 3rem;"></i>
-                            <p class="mt-3">Belum ada artikel yang ditulis</p>
+                            <div class="mt-3">Belum ada artikel yang ditulis</div>
                         </div>
                     <?php endif; ?>
                 </div>

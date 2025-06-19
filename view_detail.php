@@ -33,7 +33,30 @@ if (!$blog) {
     exit;
 }
 
-// Increment view count via AJAX
+// Prevent duplicate view counting in the same session
+$viewed_key = 'viewed_blog_' . $id;
+$current_views = $blog['views'];
+
+if (!isset($_SESSION[$viewed_key])) {
+    // Increment view count only if not viewed in this session
+    $update_stmt = $conn->prepare("UPDATE blogs SET views = views + 1 WHERE id = ?");
+    $update_stmt->bind_param("i", $id);
+    $update_stmt->execute();
+    
+    // Get the updated view count
+    $view_stmt = $conn->prepare("SELECT views FROM blogs WHERE id = ?");
+    $view_stmt->bind_param("i", $id);
+    $view_stmt->execute();
+    $view_result = $view_stmt->get_result();
+    $view_data = $view_result->fetch_assoc();
+    $current_views = $view_data['views'];
+    
+    // Mark as viewed in this session
+    $_SESSION[$viewed_key] = true;
+    
+    $update_stmt->close();
+    $view_stmt->close();
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -46,11 +69,23 @@ if (!$blog) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Increment view count when page loads
+        // Additional client-side view tracking for analytics (optional)
         window.addEventListener('load', function() {
-            fetch('increment_view.php?id=<?= $id ?>', {
+            // Send an additional tracking request for analytics purposes
+            fetch('bloging/increment_view.php?id=<?= $id ?>', {
                 method: 'GET',
                 credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    console.log('View tracked successfully:', data.views, 'total views');
+                } else {
+                    console.log('View tracking response:', data);
+                }
+            })
+            .catch(error => {
+                console.log('View tracking error:', error);
             });
         });
     </script>
@@ -166,7 +201,7 @@ if (!$blog) {
 
                 <div class="d-flex gap-3 mb-4">
                     <span class="badge bg-primary">
-                        <i class="bi bi-eye-fill"></i> <?= number_format($blog['views']) ?> views
+                        <i class="bi bi-eye-fill"></i> <?= number_format($current_views) ?> views
                     </span>
                     <span class="badge bg-secondary">
                         <i class="bi bi-folder-fill"></i> <?= htmlspecialchars($blog['category_name']) ?>

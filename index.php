@@ -18,6 +18,37 @@ $query_trending = "SELECT * FROM blogs
                    LIMIT 5";
 $result_trending = mysqli_query($conn, $query_trending);
 
+// Get featured categories with article counts
+$query_categories = "SELECT c.*, COUNT(b.id) as article_count 
+                     FROM category c 
+                     LEFT JOIN blogs b ON c.id = b.category_id AND b.status = 'published'
+                     GROUP BY c.id 
+                     ORDER BY article_count DESC 
+                     LIMIT 6";
+$result_categories = mysqli_query($conn, $query_categories);
+
+// Get statistics
+$total_articles = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as total FROM blogs WHERE status = 'published'"))['total'];
+$total_views = mysqli_fetch_assoc(mysqli_query($conn, "SELECT SUM(views) as total FROM blogs WHERE status = 'published'"))['total'];
+$total_authors = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(DISTINCT author_id) as total FROM blogs WHERE status = 'published'"))['total'];
+
+// Get most viewed article of all time
+$query_most_viewed = "SELECT b.*, 
+                             c.category as category_name,
+                             CASE 
+                                 WHEN b.author_type = 'admin' THEN a.first_name
+                                 ELSE u.fname 
+                             END as author_name
+                      FROM blogs b
+                      LEFT JOIN category c ON b.category_id = c.id
+                      LEFT JOIN admin a ON b.author_type = 'admin' AND b.author_id = a.id
+                      LEFT JOIN users u ON b.author_type = 'user' AND b.author_id = u.id
+                      WHERE b.status = 'published'
+                      ORDER BY b.views DESC 
+                      LIMIT 1";
+$result_most_viewed = mysqli_query($conn, $query_most_viewed);
+$most_viewed_article = mysqli_fetch_assoc($result_most_viewed);
+
 if (!$result_trending) {
     echo "Trending Query Error: " . mysqli_error($conn);
 }
@@ -73,7 +104,7 @@ if (!$result_trending) {
         <div
           class="banner-content d-flex align-items-center col-lg-12 col-md-12">
           <h1>
-           Syukron Ma’mun Society-Mesir hadir sebagai media digital yang mendokumentasikan pemikiran, karya tulis, dan kegiatan para alumni Daarul Rahman Cabang Kairo dalam bentuk blog.
+           Syukron Ma'mun Society-Mesir hadir sebagai media digital yang mendokumentasikan pemikiran, karya tulis, dan kegiatan para alumni Daarul Rahman Cabang Kairo dalam bentuk blog.
           </h1>
         </div>
         <div
@@ -112,13 +143,36 @@ if (!$result_trending) {
           </div>
         </div>
       </div>
-      <div class="active-cat-carusel">
+      <div class="row">
         <?php while ($row = mysqli_fetch_assoc($result_latest)): ?>
-          <div class="item single-cat">
-            <img src="bloging/uploads/<?= htmlspecialchars(basename($row['image'])) ?>" alt="gambar" />
+          <div class="col-md-4 mb-4">
+            <div class="card h-100">
+              <?php if ($row['image']): ?>
+                <img src="bloging/uploads/<?= htmlspecialchars(basename($row['image'])) ?>" class="card-img-top" alt="Blog Image">
+              <?php else: ?>
+                <img src="https://via.placeholder.com/400x200?text=No+Image" class="card-img-top" alt="No Image">
+              <?php endif; ?>
 
-            <p class="date"><?= date('d M Y', strtotime($row['created_at'])); ?></p>
-            <h4><a href="view_detail.php?id=<?= $row['id']; ?>"><?= $row['title']; ?></a></h4>
+              <div class="card-body d-flex flex-column">
+                <!-- Judul -->
+                <h5 class="text-truncate" title="<?= strip_tags($row['title']) ?>">
+                  <?= mb_strimwidth(strip_tags($row['title']), 0, 60, '...') ?>
+                </h5>
+
+                <!-- Meta Info -->
+                <div class="meta-info mb-2">
+                  <span class="icon">📅</span><?= date('d M Y', strtotime($row['created_at'])) ?>
+                </div>
+
+                <!-- Konten Ringkas -->
+                <p class="card-text mb-3"><?= mb_strimwidth(strip_tags($row['content']), 0, 100, '...') ?></p>
+
+                <!-- Tombol -->
+                <a href="view_detail.php?id=<?= $row['id']; ?>" class="btn btn-read-more mt-auto">
+                  Baca Selengkapnya <span>&rarr;</span>
+                </a>
+              </div>
+            </div>
           </div>
         <?php endwhile; ?>
       </div>
@@ -141,17 +195,41 @@ if (!$result_trending) {
         <div class="row">
             <?php if ($result_trending && mysqli_num_rows($result_trending) > 0): ?>
                 <?php while ($row = mysqli_fetch_assoc($result_trending)): ?>
-                    <div class="col-lg-4 col-md-6 single-fashion">
-                    <img src="bloging/uploads/<?= htmlspecialchars(basename($row['image'])) ?>" alt="gambar" />
-                        <h4><?= $row['title'] ?></h4>
-                        <p class="card-text">
-                            <?= mb_strimwidth(strip_tags($row['content']), 0, 120, '...') ?>
-                        </p>
-                        <a href="view_detail.php?id=<?= $row['id'] ?>">Baca selengkapnya</a>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100">
+                            <?php if ($row['image']): ?>
+                                <img src="bloging/uploads/<?= htmlspecialchars(basename($row['image'])) ?>" class="card-img-top" alt="Blog Image">
+                            <?php else: ?>
+                                <img src="https://via.placeholder.com/400x200?text=No+Image" class="card-img-top" alt="No Image">
+                            <?php endif; ?>
+
+                            <div class="card-body d-flex flex-column">
+                                <!-- Judul -->
+                                <h5 class="text-truncate" title="<?= strip_tags($row['title']) ?>">
+                                    <?= mb_strimwidth(strip_tags($row['title']), 0, 60, '...') ?>
+                                </h5>
+
+                                <!-- Meta Info -->
+                                <div class="meta-info mb-2">
+                                    <span class="icon">📅</span><?= date('d M Y', strtotime($row['created_at'])) ?>
+                                    <span class="icon ms-3">👁️</span><?= number_format($row['views']) ?> views
+                                </div>
+
+                                <!-- Konten Ringkas -->
+                                <p class="card-text mb-3"><?= mb_strimwidth(strip_tags($row['content']), 0, 100, '...') ?></p>
+
+                                <!-- Tombol -->
+                                <a href="view_detail.php?id=<?= $row['id'] ?>" class="btn btn-read-more mt-auto">
+                                    Baca Selengkapnya <span>&rarr;</span>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 <?php endwhile; ?>
             <?php else: ?>
-                <p class="text-center">Belum ada artikel trending minggu ini.</p>
+                <div class="col-12">
+                    <div class="no-results">Belum ada artikel trending minggu ini.</div>
+                </div>
             <?php endif; ?>
         </div>
     </div>
@@ -159,39 +237,180 @@ if (!$result_trending) {
 
   <!-- End fashion Area -->
 
+  <!-- Start Statistics Section -->
+  <section class="statistics-area section-gap" id="statistics">
+    <div class="container">
+      <div class="row d-flex justify-content-center">
+        <div class="menu-content pb-70 col-lg-8">
+          <div class="title text-center">
+            <h1 class="mb-10">Statistik Blog Kami</h1>
+            <p>Lihat seberapa berkembang komunitas blog kami dalam berbagi pengetahuan dan informasi.</p>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="stat-card text-center">
+            <div class="stat-icon">
+              <i class="fa fa-file-text-o"></i>
+            </div>
+            <div class="stat-number"><?= number_format($total_articles) ?></div>
+            <div class="stat-label">Total Artikel</div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="stat-card text-center">
+            <div class="stat-icon">
+              <i class="fa fa-eye"></i>
+            </div>
+            <div class="stat-number"><?= number_format($total_views) ?></div>
+            <div class="stat-label">Total Views</div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4">
+          <div class="stat-card text-center">
+            <div class="stat-icon">
+              <i class="fa fa-users"></i>
+            </div>
+            <div class="stat-number"><?= number_format($total_authors) ?></div>
+            <div class="stat-label">Penulis Aktif</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End Statistics Section -->
+
+  <!-- Start Featured Categories Section -->
+  <section class="categories-area section-gap" id="categories">
+    <div class="container">
+      <div class="row d-flex justify-content-center">
+        <div class="menu-content pb-70 col-lg-8">
+          <div class="title text-center">
+            <h1 class="mb-10">Kategori Unggulan</h1>
+            <p>Jelajahi berbagai kategori artikel yang telah kami sediakan untuk memenuhi kebutuhan informasi Anda.</p>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <?php if ($result_categories && mysqli_num_rows($result_categories) > 0): ?>
+          <?php while ($category = mysqli_fetch_assoc($result_categories)): ?>
+            <div class="col-lg-4 col-md-6 mb-4">
+              <div class="category-card">
+                <div class="category-icon">
+                  <i class="fa fa-folder-open"></i>
+                </div>
+                <div class="category-content">
+                  <h4><?= htmlspecialchars($category['category']) ?></h4>
+                  <p><?= number_format($category['article_count']) ?> Artikel</p>
+                  <a href="category.php?id=<?= $category['id'] ?>" class="btn btn-category">
+                    Jelajahi Kategori <i class="fa fa-arrow-right"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          <?php endwhile; ?>
+        <?php else: ?>
+          <div class="col-12">
+            <div class="no-results">Belum ada kategori tersedia.</div>
+          </div>
+        <?php endif; ?>
+      </div>
+    </div>
+  </section>
+  <!-- End Featured Categories Section -->
+
+  <!-- Start Most Viewed Article Section -->
+  <?php if ($most_viewed_article): ?>
+  <section class="featured-article-area section-gap" id="featured">
+    <div class="container">
+      <div class="row d-flex justify-content-center">
+        <div class="menu-content pb-70 col-lg-8">
+          <div class="title text-center">
+            <h1 class="mb-10">Artikel Terpopuler Sepanjang Masa</h1>
+            <p>Artikel yang paling banyak dibaca oleh pembaca setia kami.</p>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <div class="featured-article-card">
+            <div class="row">
+              <div class="col-lg-6">
+                <?php if ($most_viewed_article['image']): ?>
+                  <img src="bloging/uploads/<?= htmlspecialchars(basename($most_viewed_article['image'])) ?>" 
+                       class="featured-img" alt="Featured Article">
+                <?php else: ?>
+                  <img src="https://via.placeholder.com/600x400?text=No+Image" 
+                       class="featured-img" alt="No Image">
+                <?php endif; ?>
+              </div>
+              <div class="col-lg-6">
+                <div class="featured-content">
+                  <div class="featured-badge">
+                    <i class="fa fa-fire"></i> Terpopuler
+                  </div>
+                  <h2><?= strip_tags($most_viewed_article['title']) ?></h2>
+                  <p><?= mb_strimwidth(strip_tags($most_viewed_article['content']), 0, 200, '...') ?></p>
+                  <div class="featured-meta">
+                    <span><i class="fa fa-user"></i> <?= htmlspecialchars($most_viewed_article['author_name']) ?></span>
+                    <span><i class="fa fa-eye"></i> <?= number_format($most_viewed_article['views']) ?> views</span>
+                    <span><i class="fa fa-folder"></i> <?= htmlspecialchars($most_viewed_article['category_name']) ?></span>
+                  </div>
+                  <a href="view_detail.php?id=<?= $most_viewed_article['id'] ?>" class="btn btn-featured">
+                    Baca Artikel Lengkap <i class="fa fa-arrow-right"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <?php endif; ?>
+  <!-- End Most Viewed Article Section -->
+
+ <!-- End Newsletter Section -->
+
   <!-- Start team Area -->
   <section class="team-area section-gap" id="team">
     <div class="container">
       <div class="row d-flex justify-content-center">
         <div class="menu-content pb-70 col-lg-8">
           <div class="title text-center">
-            <h1 class="mb-10">About Blogger Team</h1>
-            <p>Who are in extremely love with eco friendly system.</p>
+            <h1 class="mb-10">Tentang Syukron Ma'mun Society</h1>
+            <p>Komunitas alumni Daarul Rahman Cabang Kairo yang berkomitmen untuk berbagi pengetahuan dan pengalaman.</p>
           </div>
         </div>
       </div>
       <div class="row justify-content-center d-flex align-items-center">
         <div class="col-lg-6 team-left">
+          <h3>Visi Kami</h3>
           <p>
-            inappropriate behavior is often laughed off as “boys will be
-            boys,” women face higher conduct standards especially in the
-            workplace. That’s why it’s crucial that, as women, our behavior on
-            the job is beyond reproach. inappropriate behavior is often
-            laughed off as “boys will be boys,” women face higher conduct
-            standards especially in the workplace. That’s why it’s crucial
-            that.
+            Menjadi media digital terdepan yang mendokumentasikan pemikiran, karya tulis, dan kegiatan para alumni 
+            Daarul Rahman Cabang Kairo dalam bentuk blog yang informatif dan inspiratif.
           </p>
+          
+          <h3>Misi Kami</h3>
           <p>
-            inappropriate behavior is often laughed off as “boys will be
-            boys,” women face higher conduct standards especially in the
-            workplace. That’s why it’s crucial that, as women.
+            Menyediakan platform yang memungkinkan para alumni untuk berbagi pengetahuan, pengalaman, dan pemikiran 
+            mereka dengan masyarakat luas, serta mendokumentasikan kegiatan-kegiatan penting komunitas kami.
           </p>
+          
+          <h3>Nilai-Nilai Kami</h3>
+          <ul>
+            <li><strong>Integritas:</strong> Menjaga kejujuran dan kredibilitas dalam setiap konten</li>
+            <li><strong>Kolaborasi:</strong> Mendorong kerjasama antar anggota komunitas</li>
+            <li><strong>Inovasi:</strong> Terus berinovasi dalam cara berbagi informasi</li>
+            <li><strong>Kontribusi:</strong> Memberikan manfaat positif bagi masyarakat</li>
+          </ul>
         </div>
         <div class="col-lg-6 team-right d-flex justify-content-center">
           <div class="row active-team-carusel">
             <div class="single-team">
               <div class="thumb">
-                <img class="img-fluid" src="img/team1.jpg" alt="" />
+                <img class="img-fluid" src="img/team1.jpg" alt="Tim Pengembang" />
                 <div class="align-items-center justify-content-center d-flex">
                   <a href="#"><i class="fa fa-facebook"></i></a>
                   <a href="#"><i class="fa fa-twitter"></i></a>
@@ -199,13 +418,13 @@ if (!$result_trending) {
                 </div>
               </div>
               <div class="meta-text mt-30 text-center">
-                <h4>Dora Walker</h4>
-                <p>Senior Core Developer</p>
+                <h4>Tim Pengembang</h4>
+                <p>Bertanggung jawab atas pengembangan dan pemeliharaan platform blog</p>
               </div>
             </div>
             <div class="single-team">
               <div class="thumb">
-                <img class="img-fluid" src="img/team2.jpg" alt="" />
+                <img class="img-fluid" src="img/team2.jpg" alt="Tim Konten" />
                 <div class="align-items-center justify-content-center d-flex">
                   <a href="#"><i class="fa fa-facebook"></i></a>
                   <a href="#"><i class="fa fa-twitter"></i></a>
@@ -213,8 +432,8 @@ if (!$result_trending) {
                 </div>
               </div>
               <div class="meta-text mt-30 text-center">
-                <h4>Lena Keller</h4>
-                <p>Creative Content Developer</p>
+                <h4>Tim Konten</h4>
+                <p>Mengelola dan memastikan kualitas konten yang dipublikasikan</p>
               </div>
             </div>
           </div>
@@ -239,6 +458,81 @@ if (!$result_trending) {
   <script src="js/jquery.magnific-popup.min.js"></script>
   <script src="js/jquery.sticky.js"></script>
   <script src="js/main.js"></script>
+
+  <script>
+    // Newsletter form handling
+    document.addEventListener('DOMContentLoaded', function() {
+      const newsletterForm = document.querySelector('.newsletter-form');
+      if (newsletterForm) {
+        newsletterForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const email = this.querySelector('input[type="email"]').value;
+          
+          // Simple validation
+          if (email && email.includes('@')) {
+            alert('Terima kasih! Anda telah berlangganan newsletter kami.');
+            this.reset();
+          } else {
+            alert('Mohon masukkan email yang valid.');
+          }
+        });
+      }
+
+      // Animate statistics on scroll
+      const statNumbers = document.querySelectorAll('.stat-number');
+      const observerOptions = {
+        threshold: 0.5,
+        rootMargin: '0px 0px -100px 0px'
+      };
+
+      const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const target = entry.target;
+            const finalNumber = parseInt(target.textContent.replace(/,/g, ''));
+            animateNumber(target, 0, finalNumber, 2000);
+            observer.unobserve(target);
+          }
+        });
+      }, observerOptions);
+
+      statNumbers.forEach(stat => observer.observe(stat));
+
+      function animateNumber(element, start, end, duration) {
+        const startTime = performance.now();
+        const startNumber = start;
+        const endNumber = end;
+        
+        function updateNumber(currentTime) {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          
+          const currentNumber = Math.floor(startNumber + (endNumber - startNumber) * progress);
+          element.textContent = currentNumber.toLocaleString();
+          
+          if (progress < 1) {
+            requestAnimationFrame(updateNumber);
+          }
+        }
+        
+        requestAnimationFrame(updateNumber);
+      }
+
+      // Smooth scroll for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      });
+    });
+  </script>
 </body>
 
 <?php if (session_status() === PHP_SESSION_NONE) {
@@ -269,6 +563,457 @@ if (!$result_trending) {
 
   .btn-tambah-artikel:hover {
     background-color: #218838;
+  }
+
+  .card {
+    transition: all 0.4s ease;
+    border: 3px solid #8fc333;
+    border-radius: 20px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 8px 25px rgba(143, 195, 51, 0.45);
+    position: relative;
+  }
+
+  .card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(143, 195, 51, 0.6);
+  }
+
+  .card-img-top {
+    height: 180px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .card:hover .card-img-top {
+    transform: scale(1.05);
+  }
+
+  .card-body {
+    padding: 1rem 1.25rem;
+  }
+
+  .card-body h5 {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #333;
+  }
+
+  .card-body p {
+    font-size: 0.95rem;
+    color: #555;
+  }
+
+  .meta-info {
+    font-size: 0.8rem;
+    color: #777;
+  }
+
+  .icon {
+    margin-right: 5px;
+    vertical-align: middle;
+    color: #6c757d;
+  }
+
+  .btn-read-more {
+    background: linear-gradient(135deg, #8fc333, #00c6ff);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 30px;
+    border: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-decoration: none;
+  }
+
+  .btn-read-more:hover {
+    background: linear-gradient(135deg, #8fc333, #8fc333);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    color: #fff;
+  }
+
+  .btn-read-more span {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+  }
+
+  .btn-read-more:hover span {
+    transform: translateX(5px);
+  }
+
+  .no-results {
+    background: #fff;
+    padding: 50px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 1.2rem;
+    color: #777;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Statistics Section Styles */
+  .stat-card {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 25px rgba(143, 195, 51, 0.45);
+    border: 3px solid #8fc333;
+    transition: all 0.4s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(143, 195, 51, 0.6);
+  }
+
+  .stat-icon {
+    font-size: 3rem;
+    color: #8fc333;
+    margin-bottom: 1rem;
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    font-size: 1.1rem;
+    color: #666;
+    font-weight: 500;
+  }
+
+  /* Category Cards Styles */
+  .category-card {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(143, 195, 51, 0.45);
+    border: 3px solid #8fc333;
+    transition: all 0.4s ease;
+    height: 100%;
+  }
+
+  .category-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(143, 195, 51, 0.6);
+  }
+
+  .category-icon {
+    font-size: 3rem;
+    color: #8fc333;
+    margin-bottom: 1rem;
+  }
+
+  .category-content h4 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .category-content p {
+    color: #666;
+    margin-bottom: 1.5rem;
+  }
+
+  .btn-category {
+    background: linear-gradient(135deg, #8fc333, #00c6ff);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    border: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-category:hover {
+    background: linear-gradient(135deg, #8fc333, #8fc333);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    color: #fff;
+  }
+
+  /* Featured Article Styles */
+  .featured-article-card {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(143, 195, 51, 0.45);
+    border: 3px solid #8fc333;
+    transition: all 0.4s ease;
+  }
+
+  .featured-article-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(143, 195, 51, 0.6);
+  }
+
+  .featured-img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+  }
+
+  .featured-content {
+    padding: 2rem;
+  }
+
+  .featured-badge {
+    background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 1rem;
+  }
+
+  .featured-content h2 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+  }
+
+  .featured-content p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .featured-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .featured-meta span {
+    color: #777;
+    font-size: 0.9rem;
+  }
+
+  .featured-meta i {
+    margin-right: 5px;
+    color: #8fc333;
+  }
+
+  .btn-featured {
+    background: linear-gradient(135deg, #8fc333, #00c6ff);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 25px;
+    border: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-featured:hover {
+    background: linear-gradient(135deg, #8fc333, #8fc333);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    color: #fff;
+  }
+
+  /* Newsletter Styles */
+  .newsletter-area {
+    background: linear-gradient(135deg, #8fc333, #00c6ff);
+    color: white;
+  }
+
+  .newsletter-content h2 {
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .newsletter-content p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+  }
+
+  .newsletter-form .input-group {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .newsletter-form .form-control {
+    border-radius: 25px 0 0 25px;
+    border: none;
+    padding: 12px 20px;
+    font-size: 1rem;
+  }
+
+  .newsletter-form .form-control:focus {
+    box-shadow: none;
+    border-color: #fff;
+  }
+
+  .btn-newsletter {
+    background: #333;
+    color: white;
+    border-radius: 0 25px 25px 0;
+    border: none;
+    padding: 12px 24px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .btn-newsletter:hover {
+    background: #222;
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .featured-img {
+      height: 200px;
+    }
+    
+    .featured-content {
+      padding: 1.5rem;
+    }
+    
+    .featured-content h2 {
+      font-size: 1.3rem;
+    }
+    
+    .featured-meta {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .stat-number {
+      font-size: 2rem;
+    }
+    
+    .category-card {
+      padding: 1.5rem;
+    }
+  }
+
+  /* Team Section Styles */
+  .team-left h3 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+  }
+
+  .team-left h3:first-child {
+    margin-top: 0;
+  }
+
+  .team-left p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .team-left ul {
+    color: #666;
+    line-height: 1.8;
+  }
+
+  .team-left ul li {
+    margin-bottom: 0.5rem;
+  }
+
+  .team-left strong {
+    color: #8fc333;
+  }
+
+  .single-team {
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(143, 195, 51, 0.45);
+    border: 3px solid #8fc333;
+    transition: all 0.4s ease;
+    margin: 0 10px;
+  }
+
+  .single-team:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(143, 195, 51, 0.6);
+  }
+
+  .single-team .thumb {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .single-team .thumb img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .single-team:hover .thumb img {
+    transform: scale(1.1);
+  }
+
+  .single-team .thumb .align-items-center {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(143, 195, 51, 0.8);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .single-team:hover .thumb .align-items-center {
+    opacity: 1;
+  }
+
+  .single-team .thumb a {
+    color: white;
+    font-size: 1.2rem;
+    margin: 0 10px;
+    transition: transform 0.3s ease;
+  }
+
+  .single-team .thumb a:hover {
+    transform: scale(1.2);
+  }
+
+  .single-team .meta-text {
+    padding: 1.5rem;
+  }
+
+  .single-team .meta-text h4 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .single-team .meta-text p {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0;
   }
 </style>
 

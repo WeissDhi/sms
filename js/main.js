@@ -1,4 +1,3 @@
-
 $(document).ready(function(){
 	"use strict";
 
@@ -66,6 +65,38 @@ $(document).ready(function(){
       itemsDesktopSmall : [768,2], 
       itemsTablet: [480,1], 
       itemsMobile : [320,1]
+  });
+
+  // Blog Carousel Configuration
+  $('.active-blog-carusel').owlCarousel({
+      items:3,
+      loop:true,
+      autoplay:true,
+      nav:true,
+      navText: ["<span class='lnr lnr-arrow-up'></span>","<span class='lnr lnr-arrow-down'></span>"],
+      items : 3, 
+      itemsDesktop : [992,3],
+      itemsDesktopSmall : [768,2], 
+      itemsTablet: [480,1], 
+      itemsMobile : [320,1],
+      autoplayTimeout: 5000,
+      autoplayHoverPause: true
+  });
+
+  // Trending Carousel Configuration
+  $('.active-trending-carusel').owlCarousel({
+      items:3,
+      loop:true,
+      autoplay:true,
+      nav:true,
+      navText: ["<span class='lnr lnr-arrow-up'></span>","<span class='lnr lnr-arrow-down'></span>"],
+      items : 3, 
+      itemsDesktop : [992,3],
+      itemsDesktopSmall : [768,2], 
+      itemsTablet: [480,1], 
+      itemsMobile : [320,1],
+      autoplayTimeout: 4000,
+      autoplayHoverPause: true
   });
 
 
