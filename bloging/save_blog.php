@@ -46,9 +46,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("ssssisss", $title, $content, $image, $document, $category_id, $author_id, $author_type, $status);
 
     if ($stmt->execute()) {
-        echo "Blog berhasil disimpan. <a href='../daftar-artikel.php'>Lihat Blog</a>";
+        echo "success";
     } else {
-        echo "Error: " . $stmt->error;
+        echo "error: " . $stmt->error;
     }
 
     $stmt->close();

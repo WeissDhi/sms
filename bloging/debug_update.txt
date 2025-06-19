@@ -1,0 +1,136 @@
+POST: Array
+(
+    [id] => 87
+    [old_image] => 1750353051_cropped_image.jpg
+    [title] => <p>TULISAN IBRA NI BOR</p>
+    [content] => <p>sdasdasd</p>
+    [category] => 11
+    [status] => published
+    [author_id] => 2
+    [author_type] => admin
+)
+FILES: Array
+(
+    [image] => Array
+        (
+            [name] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+    [document] => Array
+        (
+            [name] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+
+---
+POST: Array
+(
+    [id] => 87
+    [old_image] => 1750353051_cropped_image.jpg
+    [title] => <p>TULISAN IBRA NI BOR</p>
+    [content] => <p>sdasdasd</p>
+    [category] => 11
+    [status] => published
+    [author_id] => 2
+    [author_type] => admin
+)
+FILES: Array
+(
+    [image] => Array
+        (
+            [name] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+    [document] => Array
+        (
+            [name] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+
+---
+POST: Array
+(
+    [id] => 87
+    [old_image] => 1750353051_cropped_image.jpg
+    [title] => <p>TULISAN IBRA NI BOR gua edit</p>
+    [content] => <p>sdasdasd</p>
+    [category] => 11
+    [status] => published
+    [author_id] => 2
+    [author_type] => admin
+)
+FILES: Array
+(
+    [image] => Array
+        (
+            [name] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+    [document] => Array
+        (
+            [name] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+
+---
+POST: Array
+(
+    [id] => 87
+    [old_image] => 1750353051_cropped_image.jpg
+    [title] => <p>TULISAN IBRA NI BOR gua editn</p>
+    [content] => <p>sdasdasd</p>
+    [category] => 11
+    [status] => published
+    [author_id] => 2
+    [author_type] => admin
+)
+FILES: Array
+(
+    [image] => Array
+        (
+            [name] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+    [document] => Array
+        (
+            [name] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+
+---

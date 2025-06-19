@@ -671,6 +671,7 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
         }
     </style>
     <script>
+        window.authorType = "<?= $_SESSION['author_type'] ?>";
         // TinyMCE Title
         tinymce.init({
             selector: '#title',
@@ -894,72 +895,6 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
 
-        // Modify form submission to include document
-        document.getElementById('addBlogForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const croppedImage = document.getElementById('cropped_image');
-            if (!croppedImage || !croppedImage.value) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gambar Belum Di-crop',
-                    text: 'Silakan crop gambar terlebih dahulu sebelum menyimpan',
-                    confirmButtonColor: '#3498db'
-                });
-                return;
-            }
-
-            // Convert base64 to blob
-            fetch(croppedImage.value)
-                .then(res => res.blob())
-                .then(blob => {
-                    // Create new FormData
-                    const formData = new FormData(this);
-                    
-                    // Replace original image with cropped image
-                    formData.delete('image');
-                    formData.append('image', blob, 'cropped_image.jpg');
-
-                    // Add document if exists
-                    const documentInput = document.getElementById('document');
-                    if (documentInput.files.length > 0) {
-                        formData.append('document', documentInput.files[0]);
-                    }
-
-                    // Submit form
-                    fetch('save_blog.php', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.text())
-                    .then(result => {
-                        if (result.includes('berhasil')) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Berhasil!',
-                                text: 'Blog berhasil disimpan',
-                                confirmButtonColor: '#3498db'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    window.location.href = '<?= $_SESSION['author_type'] === 'admin' ? './dashboard/admin/blogs_management.php' : './dashboard/users/blog_management.php' ?>';
-                                }
-                            });
-                        } else {
-                            throw new Error('Gagal menyimpan blog');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal!',
-                            text: 'Terjadi kesalahan saat menyimpan blog',
-                            confirmButtonColor: '#3498db'
-                        });
-                    });
-                });
-        });
-
         // Form validation
         (function () {
             'use strict'
@@ -974,6 +909,77 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                 }, false)
             })
         })()
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('addBlogForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Validasi form
+                if (!this.checkValidity()) {
+                    this.classList.add('was-validated');
+                    return;
+                }
+                const croppedImage = document.getElementById('cropped_image');
+                if (!croppedImage || !croppedImage.value) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gambar Belum Di-crop',
+                        text: 'Silakan crop gambar terlebih dahulu sebelum menyimpan',
+                        confirmButtonColor: '#3498db'
+                    });
+                    return;
+                }
+                // Convert base64 to blob
+                fetch(croppedImage.value)
+                    .then(res => res.blob())
+                    .then(blob => {
+                        // Create new FormData
+                        const formData = new FormData(this);
+                        // Replace original image with cropped image
+                        formData.delete('image');
+                        formData.append('image', blob, 'cropped_image.jpg');
+                        // Add document if exists
+                        const documentInput = document.getElementById('document');
+                        if (documentInput.files.length > 0) {
+                            formData.append('document', documentInput.files[0]);
+                        }
+                        // Submit form
+                        fetch('save_blog.php', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.text())
+                        .then(result => {
+                            if (result.trim() === 'success') {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil!',
+                                    text: 'Blog berhasil disimpan',
+                                    confirmButtonColor: '#3498db'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        if (window.authorType === 'admin') {
+                                            window.location.href = './dashboard/admin/blogs_management.php';
+                                        } else {
+                                            window.location.href = './dashboard/users/blog_management.php';
+                                        }
+                                    }
+                                });
+                            } else {
+                                throw new Error('Gagal menyimpan blog');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: 'Terjadi kesalahan saat menyimpan blog',
+                                confirmButtonColor: '#3498db'
+                            });
+                        });
+                    });
+            });
+        });
     </script>
 </head>
 
@@ -1193,6 +1199,25 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
 
     <!-- Add SweetAlert2 for better alerts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // SweetAlert untuk notifikasi sukses setelah redirect
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('add') === 'success') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Blog berhasil disimpan',
+                    confirmButtonColor: '#3498db'
+                });
+                // Hapus parameter dari URL agar tidak muncul lagi saat reload
+                if (window.history.replaceState) {
+                    const url = window.location.origin + window.location.pathname;
+                    window.history.replaceState({}, document.title, url);
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>
