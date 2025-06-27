@@ -324,7 +324,7 @@ $recent_comments = $comments_stmt->get_result();
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
                                         <h5 class="mb-1">
-                                            <a href="../../view_detail.php?id=<?= $article['id'] ?>" class="text-decoration-none">
+                                            <a href="../../../view_detail.php?id=<?= $article['id'] ?>" class="text-decoration-none">
                                                 <?= strip_tags($article['title']) ?>
                                             </a>
                                         </h5>
@@ -360,7 +360,7 @@ $recent_comments = $comments_stmt->get_result();
                         <div class="text-center text-muted py-4">
                             <i class="bi bi-file-text" style="font-size: 3rem;"></i>
                             <p class="mt-3">Belum ada artikel yang ditulis</p>
-                            <a href="add_blog.php" class="btn btn-primary">
+                            <a href="../../add_blog.php" class="btn btn-primary">
                                 <i class="bi bi-plus-lg"></i> Tulis Artikel Pertama
                             </a>
                         </div>

@@ -30,6 +30,31 @@ $stmt = $conn->prepare("
 $stmt->bind_param("i", $categoryId);
 $stmt->execute();
 $result = $stmt->get_result();
+
+if (isset($_GET['category'])) {
+    $categorySlug = $_GET['category'];
+    // Ambil kategori dari database berdasarkan slugify(category)
+    $stmt = $conn->prepare("SELECT id, category FROM category");
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $categoryId = 0;
+    $categoryName = '';
+    while ($row = $result->fetch_assoc()) {
+        $slug = strtolower(trim(preg_replace('/[^a-z0-9]+/i', '-', $row['category'])));
+        if ($slug === $categorySlug) {
+            $categoryId = $row['id'];
+            $categoryName = $row['category'];
+            break;
+        }
+    }
+    if ($categoryId === 0) {
+        // Kategori tidak ditemukan
+        header('Location: index.php');
+        exit;
+    }
+} else {
+    // fallback
+}
 ?>
 
 <!DOCTYPE html>

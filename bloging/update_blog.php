@@ -47,33 +47,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Handle document upload
-    if (!empty($_FILES['document']['name'])) {
-        $targetDir = "uploads/documents/";
-        if (!is_dir($targetDir)) {
-            mkdir($targetDir, 0755, true);
+    if (!empty($_FILES['documents']['name'][0])) {
+        $target_dir = 'uploads/documents/';
+        if (!is_dir($target_dir)) {
+            mkdir($target_dir, 0755, true);
         }
-        
-        $fileName = time() . '_' . basename($_FILES["document"]["name"]);
-        $targetFilePath = $targetDir . $fileName;
-        move_uploaded_file($_FILES["document"]["tmp_name"], $targetFilePath);
-        $document = $fileName;
-
-        // Delete old document if exists
-        if ($blog['document'] && file_exists("uploads/documents/" . $blog['document'])) {
-            unlink("uploads/documents/" . $blog['document']);
+        foreach ($_FILES['documents']['name'] as $i => $name) {
+            if ($_FILES['documents']['error'][$i] === 0) {
+                $originalName = $_FILES['documents']['name'][$i];
+                $fileType = $_FILES['documents']['type'][$i];
+                $fileTmp = $_FILES['documents']['tmp_name'][$i];
+                $safeName = time() . '_' . preg_replace('/[^A-Za-z0-9.\-_]/', '_', $originalName);
+                move_uploaded_file($fileTmp, $target_dir . $safeName);
+                // Insert ke tabel documents
+                $stmtDoc = $conn->prepare("INSERT INTO documents (blog_id, file_name, file_type) VALUES (?, ?, ?)");
+                $stmtDoc->bind_param("iss", $id, $safeName, $fileType);
+                $stmtDoc->execute();
+                $stmtDoc->close();
+            }
+        }
+    }
+    // Hapus dokumen yang dihapus user
+    if (!empty($_POST['delete_documents'])) {
+        foreach ($_POST['delete_documents'] as $docId) {
+            // Ambil nama file
+            $q = $conn->prepare("SELECT file_name FROM documents WHERE id = ? AND blog_id = ?");
+            $q->bind_param("ii", $docId, $id);
+            $q->execute();
+            $q->bind_result($fileName);
+            if ($q->fetch() && $fileName && file_exists("uploads/documents/" . $fileName)) {
+                unlink("uploads/documents/" . $fileName);
+            }
+            $q->close();
+            // Hapus dari tabel
+            $del = $conn->prepare("DELETE FROM documents WHERE id = ? AND blog_id = ?");
+            $del->bind_param("ii", $docId, $id);
+            $del->execute();
+            $del->close();
         }
     }
 
-    // Handle document removal
-    if (isset($_POST['remove_document']) && $_POST['remove_document'] == '1') {
-        if ($blog['document'] && file_exists("uploads/documents/" . $blog['document'])) {
-            unlink("uploads/documents/" . $blog['document']);
-        }
-        $document = null;
-    }
-
-    $stmt = $conn->prepare("UPDATE blogs SET title = ?, slug = ?, content = ?, image = ?, document = ?, category_id = ?, author_id = ?, author_type = ?, status = ? WHERE id = ?");
-    $stmt->bind_param("ssssissssi", $title, $slug, $content, $image, $document, $category_id, $author_id, $author_type, $status, $id);
+    $stmt = $conn->prepare("UPDATE blogs SET title = ?, slug = ?, content = ?, image = ?, category_id = ?, author_id = ?, author_type = ?, status = ? WHERE id = ?");
+    $stmt->bind_param("ssssisssi", $title, $slug, $content, $image, $category_id, $author_id, $author_type, $status, $id);
 
     if ($stmt->execute()) {
         // Redirect based on author type

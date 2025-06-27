@@ -81,6 +81,17 @@ $resCat = $conn->query("SELECT id, category, parent_id FROM category");
 while ($cat = $resCat->fetch_assoc()) {
     $allCategories[$cat['id']] = $cat;
 }
+
+// Setelah $blog sudah didapatkan, ambil dokumen terkait
+$documents = [];
+$doc_stmt = $conn->prepare("SELECT * FROM documents WHERE blog_id = ?");
+$doc_stmt->bind_param("i", $id);
+$doc_stmt->execute();
+$doc_result = $doc_stmt->get_result();
+while ($doc = $doc_result->fetch_assoc()) {
+    $documents[] = $doc;
+}
+$doc_stmt->close();
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -92,6 +103,7 @@ while ($cat = $resCat->fetch_assoc()) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         // Additional client-side view tracking for analytics (optional)
         window.addEventListener('load', function() {
@@ -291,17 +303,21 @@ while ($cat = $resCat->fetch_assoc()) {
                     echo $content;
                     ?>
                 </div>
-                <?php if (!empty($blog['document'])): ?>
+                <?php if (count($documents) > 0): ?>
                     <div class="attachment-section mb-4">
                         <div class="alert alert-info d-flex align-items-center">
                             <i class="fas fa-file-alt me-2"></i>
                             <div>
                                 <strong>Lampiran:</strong>
-                                <div class="mt-1">
-                                    <a href="uploads/documents/<?= htmlspecialchars($blog['document']) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-download"></i> Unduh <?= htmlspecialchars($blog['document']) ?>
-                                    </a>
-                                </div>
+                                <ul class="mb-0 mt-1">
+                                    <?php foreach ($documents as $doc): ?>
+                                        <li>
+                                            <a href="bloging/uploads/documents/<?= htmlspecialchars($doc['file_name']) ?>" target="_blank" class="btn btn-sm btn-outline-primary mb-1">
+                                                <i class="fas fa-download"></i> Unduh <?= htmlspecialchars($doc['file_name']) ?>
+                                            </a>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -442,10 +458,21 @@ while ($cat = $resCat->fetch_assoc()) {
             // Handle delete comment buttons
             document.querySelectorAll('.delete-comment-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    if (confirm('Apakah Anda yakin ingin menghapus komentar ini?')) {
-                        const commentId = this.closest('.comment').dataset.commentId;
-                        deleteComment(commentId);
-                    }
+                    const commentId = this.closest('.comment').dataset.commentId;
+                    Swal.fire({
+                        title: 'Hapus Komentar?',
+                        text: 'Komentar yang dihapus tidak dapat dikembalikan. Lanjutkan?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Ya, hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            deleteComment(commentId);
+                        }
+                    });
                 });
             });
 
@@ -477,15 +504,29 @@ while ($cat = $resCat->fetch_assoc()) {
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        alert('Komentar berhasil ditambahkan');
-                        location.reload();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: 'Komentar berhasil ditambahkan',
+                            confirmButtonColor: '#3498db'
+                        }).then(() => location.reload());
                     } else {
-                        alert(data.message || 'Gagal menambahkan komentar');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: data.message || 'Gagal menambahkan komentar',
+                            confirmButtonColor: '#d33'
+                        });
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Terjadi kesalahan saat mengirim komentar');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: 'Terjadi kesalahan saat mengirim komentar',
+                        confirmButtonColor: '#d33'
+                    });
                 });
         }
 
@@ -501,15 +542,29 @@ while ($cat = $resCat->fetch_assoc()) {
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        alert('Komentar berhasil dihapus');
-                        location.reload();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: 'Komentar berhasil dihapus',
+                            confirmButtonColor: '#3498db'
+                        }).then(() => location.reload());
                     } else {
-                        alert(data.message || 'Gagal menghapus komentar');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: data.message || 'Gagal menghapus komentar',
+                            confirmButtonColor: '#d33'
+                        });
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Terjadi kesalahan saat menghapus komentar');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: 'Terjadi kesalahan saat menghapus komentar',
+                        confirmButtonColor: '#d33'
+                    });
                 });
         }
 
@@ -544,20 +599,41 @@ while ($cat = $resCat->fetch_assoc()) {
                         // Add event listeners to delete buttons
                         container.querySelectorAll('.delete-reply-btn').forEach(btn => {
                             btn.addEventListener('click', function() {
-                                if (confirm('Apakah Anda yakin ingin menghapus balasan ini?')) {
-                                    deleteComment(this.dataset.replyId);
-                                }
+                                Swal.fire({
+                                    title: 'Hapus Balasan?',
+                                    text: 'Balasan yang dihapus tidak dapat dikembalikan. Lanjutkan?',
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonColor: '#d33',
+                                    cancelButtonColor: '#3085d6',
+                                    confirmButtonText: 'Ya, hapus!',
+                                    cancelButtonText: 'Batal'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        deleteComment(this.dataset.replyId);
+                                    }
+                                });
                             });
                         });
 
                         container.style.display = 'block';
                     } else {
-                        alert(data.message || 'Gagal memuat balasan');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: data.message || 'Gagal memuat balasan',
+                            confirmButtonColor: '#d33'
+                        });
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Terjadi kesalahan saat memuat balasan');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: 'Terjadi kesalahan saat memuat balasan',
+                        confirmButtonColor: '#d33'
+                    });
                 });
         }
     </script>

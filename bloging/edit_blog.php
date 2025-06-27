@@ -23,6 +23,17 @@ if (!$blog) {
     echo "Blog tidak ditemukan.";
     exit;
 }
+
+// Ambil dokumen terkait blog
+$documents = [];
+$doc_stmt = $conn->prepare("SELECT * FROM documents WHERE blog_id = ?");
+$doc_stmt->bind_param("i", $blog['id']);
+$doc_stmt->execute();
+$doc_result = $doc_stmt->get_result();
+while ($doc = $doc_result->fetch_assoc()) {
+    $documents[] = $doc;
+}
+$doc_stmt->close();
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -972,6 +983,37 @@ if (!$blog) {
             const i = Math.floor(Math.log(bytes) / Math.log(k));
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
+
+        document.getElementById('documents').addEventListener('change', function(event) {
+            const files = event.target.files;
+            const preview = document.getElementById('documentsPreview');
+            preview.innerHTML = '';
+            if (files.length > 0) {
+                preview.style.display = 'block';
+                for (let i = 0; i < files.length; i++) {
+                    const li = document.createElement('li');
+                    li.textContent = files[i].name + ' (' + (files[i].size/1024/1024).toFixed(2) + ' MB)';
+                    preview.appendChild(li);
+                }
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+
+        function removeDocument(docId, btn) {
+            // Remove from UI
+            const li = btn.closest('li');
+            li.parentNode.removeChild(li);
+            // Remove hidden input so it won't be kept
+            const input = li.querySelector('input[name="keep_documents[]"]');
+            if (input) input.remove();
+            // Add hidden input to mark for deletion
+            const delInput = document.createElement('input');
+            delInput.type = 'hidden';
+            delInput.name = 'delete_documents[]';
+            delInput.value = docId;
+            document.getElementById('editBlogForm').appendChild(delInput);
+        }
     </script>
     
     <?php if(isset($_SESSION['success'])): ?>
@@ -1076,45 +1118,40 @@ if (!$blog) {
                             Lampiran
                         </div>
                         <div class="document-section">
-                            <?php if ($blog['document']): ?>
-                            <div class="mb-4">
-                                <label class="form-label">Lampiran Saat Ini:</label>
-                                <div class="alert alert-info d-flex align-items-center">
-                                    <i class="fas fa-file-alt me-2"></i>
-                                    <div>
-                                        <strong><?= htmlspecialchars($blog['document']) ?></strong>
-                                        <div class="small text-muted">
-                                            <a href="uploads/documents/<?= htmlspecialchars($blog['document']) ?>" target="_blank" class="text-decoration-none">
-                                                <i class="fas fa-download"></i> Unduh Lampiran
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <button type="button" class="btn-close ms-auto" onclick="removeCurrentDocument()"></button>
+                            <?php if (count($documents) > 0): ?>
+                                <div class="mb-4">
+                                    <label class="form-label">Lampiran Saat Ini:</label>
+                                    <ul class="list-group mb-2">
+                                        <?php foreach ($documents as $doc): ?>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <span>
+                                                    <i class="fas fa-file-alt me-2"></i>
+                                                    <?= htmlspecialchars($doc['file_name']) ?>
+                                                </span>
+                                                <span>
+                                                    <a href="uploads/documents/<?= htmlspecialchars($doc['file_name']) ?>" target="_blank" class="btn btn-sm btn-outline-primary me-2">
+                                                        <i class="fas fa-download"></i> Unduh
+                                                    </a>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeDocument(<?= $doc['id'] ?>, this)"><i class="fas fa-trash"></i> Hapus</button>
+                                                    <input type="hidden" name="keep_documents[]" value="<?= $doc['id'] ?>">
+                                                </span>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
                                 </div>
-                            </div>
                             <?php endif; ?>
-
                             <div class="custom-file-upload">
                                 <label class="file-upload-label">
                                     <i class="fas fa-file-upload"></i>
                                     <span>Upload File Lampiran (PDF, DOC, DOCX, TXT, PPT, PPTX)</span>
                                 </label>
-                                <input type="file" id="document" name="document" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx" onchange="validateDocument(event)">
+                                <input type="file" id="documents" name="documents[]" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx" multiple>
                             </div>
                             <div class="preview-label">
                                 <i class="fas fa-info-circle"></i>
-                                Format: PDF, DOC, DOCX, TXT, PPT, PPTX (Max. 10MB)
+                                Format: PDF, DOC, DOCX, TXT, PPT, PPTX (Max. 10MB per file)
                             </div>
-                            <div id="documentPreview" class="mt-3" style="display: none;">
-                                <div class="alert alert-info d-flex align-items-center">
-                                    <i class="fas fa-file-alt me-2"></i>
-                                    <div>
-                                        <strong id="documentName"></strong>
-                                        <div class="small text-muted" id="documentSize"></div>
-                                    </div>
-                                    <button type="button" class="btn-close ms-auto" onclick="removeDocument()"></button>
-                                </div>
-                            </div>
+                            <ul id="documentsPreview" class="mt-3" style="display: none;"></ul>
                         </div>
                     </div>
 
@@ -1152,7 +1189,7 @@ if (!$blog) {
                         <input type="hidden" name="author_id" value="<?= $_SESSION['author_id'] ?>">
                         <input type="hidden" name="author_type" value="<?= $_SESSION['author_type'] ?>">
 
-                        <button type="submit" class="btn btn-green">
+                        <button type="submit" class="btn btn-green" id="updateBlogBtn">
                             <i class="fas fa-save"></i>Update Blog
                         </button>
                     </div>
@@ -1163,5 +1200,29 @@ if (!$blog) {
 
     <!-- Add SweetAlert2 for better alerts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    document.getElementById('editBlogForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const form = this;
+        if (!form.checkValidity()) {
+            form.classList.add('was-validated');
+            return;
+        }
+        Swal.fire({
+            title: 'Update Blog?',
+            text: 'Apakah Anda yakin ingin menyimpan perubahan blog ini?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, simpan!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+    </script>
 </body>
 </html>

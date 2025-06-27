@@ -1,0 +1,19 @@
+digraph {
+	rankdir=TB size=10
+	A [label=Mulai shape=oval]
+	B [label="Input array t, theta" shape=parallelogram]
+	C [label="peaks, _ = find_peaks(theta)" shape=box]
+	D [label="Apakah len(peaks) >= 2?" shape=diamond]
+	E [label="periode = t[peaks[1]] - t[peaks[0]]" shape=box]
+	F [label="Return periode" shape=parallelogram]
+	G [label="Return np.nan" shape=parallelogram]
+	H [label=Selesai shape=oval]
+	A -> B
+	B -> C
+	C -> D
+	D -> E [label=Ya]
+	E -> F
+	D -> G [label=Tidak]
+	F -> H
+	G -> H
+}

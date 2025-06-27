@@ -49,7 +49,7 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
             left: 0;
             width: 100%;
             height: 100%;
-            background: 
+            background:
                 radial-gradient(circle at 0% 0%, rgba(52, 152, 219, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 100% 100%, rgba(46, 204, 113, 0.1) 0%, transparent 50%);
             z-index: -1;
@@ -118,7 +118,8 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
             font-size: 1.1rem;
         }
 
-        .form-control, .form-select {
+        .form-control,
+        .form-select {
             border: 2px solid #e9ecef;
             border-radius: 12px;
             padding: 0.875rem;
@@ -126,7 +127,8 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
             font-size: 1rem;
         }
 
-        .form-control:focus, .form-select:focus {
+        .form-control:focus,
+        .form-select:focus {
             border-color: var(--secondary-color);
             box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.15);
         }
@@ -153,12 +155,10 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(
-                120deg,
-                transparent,
-                rgba(255, 255, 255, 0.2),
-                transparent
-            );
+            background: linear-gradient(120deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.2),
+                    transparent);
             transition: 0.5s;
         }
 
@@ -263,7 +263,7 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
             .container {
                 padding: 1rem;
             }
-            
+
             .card {
                 padding: 1.5rem;
             }
@@ -320,8 +320,8 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
             background: white;
             border-radius: 20px;
             padding: 2rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .editor-sidebar {
@@ -334,7 +334,7 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
             .blog-editor {
                 grid-template-columns: 1fr;
             }
-            
+
             .editor-sidebar {
                 position: static;
             }
@@ -346,14 +346,14 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
             border-radius: 20px;
             padding: 2rem;
             margin-bottom: 2rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
         }
 
         .form-section:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
         }
 
         /* Section Titles */
@@ -393,7 +393,8 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
         }
 
         /* Form Controls */
-        .form-control, .form-select {
+        .form-control,
+        .form-select {
             border: 2px solid #e9ecef;
             border-radius: 15px;
             padding: 1.25rem;
@@ -402,7 +403,8 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
             background: #f8f9fa;
         }
 
-        .form-control:focus, .form-select:focus {
+        .form-control:focus,
+        .form-select:focus {
             border-color: var(--secondary-color);
             background: white;
             box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.15);
@@ -496,7 +498,7 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
         #thumbnailPreview {
             max-width: 100%;
             border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             margin-top: 1.5rem;
             transition: transform 0.3s ease;
         }
@@ -530,12 +532,10 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(
-                120deg,
-                transparent,
-                rgba(255, 255, 255, 0.3),
-                transparent
-            );
+            background: linear-gradient(120deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.3),
+                    transparent);
             transition: 0.5s;
         }
 
@@ -698,7 +698,7 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
             file_picker_types: 'image media',
             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
             images_reuse_filename: true,
-            images_upload_handler: function (blobInfo, progress) {
+            images_upload_handler: function(blobInfo, progress) {
                 return new Promise((resolve, reject) => {
                     const xhr = new XMLHttpRequest();
                     xhr.withCredentials = false;
@@ -710,7 +710,10 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
 
                     xhr.onload = function() {
                         if (xhr.status === 403) {
-                            reject({ message: 'HTTP Error: ' + xhr.status, remove: true });
+                            reject({
+                                message: 'HTTP Error: ' + xhr.status,
+                                remove: true
+                            });
                             return;
                         }
 
@@ -731,7 +734,7 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                         resolve('uploads/' + filename);
                     };
 
-                    xhr.onerror = function () {
+                    xhr.onerror = function() {
                         reject('Image upload failed due to a XHR Transport error');
                     };
 
@@ -792,7 +795,7 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                     }
 
                     cropper = new Cropper(image, {
-                        aspectRatio: 16/9,
+                        aspectRatio: 16 / 9,
                         viewMode: 1,
                         ready: function() {
                             // Set initial crop data
@@ -817,7 +820,7 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                     imageSmoothingEnabled: true,
                     imageSmoothingQuality: 'high'
                 });
-                
+
                 if (canvas) {
                     // Create a hidden input if it doesn't exist
                     let hiddenInput = document.getElementById('cropped_image');
@@ -833,74 +836,12 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
             }
         }
 
-        // Document handling
-        function validateDocument(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const validTypes = [
-                'application/pdf',
-                'application/msword',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'text/plain',
-                'application/vnd.ms-powerpoint',
-                'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-            ];
-            const maxSize = 10 * 1024 * 1024; // 10MB
-
-            if (!validTypes.includes(file.type)) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Format File Tidak Valid',
-                    text: 'Gunakan format PDF, DOC, DOCX, TXT, PPT, atau PPTX.',
-                    confirmButtonColor: '#3498db'
-                });
-                event.target.value = '';
-                return;
-            }
-
-            if (file.size > maxSize) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Ukuran File Terlalu Besar',
-                    text: 'Maksimal ukuran file adalah 10MB.',
-                    confirmButtonColor: '#3498db'
-                });
-                event.target.value = '';
-                return;
-            }
-
-            // Show document preview
-            const preview = document.getElementById('documentPreview');
-            const nameElement = document.getElementById('documentName');
-            const sizeElement = document.getElementById('documentSize');
-
-            nameElement.textContent = file.name;
-            sizeElement.textContent = formatFileSize(file.size);
-            preview.style.display = 'block';
-        }
-
-        function removeDocument() {
-            const input = document.getElementById('document');
-            const preview = document.getElementById('documentPreview');
-            input.value = '';
-            preview.style.display = 'none';
-        }
-
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
         // Form validation
-        (function () {
+        (function() {
             'use strict'
             var forms = document.querySelectorAll('.needs-validation')
-            Array.prototype.slice.call(forms).forEach(function (form) {
-                form.addEventListener('submit', function (event) {
+            Array.prototype.slice.call(forms).forEach(function(form) {
+                form.addEventListener('submit', function(event) {
                     if (!form.checkValidity()) {
                         event.preventDefault()
                         event.stopPropagation()
@@ -937,46 +878,41 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                         // Replace original image with cropped image
                         formData.delete('image');
                         formData.append('image', blob, 'cropped_image.jpg');
-                        // Add document if exists
-                        const documentInput = document.getElementById('document');
-                        if (documentInput.files.length > 0) {
-                            formData.append('document', documentInput.files[0]);
-                        }
                         // Submit form
                         fetch('save_blog.php', {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then(response => response.text())
-                        .then(result => {
-                            if (result.trim() === 'success') {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Berhasil!',
-                                    text: 'Blog berhasil disimpan',
-                                    confirmButtonColor: '#3498db'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        if (window.authorType === 'admin') {
-                                            window.location.href = './dashboard/admin/blogs_management.php';
-                                        } else {
-                                            window.location.href = './dashboard/users/blog_management.php';
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then(response => response.text())
+                            .then(result => {
+                                if (result.trim() === 'success') {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Berhasil!',
+                                        text: 'Blog berhasil disimpan',
+                                        confirmButtonColor: '#3498db'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            if (window.authorType === 'admin') {
+                                                window.location.href = './dashboard/admin/blogs_management.php';
+                                            } else {
+                                                window.location.href = './dashboard/users/blog_management.php';
+                                            }
                                         }
-                                    }
+                                    });
+                                } else {
+                                    throw new Error('Gagal menyimpan blog');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Gagal!',
+                                    text: 'Terjadi kesalahan saat menyimpan blog',
+                                    confirmButtonColor: '#3498db'
                                 });
-                            } else {
-                                throw new Error('Gagal menyimpan blog');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Gagal!',
-                                text: 'Terjadi kesalahan saat menyimpan blog',
-                                confirmButtonColor: '#3498db'
                             });
-                        });
                     });
             });
         });
@@ -993,19 +929,21 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
             </a>
         </div>
 
-        <?php if(isset($_SESSION['success'])): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i><?php echo $_SESSION['success']; ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        <?php unset($_SESSION['success']); endif; ?>
+        <?php if (isset($_SESSION['success'])): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i><?php echo $_SESSION['success']; ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php unset($_SESSION['success']);
+        endif; ?>
 
-        <?php if(isset($_SESSION['error'])): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i><?php echo $_SESSION['error']; ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        <?php unset($_SESSION['error']); endif; ?>
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i><?php echo $_SESSION['error']; ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php unset($_SESSION['error']);
+        endif; ?>
 
         <form action="save_blog.php" method="POST" enctype="multipart/form-data" id="addBlogForm" class="needs-validation" novalidate>
             <div class="blog-editor">
@@ -1056,7 +994,6 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                             <img id="thumbnailPreview" src="#" alt="Preview Thumbnail" style="display: none;">
                         </div>
                     </div>
-
                     <div class="form-section">
                         <div class="section-title">
                             <i class="fas fa-file-alt"></i>
@@ -1068,25 +1005,15 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                                     <i class="fas fa-file-upload"></i>
                                     <span>Upload File Materi (PDF, DOC, DOCX, TXT, PPT, PPTX)</span>
                                 </label>
-                                <input type="file" id="document" name="document" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx" onchange="validateDocument(event)">
+                                <input type="file" id="documents" name="documents[]" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx" multiple>
                             </div>
                             <div class="preview-label">
                                 <i class="fas fa-info-circle"></i>
-                                Format: PDF, DOC, DOCX, TXT, PPT, PPTX (Max. 10MB)
+                                Format: PDF, DOC, DOCX, TXT, PPT, PPTX (Max. 10MB per file)
                             </div>
-                            <div id="documentPreview" class="mt-3" style="display: none;">
-                                <div class="alert alert-info d-flex align-items-center">
-                                    <i class="fas fa-file-alt me-2"></i>
-                                    <div>
-                                        <strong id="documentName"></strong>
-                                        <div class="small text-muted" id="documentSize"></div>
-                                    </div>
-                                    <button type="button" class="btn-close ms-auto" onclick="removeDocument()"></button>
-                                </div>
-                            </div>
+                            <ul id="documentsPreview" class="mt-3" style="display: none;"></ul>
                         </div>
                     </div>
-
                     <div class="form-section">
                         <div class="section-title">
                             <i class="fas fa-tags"></i>
@@ -1102,7 +1029,9 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                                 $categories[] = $row;
                             }
                             // Pisahkan parent dan child
-                            $parentCategories = array_filter($categories, function($cat) { return $cat['parent_id'] === null; });
+                            $parentCategories = array_filter($categories, function ($cat) {
+                                return $cat['parent_id'] === null;
+                            });
                             $categoriesByParent = [];
                             foreach ($categories as $cat) {
                                 $categoriesByParent[$cat['parent_id']][] = $cat;
@@ -1192,6 +1121,8 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                             <i class="fas fa-save"></i>Simpan Blog
                         </button>
                     </div>
+
+
                 </div>
             </div>
         </form>
@@ -1215,6 +1146,24 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                     const url = window.location.origin + window.location.pathname;
                     window.history.replaceState({}, document.title, url);
                 }
+            }
+        });
+    </script>
+
+    <script>
+        document.getElementById('documents').addEventListener('change', function(event) {
+            const files = event.target.files;
+            const preview = document.getElementById('documentsPreview');
+            preview.innerHTML = '';
+            if (files.length > 0) {
+                preview.style.display = 'block';
+                for (let i = 0; i < files.length; i++) {
+                    const li = document.createElement('li');
+                    li.textContent = files[i].name + ' (' + (files[i].size / 1024 / 1024).toFixed(2) + ' MB)';
+                    preview.appendChild(li);
+                }
+            } else {
+                preview.style.display = 'none';
             }
         });
     </script>

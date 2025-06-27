@@ -367,7 +367,7 @@ $result = $stmt->get_result();
                             <?php while ($row = $result->fetch_assoc()): ?>
                                 <tr>
                                     <td>
-                                        <a href="../../<?= htmlspecialchars($row['slug']) ?>" class="blog-title text-decoration-none">
+                                        <a href="../../../<?= htmlspecialchars($row['slug']) ?>" class="blog-title text-decoration-none">
                                             <?= strip_tags($row['title']) ?>
                                         </a>
                                     </td>
@@ -401,7 +401,7 @@ $result = $stmt->get_result();
                                             <a href="../../edit_blog.php?id=<?= $row['id'] ?>" class="btn btn-warning btn-action" title="Edit">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
-                                            <a href="../../<?= htmlspecialchars($row['slug']) ?>" class="btn btn-info btn-action" title="Lihat">
+                                            <a href="../../../<?= htmlspecialchars($row['slug']) ?>" class="btn btn-info btn-action" title="Lihat">
                                                 <i class="bi bi-eye"></i>
                                             </a>
                                             <a href="../../delete_blog.php?id=<?= $row['id'] ?>" class="btn btn-danger btn-sm delete-blog" data-id="<?php echo $row['id']; ?>" data-title="<?php echo htmlspecialchars($row['title']); ?>" title="Hapus">

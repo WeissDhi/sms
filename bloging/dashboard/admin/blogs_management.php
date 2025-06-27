@@ -386,7 +386,7 @@ $stats = $stats_result->fetch_assoc();
                                         <a href="../../edit_blog.php?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm" title="Edit">
                                             <i class="bi bi-pencil"></i>
                                         </a>
-                                        <a href="../../delete_blog.php?id=<?= $row['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')" title="Hapus">
+                                        <a href="../../delete_blog.php?id=<?= $row['id'] ?>" class="btn btn-danger btn-sm delete-blog-btn" data-id="<?= $row['id'] ?>" title="Hapus">
                                             <i class="bi bi-trash"></i>
                                         </a>
                                         <a href="../../../<?= htmlspecialchars($row['slug']) ?>" class="btn btn-info btn-sm" title="Lihat">
@@ -401,6 +401,29 @@ $stats = $stats_result->fetch_assoc();
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    document.querySelectorAll('.delete-blog-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const url = this.getAttribute('href');
+            Swal.fire({
+                title: 'Hapus Blog?',
+                text: 'Blog yang dihapus tidak dapat dikembalikan. Lanjutkan?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
+        });
+    });
+    </script>
 </body>
 
 </html>
