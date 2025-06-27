@@ -669,6 +669,19 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
         #documentSize {
             font-size: 0.875rem;
         }
+
+        #cropper-container {
+            max-width: 100%;
+            max-height: 1500px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        #cropper-image {
+            max-width: 100%;
+            max-height: 1500px;
+            display: block;
+            margin: 0 auto;
+        }
     </style>
     <script>
         window.authorType = "<?= $_SESSION['author_type'] ?>";
@@ -985,13 +998,18 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                                     <i class="fas fa-cloud-upload-alt"></i>
                                     <span>Pilih atau seret gambar ke sini</span>
                                 </label>
-                                <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/gif,image/webp" onchange="previewThumbnail(event)" required>
+                                <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
                             </div>
+                            <div class="mb-3">
+                                <div id="cropper-container" style="display: none;">
+                                    <img id="cropper-image" src="" alt="Preview">
+                                </div>
+                            </div>
+                            <input type="hidden" name="cropped_image" id="cropped_image">
                             <div class="preview-label">
                                 <i class="fas fa-info-circle"></i>
                                 Format: JPG, PNG, GIF, WEBP (Max. 5MB)
                             </div>
-                            <img id="thumbnailPreview" src="#" alt="Preview Thumbnail" style="display: none;">
                         </div>
                     </div>
                     <div class="form-section">
@@ -1166,6 +1184,49 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                 preview.style.display = 'none';
             }
         });
+    </script>
+
+    <script>
+        document.getElementById('image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const image = document.getElementById('cropper-image');
+                    image.src = e.target.result;
+                    document.getElementById('cropper-container').style.display = 'block';
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+                    cropper = new Cropper(image, {
+                        aspectRatio: 16 / 9,
+                        viewMode: 1,
+                        ready: function() {
+                            updateCropData();
+                        },
+                        crop: function() {
+                            updateCropData();
+                        }
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function updateCropData() {
+            if (cropper) {
+                const canvas = cropper.getCroppedCanvas({
+                    maxWidth: 800,
+                    maxHeight: 800,
+                    fillColor: '#fff',
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high'
+                });
+                if (canvas) {
+                    document.getElementById('cropped_image').value = canvas.toDataURL('image/png');
+                }
+            }
+        }
     </script>
 </body>
 

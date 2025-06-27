@@ -249,12 +249,17 @@ $doc_stmt->close();
             transform: scale(1.05);
         }
 
-        #thumbnailPreview {
+        #cropper-container {
             max-width: 100%;
-            height: auto;
-            display: none;
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
+            max-height: 1500px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        #cropper-image {
+            max-width: 100%;
+            max-height: 1500px;
+            display: block;
+            margin: 0 auto;
         }
 
         .form-section {
@@ -866,7 +871,7 @@ $doc_stmt->close();
 
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const image = document.getElementById('thumbnailPreview');
+                    const image = document.getElementById('cropper-image');
                     image.src = e.target.result;
                     image.style.display = "block";
 
@@ -1014,6 +1019,47 @@ $doc_stmt->close();
             delInput.value = docId;
             document.getElementById('editBlogForm').appendChild(delInput);
         }
+
+        document.getElementById('image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const image = document.getElementById('cropper-image');
+                    image.src = e.target.result;
+                    document.getElementById('cropper-container').style.display = 'block';
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+                    cropper = new Cropper(image, {
+                        aspectRatio: 16 / 9,
+                        viewMode: 1,
+                        ready: function() {
+                            updateCropData();
+                        },
+                        crop: function() {
+                            updateCropData();
+                        }
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function updateCropData() {
+            if (cropper) {
+                const canvas = cropper.getCroppedCanvas({
+                    maxWidth: 800,
+                    maxHeight: 800,
+                    fillColor: '#fff',
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high'
+                });
+                if (canvas) {
+                    document.getElementById('cropped_image').value = canvas.toDataURL('image/png');
+                }
+            }
+        }
     </script>
     
     <?php if(isset($_SESSION['success'])): ?>
@@ -1108,7 +1154,7 @@ $doc_stmt->close();
                                 <i class="fas fa-info-circle"></i>
                                 Format: JPG, PNG, GIF, WEBP (Max. 5MB)
                             </div>
-                            <img id="thumbnailPreview" src="#" alt="Preview Thumbnail" style="display: none;">
+                            <img id="cropper-image" src="#" alt="Preview Thumbnail" style="display: none;">
                         </div>
                     </div>
 
