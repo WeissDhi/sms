@@ -53,11 +53,11 @@ $most_viewed_article = mysqli_fetch_assoc($result_most_viewed);
 $allCategories = [];
 $resCat = $conn->query("SELECT id, category, parent_id FROM category");
 while ($cat = $resCat->fetch_assoc()) {
-    $allCategories[$cat['id']] = $cat;
+  $allCategories[$cat['id']] = $cat;
 }
 
 if (!$result_trending) {
-    echo "Trending Query Error: " . mysqli_error($conn);
+  echo "Trending Query Error: " . mysqli_error($conn);
 }
 ?>
 
@@ -103,12 +103,15 @@ if (!$result_trending) {
 
   <style>
     body {
-      background: #FAFAF0; /* Ivory */
+      background: #FAFAF0;
+      /* Ivory */
       font-family: 'Poppins', Arial, sans-serif;
-      color: #2C2C2C; /* Charcoal */
+      color: #2C2C2C;
+      /* Charcoal */
       max-width: 100vw;
       overflow-x: hidden;
     }
+
     /* Container Section Card */
     .category-area,
     .fashion-area,
@@ -116,14 +119,18 @@ if (!$result_trending) {
     .categories-area,
     .featured-article-area,
     .team-area {
-      background: #EEEEEE; /* Soft gray */
+      background: #EEEEEE;
+      /* Soft gray */
       border-radius: 24px;
-      box-shadow: 0 4px 16px rgba(46, 125, 50, 0.08); /* Forest green shadow */
+      box-shadow: 0 4px 16px rgba(46, 125, 50, 0.08);
+      /* Forest green shadow */
       padding: 36px 24px 32px 24px;
       margin-bottom: 48px;
       position: relative;
     }
+
     @media (max-width: 768px) {
+
       .category-area,
       .fashion-area,
       .statistics-area,
@@ -134,20 +141,25 @@ if (!$result_trending) {
         margin-bottom: 24px;
       }
     }
+
     .banner-area .banner-content h1 {
-  font-size: 32px; 
-  line-height: 1.5;
-  font-weight: 600;
-  color: #2C2C2C; /* Charcoal */
-}
+      font-size: 32px;
+      line-height: 1.5;
+      font-weight: 600;
+      color: #2C2C2C;
+      /* Charcoal */
+    }
+
     /* Section Divider */
     .section-divider {
       width: 80px;
       height: 4px;
-      background: linear-gradient(90deg, #2E7D32 60%, #C5E1A5 100%); /* Forest green to lime */
+      background: linear-gradient(90deg, #2E7D32 60%, #C5E1A5 100%);
+      /* Forest green to lime */
       border-radius: 2px;
       margin: 24px auto 0 auto;
     }
+
     .row {
       margin-left: 0 !important;
       margin-right: 0 !important;
@@ -158,7 +170,9 @@ if (!$result_trending) {
       padding-right: 8px !important;
     }
 
-    img, .card, .featured-img {
+    img,
+    .card,
+    .featured-img {
       max-width: 100%;
       height: auto;
       box-sizing: border-box;
@@ -205,24 +219,24 @@ if (!$result_trending) {
                 <div class="mb-2">
                   <?php
                   if (!empty($row['category_id']) && isset($allCategories[$row['category_id']])) {
-                      $cat = $allCategories[$row['category_id']];
-                      if ($cat['parent_id'] && isset($allCategories[$cat['parent_id']])) {
-                          $parent = $allCategories[$cat['parent_id']];
-                          ?>
-                          <a href="category.php?id=<?= $parent['id'] ?>" class="badge bg-success text-white text-decoration-none me-1">
-                              #<?= htmlspecialchars($parent['category']) ?>
-                          </a>
-                          <a href="category.php?id=<?= $cat['id'] ?>" class="badge bg-light text-success text-decoration-none">
-                              #<?= htmlspecialchars($cat['category']) ?>
-                          </a>
-                          <?php
-                      } else {
-                          ?>
-                          <a href="category.php?id=<?= $cat['id'] ?>" class="badge bg-success text-white text-decoration-none">
-                              #<?= htmlspecialchars($cat['category']) ?>
-                          </a>
-                          <?php
-                      }
+                    $cat = $allCategories[$row['category_id']];
+                    if ($cat['parent_id'] && isset($allCategories[$cat['parent_id']])) {
+                      $parent = $allCategories[$cat['parent_id']];
+                  ?>
+                      <a href="category.php?id=<?= $parent['id'] ?>" class="badge bg-success text-white text-decoration-none me-1">
+                        #<?= htmlspecialchars($parent['category']) ?>
+                      </a>
+                      <a href="category.php?id=<?= $cat['id'] ?>" class="badge bg-light text-success text-decoration-none">
+                        #<?= htmlspecialchars($cat['category']) ?>
+                      </a>
+                    <?php
+                    } else {
+                    ?>
+                      <a href="category.php?id=<?= $cat['id'] ?>" class="badge bg-success text-white text-decoration-none">
+                        #<?= htmlspecialchars($cat['category']) ?>
+                      </a>
+                  <?php
+                    }
                   }
                   ?>
                 </div>
@@ -231,9 +245,10 @@ if (!$result_trending) {
                 <p class="card-text mb-3"><?= mb_strimwidth(strip_tags($row['content']), 0, 100, '...') ?></p>
 
                 <!-- Tombol -->
-                <a href="/smsblog/<?= htmlspecialchars($row['slug']) ?>" class="btn btn-read-more mt-auto">
+                <a href="<?= htmlspecialchars($row['slug']) ?>" class="btn btn-read-more mt-auto">
                   Baca Selengkapnya <span>&rarr;</span>
                 </a>
+
               </div>
             </div>
           </div>
@@ -243,61 +258,61 @@ if (!$result_trending) {
   </section>
   <!-- End category Area -->
 
-  
+
   <!-- Start fashion Area -->
- <section class="fashion-area section-gap" id="fashion">
+  <section class="fashion-area section-gap" id="fashion">
     <div class="container">
-        <div class="row d-flex justify-content-center">
-            <div class="menu-content pb-60 col-lg-10">
-                <div class="title text-center">
-                    <h1 class="mb-10">Bacaan Trending di Minggu Ini</h1>
-                    <p>Temukan artikel-artikel yang paling banyak dibaca dalam seminggu terakhir.</p>
-                    <div class="section-divider"></div>
+      <div class="row d-flex justify-content-center">
+        <div class="menu-content pb-60 col-lg-10">
+          <div class="title text-center">
+            <h1 class="mb-10">Bacaan Trending di Minggu Ini</h1>
+            <p>Temukan artikel-artikel yang paling banyak dibaca dalam seminggu terakhir.</p>
+            <div class="section-divider"></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <?php if ($result_trending && mysqli_num_rows($result_trending) > 0): ?>
+          <?php while ($row = mysqli_fetch_assoc($result_trending)): ?>
+            <div class="col-lg-4 col-md-6 mb-4">
+              <div class="card h-100">
+                <?php if ($row['image']): ?>
+                  <img src="bloging/uploads/<?= htmlspecialchars(basename($row['image'])) ?>" class="card-img-top" alt="Blog Image">
+                <?php else: ?>
+                  <img src="https://via.placeholder.com/400x200?text=No+Image" class="card-img-top" alt="No Image">
+                <?php endif; ?>
+
+                <div class="card-body d-flex flex-column">
+                  <!-- Judul -->
+                  <h5 class="text-truncate" title="<?= strip_tags($row['title']) ?>">
+                    <?= mb_strimwidth(strip_tags($row['title']), 0, 60, '...') ?>
+                  </h5>
+
+                  <!-- Meta Info -->
+                  <div class="meta-info mb-2">
+                    <span class="icon">📅</span><?= date('d M Y', strtotime($row['created_at'])) ?>
+                    <span class="icon ms-3">👁️</span><?= number_format($row['views']) ?> views
+                  </div>
+
+                  <!-- Konten Ringkas -->
+                  <p class="card-text mb-3"><?= mb_strimwidth(strip_tags($row['content']), 0, 100, '...') ?></p>
+
+                  <!-- Tombol -->
+                  <a href="/<?= htmlspecialchars($row['slug']) ?>" class="btn btn-read-more mt-auto">
+                    Baca Selengkapnya <span>&rarr;</span>
+                  </a>
                 </div>
+              </div>
             </div>
-        </div>
-        <div class="row">
-            <?php if ($result_trending && mysqli_num_rows($result_trending) > 0): ?>
-                <?php while ($row = mysqli_fetch_assoc($result_trending)): ?>
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="card h-100">
-                            <?php if ($row['image']): ?>
-                                <img src="bloging/uploads/<?= htmlspecialchars(basename($row['image'])) ?>" class="card-img-top" alt="Blog Image">
-                            <?php else: ?>
-                                <img src="https://via.placeholder.com/400x200?text=No+Image" class="card-img-top" alt="No Image">
-                            <?php endif; ?>
-
-                            <div class="card-body d-flex flex-column">
-                                <!-- Judul -->
-                                <h5 class="text-truncate" title="<?= strip_tags($row['title']) ?>">
-                                    <?= mb_strimwidth(strip_tags($row['title']), 0, 60, '...') ?>
-                                </h5>
-
-                                <!-- Meta Info -->
-                                <div class="meta-info mb-2">
-                                    <span class="icon">📅</span><?= date('d M Y', strtotime($row['created_at'])) ?>
-                                    <span class="icon ms-3">👁️</span><?= number_format($row['views']) ?> views
-                                </div>
-
-                                <!-- Konten Ringkas -->
-                                <p class="card-text mb-3"><?= mb_strimwidth(strip_tags($row['content']), 0, 100, '...') ?></p>
-
-                                <!-- Tombol -->
-                                <a href="/smsblog/<?= htmlspecialchars($row['slug']) ?>" class="btn btn-read-more mt-auto">
-                                    Baca Selengkapnya <span>&rarr;</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <div class="col-12">
-                    <div class="no-results">Belum ada artikel trending minggu ini.</div>
-                </div>
-            <?php endif; ?>
-        </div>
+          <?php endwhile; ?>
+        <?php else: ?>
+          <div class="col-12">
+            <div class="no-results">Belum ada artikel trending minggu ini.</div>
+          </div>
+        <?php endif; ?>
+      </div>
     </div>
-</section>
+  </section>
 
   <!-- End fashion Area -->
 
@@ -388,57 +403,57 @@ if (!$result_trending) {
 
   <!-- Start Most Viewed Article Section -->
   <?php if ($most_viewed_article): ?>
-  <section class="featured-article-area section-gap" id="featured">
-    <div class="container">
-      <div class="row d-flex justify-content-center">
-        <div class="menu-content pb-70 col-lg-8">
-          <div class="title text-center">
-            <h1 class="mb-10">Artikel Terpopuler Sepanjang Masa</h1>
-            <p>Artikel yang paling banyak dibaca oleh pembaca setia kami.</p>
-            <div class="section-divider"></div>
+    <section class="featured-article-area section-gap" id="featured">
+      <div class="container">
+        <div class="row d-flex justify-content-center">
+          <div class="menu-content pb-70 col-lg-8">
+            <div class="title text-center">
+              <h1 class="mb-10">Artikel Terpopuler Sepanjang Masa</h1>
+              <p>Artikel yang paling banyak dibaca oleh pembaca setia kami.</p>
+              <div class="section-divider"></div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-8 mx-auto">
-          <div class="featured-article-card">
-            <div class="row">
-              <div class="col-lg-6">
-                <?php if ($most_viewed_article['image']): ?>
-                  <img src="bloging/uploads/<?= htmlspecialchars(basename($most_viewed_article['image'])) ?>" 
-                       class="featured-img" alt="Featured Article">
-                <?php else: ?>
-                  <img src="https://via.placeholder.com/600x400?text=No+Image" 
-                       class="featured-img" alt="No Image">
-                <?php endif; ?>
-              </div>
-              <div class="col-lg-6">
-                <div class="featured-content">
-                  <div class="featured-badge">
-                    <i class="fa fa-fire"></i> Terpopuler
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <div class="featured-article-card">
+              <div class="row">
+                <div class="col-lg-6">
+                  <?php if ($most_viewed_article['image']): ?>
+                    <img src="bloging/uploads/<?= htmlspecialchars(basename($most_viewed_article['image'])) ?>"
+                      class="featured-img" alt="Featured Article">
+                  <?php else: ?>
+                    <img src="https://via.placeholder.com/600x400?text=No+Image"
+                      class="featured-img" alt="No Image">
+                  <?php endif; ?>
+                </div>
+                <div class="col-lg-6">
+                  <div class="featured-content">
+                    <div class="featured-badge">
+                      <i class="fa fa-fire"></i> Terpopuler
+                    </div>
+                    <h2><?= strip_tags($most_viewed_article['title']) ?></h2>
+                    <p><?= mb_strimwidth(strip_tags($most_viewed_article['content']), 0, 200, '...') ?></p>
+                    <div class="featured-meta">
+                      <span><i class="fa fa-user"></i> <?= htmlspecialchars($most_viewed_article['author_name']) ?></span>
+                      <span><i class="fa fa-eye"></i> <?= number_format($most_viewed_article['views']) ?> views</span>
+                      <span><i class="fa fa-folder"></i> <?= htmlspecialchars($most_viewed_article['category_name']) ?></span>
+                    </div>
+                    <a href="/<?= htmlspecialchars($most_viewed_article['slug']) ?>" class="btn btn-featured">
+                      Baca Artikel Lengkap <i class="fa fa-arrow-right"></i>
+                    </a>
                   </div>
-                  <h2><?= strip_tags($most_viewed_article['title']) ?></h2>
-                  <p><?= mb_strimwidth(strip_tags($most_viewed_article['content']), 0, 200, '...') ?></p>
-                  <div class="featured-meta">
-                    <span><i class="fa fa-user"></i> <?= htmlspecialchars($most_viewed_article['author_name']) ?></span>
-                    <span><i class="fa fa-eye"></i> <?= number_format($most_viewed_article['views']) ?> views</span>
-                    <span><i class="fa fa-folder"></i> <?= htmlspecialchars($most_viewed_article['category_name']) ?></span>
-                  </div>
-                  <a href="/smsblog/<?= htmlspecialchars($most_viewed_article['slug']) ?>" class="btn btn-featured">
-                    Baca Artikel Lengkap <i class="fa fa-arrow-right"></i>
-                  </a>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
   <?php endif; ?>
   <!-- End Most Viewed Article Section -->
 
- <!-- End Newsletter Section -->
+  <!-- End Newsletter Section -->
 
   <!-- Start team Area -->
   <section class="team-area section-gap" id="team">
@@ -456,16 +471,16 @@ if (!$result_trending) {
         <div class="col-lg-6 team-left">
           <h3>Visi Kami</h3>
           <p>
-            Menjadi media digital terdepan yang mendokumentasikan pemikiran, karya tulis, dan kegiatan para alumni 
+            Menjadi media digital terdepan yang mendokumentasikan pemikiran, karya tulis, dan kegiatan para alumni
             Daarul Rahman Cabang Kairo dalam bentuk blog yang informatif dan inspiratif.
           </p>
-          
+
           <h3>Misi Kami</h3>
           <p>
-            Menyediakan platform yang memungkinkan para alumni untuk berbagi pengetahuan, pengalaman, dan pemikiran 
+            Menyediakan platform yang memungkinkan para alumni untuk berbagi pengetahuan, pengalaman, dan pemikiran
             mereka dengan masyarakat luas, serta mendokumentasikan kegiatan-kegiatan penting komunitas kami.
           </p>
-          
+
           <h3>Nilai-Nilai Kami</h3>
           <ul>
             <li><strong>Integritas:</strong> Menjaga kejujuran dan kredibilitas dalam setiap konten</li>
@@ -535,7 +550,7 @@ if (!$result_trending) {
         newsletterForm.addEventListener('submit', function(e) {
           e.preventDefault();
           const email = this.querySelector('input[type="email"]').value;
-          
+
           // Simple validation
           if (email && email.includes('@')) {
             alert('Terima kasih! Anda telah berlangganan newsletter kami.');
@@ -570,25 +585,25 @@ if (!$result_trending) {
         const startTime = performance.now();
         const startNumber = start;
         const endNumber = end;
-        
+
         function updateNumber(currentTime) {
           const elapsed = currentTime - startTime;
           const progress = Math.min(elapsed / duration, 1);
-          
+
           const currentNumber = Math.floor(startNumber + (endNumber - startNumber) * progress);
           element.textContent = currentNumber.toLocaleString();
-          
+
           if (progress < 1) {
             requestAnimationFrame(updateNumber);
           }
         }
-        
+
         requestAnimationFrame(updateNumber);
       }
 
       // Smooth scroll for anchor links
       document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
+        anchor.addEventListener('click', function(e) {
           e.preventDefault();
           const target = document.querySelector(this.getAttribute('href'));
           if (target) {
@@ -604,11 +619,11 @@ if (!$result_trending) {
 </body>
 
 <?php if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+  session_start();
 } ?>
 <!-- Tombol Tambah Artikel -->
 <a href="<?= isset($_SESSION['author_id']) && in_array($_SESSION['author_type'], ['user', 'admin']) ? 'bloging/add_blog.php' : 'login.php' ?>"
-   class="btn-tambah-artikel">
+  class="btn-tambah-artikel">
   + Tambah Artikel
 </a>
 
@@ -618,7 +633,8 @@ if (!$result_trending) {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    background-color: #2E7D32; /* Forest green */
+    background-color: #2E7D32;
+    /* Forest green */
     color: white;
     padding: 14px 20px;
     border-radius: 50px;
@@ -630,23 +646,27 @@ if (!$result_trending) {
   }
 
   .btn-tambah-artikel:hover {
-    background-color: #1B5E20; /* Darker forest green */
+    background-color: #1B5E20;
+    /* Darker forest green */
   }
 
   .card {
     transition: all 0.4s ease;
-    border: 3px solid #2E7D32; /* Forest green */
+    border: 3px solid #2E7D32;
+    /* Forest green */
     border-radius: 20px;
     overflow: hidden;
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(6px);
-    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.45); /* Forest green shadow */
+    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.45);
+    /* Forest green shadow */
     position: relative;
   }
 
   .card:hover {
     transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 15px 35px rgba(46, 125, 50, 0.6); /* Forest green shadow */
+    box-shadow: 0 15px 35px rgba(46, 125, 50, 0.6);
+    /* Forest green shadow */
   }
 
   .card-img-top {
@@ -666,7 +686,8 @@ if (!$result_trending) {
   .card-body h5 {
     font-weight: 600;
     font-size: 1.1rem;
-    color: #2C2C2C; /* Charcoal */
+    color: #2C2C2C;
+    /* Charcoal */
   }
 
   .card-body p {
@@ -686,7 +707,8 @@ if (!$result_trending) {
   }
 
   .btn-read-more {
-    background: linear-gradient(135deg, #2E7D32, #C5E1A5); /* Forest green to lime */
+    background: linear-gradient(135deg, #2E7D32, #C5E1A5);
+    /* Forest green to lime */
     color: white;
     padding: 8px 20px;
     border-radius: 30px;
@@ -701,7 +723,8 @@ if (!$result_trending) {
   }
 
   .btn-read-more:hover {
-    background: linear-gradient(135deg, #2E7D32, #2E7D32); /* Forest green */
+    background: linear-gradient(135deg, #2E7D32, #2E7D32);
+    /* Forest green */
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     color: #fff;
@@ -717,7 +740,8 @@ if (!$result_trending) {
   }
 
   .no-results {
-    background: #EEEEEE; /* Soft gray */
+    background: #EEEEEE;
+    /* Soft gray */
     padding: 50px;
     border-radius: 10px;
     text-align: center;
@@ -731,26 +755,31 @@ if (!$result_trending) {
     background: rgba(255, 255, 255, 0.98);
     border-radius: 20px;
     padding: 2rem;
-    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.45); /* Forest green shadow */
-    border: 3px solid #2E7D32; /* Forest green */
+    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.45);
+    /* Forest green shadow */
+    border: 3px solid #2E7D32;
+    /* Forest green */
     transition: all 0.4s ease;
   }
 
   .stat-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 15px 35px rgba(46, 125, 50, 0.6); /* Forest green shadow */
+    box-shadow: 0 15px 35px rgba(46, 125, 50, 0.6);
+    /* Forest green shadow */
   }
 
   .stat-icon {
     font-size: 3rem;
-    color: #2E7D32; /* Forest green */
+    color: #2E7D32;
+    /* Forest green */
     margin-bottom: 1rem;
   }
 
   .stat-number {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #2C2C2C; /* Charcoal */
+    color: #2C2C2C;
+    /* Charcoal */
     margin-bottom: 0.5rem;
   }
 
@@ -766,25 +795,30 @@ if (!$result_trending) {
     border-radius: 20px;
     padding: 2rem;
     text-align: center;
-    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.45); /* Forest green shadow */
-    border: 3px solid #2E7D32; /* Forest green */
+    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.45);
+    /* Forest green shadow */
+    border: 3px solid #2E7D32;
+    /* Forest green */
     transition: all 0.4s ease;
     height: 100%;
   }
 
   .category-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 15px 35px rgba(46, 125, 50, 0.6); /* Forest green shadow */
+    box-shadow: 0 15px 35px rgba(46, 125, 50, 0.6);
+    /* Forest green shadow */
   }
 
   .category-icon {
     font-size: 3rem;
-    color: #2E7D32; /* Forest green */
+    color: #2E7D32;
+    /* Forest green */
     margin-bottom: 1rem;
   }
 
   .category-content h4 {
-    color: #2C2C2C; /* Charcoal */
+    color: #2C2C2C;
+    /* Charcoal */
     font-weight: 600;
     margin-bottom: 0.5rem;
   }
@@ -795,7 +829,8 @@ if (!$result_trending) {
   }
 
   .btn-category {
-    background: linear-gradient(135deg, #2E7D32, #C5E1A5); /* Forest green to lime */
+    background: linear-gradient(135deg, #2E7D32, #C5E1A5);
+    /* Forest green to lime */
     color: white;
     padding: 10px 20px;
     border-radius: 25px;
@@ -809,7 +844,8 @@ if (!$result_trending) {
   }
 
   .btn-category:hover {
-    background: linear-gradient(135deg, #2E7D32, #2E7D32); /* Forest green */
+    background: linear-gradient(135deg, #2E7D32, #2E7D32);
+    /* Forest green */
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     color: #fff;
@@ -820,14 +856,17 @@ if (!$result_trending) {
     background: rgba(255, 255, 255, 0.98);
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.45); /* Forest green shadow */
-    border: 3px solid #2E7D32; /* Forest green */
+    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.45);
+    /* Forest green shadow */
+    border: 3px solid #2E7D32;
+    /* Forest green */
     transition: all 0.4s ease;
   }
 
   .featured-article-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 15px 35px rgba(46, 125, 50, 0.6); /* Forest green shadow */
+    box-shadow: 0 15px 35px rgba(46, 125, 50, 0.6);
+    /* Forest green shadow */
   }
 
   .featured-img {
@@ -841,7 +880,8 @@ if (!$result_trending) {
   }
 
   .featured-badge {
-    background: linear-gradient(135deg, #F57C00, #FF9800); /* Orange burnt gradient */
+    background: linear-gradient(135deg, #F57C00, #FF9800);
+    /* Orange burnt gradient */
     color: white;
     padding: 8px 16px;
     border-radius: 20px;
@@ -852,7 +892,8 @@ if (!$result_trending) {
   }
 
   .featured-content h2 {
-    color: #2C2C2C; /* Charcoal */
+    color: #2C2C2C;
+    /* Charcoal */
     font-weight: 600;
     margin-bottom: 1rem;
     font-size: 1.5rem;
@@ -878,11 +919,13 @@ if (!$result_trending) {
 
   .featured-meta i {
     margin-right: 5px;
-    color: #2E7D32; /* Forest green */
+    color: #2E7D32;
+    /* Forest green */
   }
 
   .btn-featured {
-    background: linear-gradient(135deg, #2E7D32, #C5E1A5); /* Forest green to lime */
+    background: linear-gradient(135deg, #2E7D32, #C5E1A5);
+    /* Forest green to lime */
     color: white;
     padding: 12px 24px;
     border-radius: 25px;
@@ -896,7 +939,8 @@ if (!$result_trending) {
   }
 
   .btn-featured:hover {
-    background: linear-gradient(135deg, #2E7D32, #2E7D32); /* Forest green */
+    background: linear-gradient(135deg, #2E7D32, #2E7D32);
+    /* Forest green */
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     color: #fff;
@@ -904,7 +948,8 @@ if (!$result_trending) {
 
   /* Newsletter Styles */
   .newsletter-area {
-    background: linear-gradient(135deg, #2E7D32, #C5E1A5); /* Forest green to lime */
+    background: linear-gradient(135deg, #2E7D32, #C5E1A5);
+    /* Forest green to lime */
     color: white;
   }
 
@@ -937,7 +982,8 @@ if (!$result_trending) {
   }
 
   .btn-newsletter {
-    background: #2C2C2C; /* Charcoal */
+    background: #2C2C2C;
+    /* Charcoal */
     color: white;
     border-radius: 0 25px 25px 0;
     border: none;
@@ -947,7 +993,8 @@ if (!$result_trending) {
   }
 
   .btn-newsletter:hover {
-    background: #1a1a1a; /* Darker charcoal */
+    background: #1a1a1a;
+    /* Darker charcoal */
     color: white;
     transform: translateY(-2px);
   }
@@ -957,24 +1004,24 @@ if (!$result_trending) {
     .featured-img {
       height: 200px;
     }
-    
+
     .featured-content {
       padding: 1.5rem;
     }
-    
+
     .featured-content h2 {
       font-size: 1.3rem;
     }
-    
+
     .featured-meta {
       flex-direction: column;
       gap: 0.5rem;
     }
-    
+
     .stat-number {
       font-size: 2rem;
     }
-    
+
     .category-card {
       padding: 1.5rem;
     }
@@ -982,7 +1029,8 @@ if (!$result_trending) {
 
   /* Team Section Styles */
   .team-left h3 {
-    color: #2C2C2C; /* Charcoal */
+    color: #2C2C2C;
+    /* Charcoal */
     font-weight: 600;
     margin-bottom: 1rem;
     margin-top: 2rem;
@@ -1008,22 +1056,26 @@ if (!$result_trending) {
   }
 
   .team-left strong {
-    color: #2E7D32; /* Forest green */
+    color: #2E7D32;
+    /* Forest green */
   }
 
   .single-team {
     background: rgba(255, 255, 255, 0.98);
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.45); /* Forest green shadow */
-    border: 3px solid #2E7D32; /* Forest green */
+    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.45);
+    /* Forest green shadow */
+    border: 3px solid #2E7D32;
+    /* Forest green */
     transition: all 0.4s ease;
     margin: 0 10px;
   }
 
   .single-team:hover {
     transform: translateY(-8px);
-    box-shadow: 0 15px 35px rgba(46, 125, 50, 0.6); /* Forest green shadow */
+    box-shadow: 0 15px 35px rgba(46, 125, 50, 0.6);
+    /* Forest green shadow */
   }
 
   .single-team .thumb {
@@ -1048,7 +1100,8 @@ if (!$result_trending) {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(46, 125, 50, 0.8); /* Forest green overlay */
+    background: rgba(46, 125, 50, 0.8);
+    /* Forest green overlay */
     opacity: 0;
     transition: opacity 0.3s ease;
   }
@@ -1073,7 +1126,8 @@ if (!$result_trending) {
   }
 
   .single-team .meta-text h4 {
-    color: #2C2C2C; /* Charcoal */
+    color: #2C2C2C;
+    /* Charcoal */
     font-weight: 600;
     margin-bottom: 0.5rem;
   }

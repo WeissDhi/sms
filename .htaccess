@@ -2,3 +2,12 @@ RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^([a-zA-Z0-9-]+)$ view_detail.php?slug=$1 [L,QSA] 
+
+RewriteEngine On
+
+# Kalau folder atau file tidak ada secara fisik
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Arahkan semua request ke view_detail.php dengan parameter "slug"
+RewriteRule ^(.+)$ view_detail.php?slug=$1 [L,QSA]

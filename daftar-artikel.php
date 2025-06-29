@@ -73,7 +73,8 @@ $result = $conn->query($sql);
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background: #FAFAF0; /* Ivory */
+            background: #FAFAF0;
+            /* Ivory */
         }
 
         .search-bar {
@@ -82,7 +83,8 @@ $result = $conn->query($sql);
 
         .search-bar input {
             border-radius: 30px 0 0 30px;
-            border-color: #2E7D32; /* Forest green */
+            border-color: #2E7D32;
+            /* Forest green */
         }
 
         .search-bar input:focus {
@@ -93,12 +95,14 @@ $result = $conn->query($sql);
 
         .search-bar button {
             border-radius: 0 30px 30px 0;
-            background: linear-gradient(135deg, #2E7D32, #C5E1A5); /* Forest green to lime */
+            background: linear-gradient(135deg, #2E7D32, #C5E1A5);
+            /* Forest green to lime */
             border: none;
             color: #fff;
             font-weight: 600;
             transition: background 0.3s;
         }
+
         .search-bar button:hover {
             background: #2E7D32;
             color: #fff;
@@ -106,10 +110,12 @@ $result = $conn->query($sql);
 
         .card {
             transition: all 0.4s ease;
-            border: 3px solid #2E7D32; /* Forest green */
+            border: 3px solid #2E7D32;
+            /* Forest green */
             border-radius: 20px;
             overflow: hidden;
-            background: #EEEEEE; /* Soft gray */
+            background: #EEEEEE;
+            /* Soft gray */
             backdrop-filter: blur(6px);
             box-shadow: 0 8px 25px rgba(46, 125, 50, 0.18);
             position: relative;
@@ -137,7 +143,8 @@ $result = $conn->query($sql);
         .card-body h5 {
             font-weight: 600;
             font-size: 1.1rem;
-            color: #2C2C2C; /* Charcoal */
+            color: #2C2C2C;
+            /* Charcoal */
         }
 
         .card-body p {
@@ -151,13 +158,17 @@ $result = $conn->query($sql);
         }
 
         .bg-success {
-            background: #2E7D32 !important; /* Forest green */
+            background: #2E7D32 !important;
+            /* Forest green */
             color: #fff !important;
         }
+
         .bg-light {
-            background: #C5E1A5 !important; /* Lime */
+            background: #C5E1A5 !important;
+            /* Lime */
             color: #2E7D32 !important;
         }
+
         .text-success {
             color: #2E7D32 !important;
         }
@@ -170,11 +181,13 @@ $result = $conn->query($sql);
         .icon {
             margin-right: 5px;
             vertical-align: middle;
-            color: #2E7D32; /* Forest green */
+            color: #2E7D32;
+            /* Forest green */
         }
 
         .no-results {
-            background: #EEEEEE; /* Soft gray */
+            background: #EEEEEE;
+            /* Soft gray */
             padding: 50px;
             border-radius: 10px;
             text-align: center;
@@ -184,7 +197,8 @@ $result = $conn->query($sql);
         }
 
         .btn-read-more {
-            background: linear-gradient(135deg, #2E7D32, #C5E1A5); /* Forest green to lime */
+            background: linear-gradient(135deg, #2E7D32, #C5E1A5);
+            /* Forest green to lime */
             color: white;
             padding: 8px 20px;
             border: none;
@@ -264,21 +278,21 @@ $result = $conn->query($sql);
                                         if ($cat && $cat['parent_id'] && isset($allCategories[$cat['parent_id']])) {
                                             // Ada parent, tampilkan dua badge
                                             $parent = $allCategories[$cat['parent_id']];
-                                            ?>
+                                    ?>
                                             <a href="?search=<?= urlencode($parent['category']) ?>" class="badge bg-success text-white text-decoration-none me-1">
                                                 #<?= htmlspecialchars($parent['category']) ?>
                                             </a>
                                             <a href="?search=<?= urlencode($cat['category']) ?>" class="badge bg-light text-success text-decoration-none">
                                                 #<?= htmlspecialchars($cat['category']) ?>
                                             </a>
-                                            <?php
+                                        <?php
                                         } else {
                                             // Tidak ada parent, tampilkan satu badge
-                                            ?>
+                                        ?>
                                             <a href="?search=<?= urlencode($cat['category']) ?>" class="badge bg-success text-white text-decoration-none">
                                                 #<?= htmlspecialchars($cat['category']) ?>
                                             </a>
-                                            <?php
+                                    <?php
                                         }
                                     }
                                     ?>
@@ -288,9 +302,10 @@ $result = $conn->query($sql);
                                 <p class="card-text mb-3"><?= mb_strimwidth(strip_tags($row['content']), 0, 100, '...') ?></p>
 
                                 <!-- Tombol -->
-                                <a href="/smsblog/<?= htmlspecialchars($row['slug']) ?>" class="btn btn-read-more mt-auto">
+                                <a href="<?= htmlspecialchars($row['slug']) ?>" class="btn btn-read-more mt-auto">
                                     Baca Selengkapnya <span>&rarr;</span>
                                 </a>
+
                             </div>
                         </div>
                     </div>
