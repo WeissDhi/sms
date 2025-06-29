@@ -21,7 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status = $_POST['status']; // Ambil status dari form
 
     $image = $old_image;
-    $document = $blog['document']; // Get current document
+    // Remove the undefined $blog variable
+    // $document = $blog['document']; // Get current document
 
     $title_clean = strip_tags($title);
     $slug = slugify($title_clean);
@@ -91,7 +92,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("ssssisssi", $title, $slug, $content, $image, $category_id, $author_id, $author_type, $status, $id);
 
     if ($stmt->execute()) {
-        // Redirect based on author type
+        // Return success for AJAX requests
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+            echo 'success';
+            exit;
+        }
+        
+        // Redirect based on author type for regular form submissions
         if ($author_type === 'admin') {
             header("Location: ./dashboard/admin/blogs_management.php?edit=success");
         } else {
@@ -99,6 +106,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         exit;
     } else {
+        // Return error for AJAX requests
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+            echo 'error';
+            exit;
+        }
+        
         echo "Gagal menyimpan perubahan.";
     }
 }

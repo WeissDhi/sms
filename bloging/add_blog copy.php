@@ -1,53 +1,26 @@
-<?php 
+<?php
 include 'config.php';
 session_start();
 
+// Pastikan user login
 if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
     header("Location: login.php");
     exit;
 }
-
-if (!isset($_GET['id'])) {
-    echo "ID tidak ditemukan.";
-    exit;
-}
-
-$id = intval($_GET['id']);
-$query = $conn->prepare("SELECT * FROM blogs WHERE id = ?");
-$query->bind_param("i", $id);
-$query->execute();
-$result = $query->get_result();
-$blog = $result->fetch_assoc();
-
-if (!$blog) {
-    echo "Blog tidak ditemukan.";
-    exit;
-}
-
-// Ambil dokumen terkait blog
-$documents = [];
-$doc_stmt = $conn->prepare("SELECT * FROM documents WHERE blog_id = ?");
-$doc_stmt->bind_param("i", $blog['id']);
-$doc_stmt->execute();
-$doc_result = $doc_stmt->get_result();
-while ($doc = $doc_result->fetch_assoc()) {
-    $documents[] = $doc;
-}
-$doc_stmt->close();
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
-    <title>Edit Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah Blog</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tiny.cloud/1/nj9l4dp2auxgapch64yc16dhhguiiat5xsafdy8dj0g2zsm7/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -76,7 +49,7 @@ $doc_stmt->close();
             left: 0;
             width: 100%;
             height: 100%;
-            background: 
+            background:
                 radial-gradient(circle at 0% 0%, rgba(52, 152, 219, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 100% 100%, rgba(46, 204, 113, 0.1) 0%, transparent 50%);
             z-index: -1;
@@ -97,9 +70,6 @@ $doc_stmt->close();
             box-shadow: var(--card-shadow);
             position: relative;
             overflow: hidden;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
         .page-header::before {
@@ -126,28 +96,6 @@ $doc_stmt->close();
             color: var(--accent-color);
         }
 
-        .back-button {
-            color: white;
-            text-decoration: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-            transition: all 0.3s ease;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .back-button:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
         .card {
             background: white;
             border-radius: 20px;
@@ -170,7 +118,8 @@ $doc_stmt->close();
             font-size: 1.1rem;
         }
 
-        .form-control, .form-select {
+        .form-control,
+        .form-select {
             border: 2px solid #e9ecef;
             border-radius: 12px;
             padding: 0.875rem;
@@ -178,7 +127,8 @@ $doc_stmt->close();
             font-size: 1rem;
         }
 
-        .form-control:focus, .form-select:focus {
+        .form-control:focus,
+        .form-select:focus {
             border-color: var(--secondary-color);
             box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.15);
         }
@@ -205,12 +155,10 @@ $doc_stmt->close();
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(
-                120deg,
-                transparent,
-                rgba(255, 255, 255, 0.2),
-                transparent
-            );
+            background: linear-gradient(120deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.2),
+                    transparent);
             transition: 0.5s;
         }
 
@@ -237,29 +185,12 @@ $doc_stmt->close();
             background: #f1f8ff;
         }
 
-        .current-thumbnail {
-            max-width: 200px;
+        #thumbnailPreview {
+            max-width: 100%;
+            height: auto;
+            display: none;
             border-radius: 12px;
             box-shadow: var(--card-shadow);
-            margin-top: 1rem;
-            transition: transform 0.3s ease;
-        }
-
-        .current-thumbnail:hover {
-            transform: scale(1.05);
-        }
-
-        #cropper-container {
-            max-width: 100%;
-            max-height: 1500px;
-            margin: 0 auto;
-            overflow: hidden;
-        }
-        #cropper-image {
-            max-width: 100%;
-            max-height: 1500px;
-            display: block;
-            margin: 0 auto;
         }
 
         .form-section {
@@ -320,33 +251,6 @@ $doc_stmt->close();
             font-size: 1.1rem;
         }
 
-        .alert {
-            border-radius: 12px;
-            border: none;
-            box-shadow: var(--card-shadow);
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .alert-success {
-            background: linear-gradient(135deg, #d4edda, #c3e6cb);
-            color: #155724;
-            border-left: 4px solid #28a745;
-        }
-
-        .alert-danger {
-            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
-            color: #721c24;
-            border-left: 4px solid #dc3545;
-        }
-
-        .alert i {
-            font-size: 1.25rem;
-        }
-
         .form-select {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%232c3e50' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
@@ -359,25 +263,17 @@ $doc_stmt->close();
             .container {
                 padding: 1rem;
             }
-            
+
             .card {
                 padding: 1.5rem;
             }
 
             .page-header {
                 padding: 1.5rem;
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
             }
 
             .page-header h2 {
                 font-size: 1.8rem;
-            }
-
-            .back-button {
-                width: 100%;
-                justify-content: center;
             }
 
             .section-title {
@@ -424,8 +320,8 @@ $doc_stmt->close();
             background: white;
             border-radius: 20px;
             padding: 2rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .editor-sidebar {
@@ -438,7 +334,7 @@ $doc_stmt->close();
             .blog-editor {
                 grid-template-columns: 1fr;
             }
-            
+
             .editor-sidebar {
                 position: static;
             }
@@ -450,14 +346,14 @@ $doc_stmt->close();
             border-radius: 20px;
             padding: 2rem;
             margin-bottom: 2rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
         }
 
         .form-section:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
         }
 
         /* Section Titles */
@@ -497,7 +393,8 @@ $doc_stmt->close();
         }
 
         /* Form Controls */
-        .form-control, .form-select {
+        .form-control,
+        .form-select {
             border: 2px solid #e9ecef;
             border-radius: 15px;
             padding: 1.25rem;
@@ -506,7 +403,8 @@ $doc_stmt->close();
             background: #f8f9fa;
         }
 
-        .form-control:focus, .form-select:focus {
+        .form-control:focus,
+        .form-select:focus {
             border-color: var(--secondary-color);
             background: white;
             box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.15);
@@ -600,24 +498,12 @@ $doc_stmt->close();
         #thumbnailPreview {
             max-width: 100%;
             border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             margin-top: 1.5rem;
             transition: transform 0.3s ease;
         }
 
         #thumbnailPreview:hover {
-            transform: scale(1.02);
-        }
-
-        .current-thumbnail {
-            max-width: 100%;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-top: 1.5rem;
-            transition: transform 0.3s ease;
-        }
-
-        .current-thumbnail:hover {
             transform: scale(1.02);
         }
 
@@ -646,12 +532,10 @@ $doc_stmt->close();
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(
-                120deg,
-                transparent,
-                rgba(255, 255, 255, 0.3),
-                transparent
-            );
+            background: linear-gradient(120deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.3),
+                    transparent);
             transition: 0.5s;
         }
 
@@ -747,8 +631,60 @@ $doc_stmt->close();
             font-size: 2.2rem;
             color: var(--secondary-color);
         }
+
+        .document-section {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+            border: 2px dashed #dee2e6;
+            transition: all 0.3s ease;
+        }
+
+        .document-section:hover {
+            border-color: var(--secondary-color);
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        }
+
+        #documentPreview {
+            margin-top: 1rem;
+        }
+
+        #documentPreview .alert {
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0;
+        }
+
+        #documentPreview .btn-close {
+            padding: 0.5rem;
+            margin: -0.5rem;
+        }
+
+        #documentName {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        #documentSize {
+            font-size: 0.875rem;
+        }
+
+        #cropper-container {
+            max-width: 100%;
+            max-height: 1500px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        #cropper-image {
+            max-width: 100%;
+            max-height: 1500px;
+            display: block;
+            margin: 0 auto;
+        }
     </style>
     <script>
+        window.authorType = "<?= $_SESSION['author_type'] ?>";
         // TinyMCE Title
         tinymce.init({
             selector: '#title',
@@ -758,18 +694,7 @@ $doc_stmt->close();
             height: 100,
             branding: false,
             statusbar: false,
-            forced_root_block: false,
-            convert_urls: false,
-            entity_encoding: 'raw',
-            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:20px; font-weight:bold; margin:0; padding:0 }',
-            setup: function(editor) {
-                editor.on('change', function() {
-                    // Remove any paragraph tags when saving
-                    var content = editor.getContent();
-                    content = content.replace(/<p>/g, '').replace(/<\/p>/g, '');
-                    editor.setContent(content);
-                });
-            }
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:20px; font-weight:bold }'
         });
 
         // TinyMCE Content
@@ -786,7 +711,7 @@ $doc_stmt->close();
             file_picker_types: 'image media',
             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
             images_reuse_filename: true,
-            images_upload_handler: function (blobInfo, progress) {
+            images_upload_handler: function(blobInfo, progress) {
                 return new Promise((resolve, reject) => {
                     const xhr = new XMLHttpRequest();
                     xhr.withCredentials = false;
@@ -798,7 +723,10 @@ $doc_stmt->close();
 
                     xhr.onload = function() {
                         if (xhr.status === 403) {
-                            reject({ message: 'HTTP Error: ' + xhr.status, remove: true });
+                            reject({
+                                message: 'HTTP Error: ' + xhr.status,
+                                remove: true
+                            });
                             return;
                         }
 
@@ -819,7 +747,7 @@ $doc_stmt->close();
                         resolve('uploads/' + filename);
                     };
 
-                    xhr.onerror = function () {
+                    xhr.onerror = function() {
                         reject('Image upload failed due to a XHR Transport error');
                     };
 
@@ -871,28 +799,24 @@ $doc_stmt->close();
 
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const image = document.getElementById('cropper-image');
+                    const image = document.getElementById('thumbnailPreview');
                     image.src = e.target.result;
                     image.style.display = "block";
 
-                    if (cropper) cropper.destroy();
+                    if (cropper) {
+                        cropper.destroy();
+                    }
 
                     cropper = new Cropper(image, {
                         aspectRatio: 16 / 9,
                         viewMode: 1,
-                        autoCropArea: 0.65,
-                        crop: function(event) {
-                            const canvas = cropper.getCroppedCanvas({
-                                width: 800,
-                                height: 450
-                            });
-                            
-                            canvas.toBlob(function(blob) {
-                                croppedImageData = new File([blob], file.name, {
-                                    type: 'image/jpeg',
-                                    lastModified: new Date().getTime()
-                                });
-                            }, 'image/jpeg', 0.9);
+                        ready: function() {
+                            // Set initial crop data
+                            updateCropData();
+                        },
+                        crop: function() {
+                            // Update crop data on every crop event
+                            updateCropData();
                         }
                     });
                 };
@@ -900,12 +824,37 @@ $doc_stmt->close();
             }
         }
 
+        function updateCropData() {
+            if (cropper) {
+                const canvas = cropper.getCroppedCanvas({
+                    maxWidth: 800,
+                    maxHeight: 800,
+                    fillColor: '#fff',
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high'
+                });
+
+                if (canvas) {
+                    // Create a hidden input if it doesn't exist
+                    let hiddenInput = document.getElementById('cropped_image');
+                    if (!hiddenInput) {
+                        hiddenInput = document.createElement('input');
+                        hiddenInput.type = 'hidden';
+                        hiddenInput.id = 'cropped_image';
+                        hiddenInput.name = 'cropped_image';
+                        document.getElementById('addBlogForm').appendChild(hiddenInput);
+                    }
+                    hiddenInput.value = canvas.toDataURL('image/png');
+                }
+            }
+        }
+
         // Form validation
-        (function () {
+        (function() {
             'use strict'
             var forms = document.querySelectorAll('.needs-validation')
-            Array.prototype.slice.call(forms).forEach(function (form) {
-                form.addEventListener('submit', function (event) {
+            Array.prototype.slice.call(forms).forEach(function(form) {
+                form.addEventListener('submit', function(event) {
                     if (!form.checkValidity()) {
                         event.preventDefault()
                         event.stopPropagation()
@@ -915,80 +864,381 @@ $doc_stmt->close();
             })
         })()
 
-        // Document handling functions
-        function validateDocument(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const validTypes = ['.pdf', '.doc', '.docx', '.txt', '.ppt', '.pptx'];
-            const maxSize = 10 * 1024 * 1024; // 10MB
-            const fileExt = '.' + file.name.split('.').pop().toLowerCase();
-
-            if (!validTypes.includes(fileExt)) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Format File Tidak Valid',
-                    text: 'Gunakan format PDF, DOC, DOCX, TXT, PPT, atau PPTX.',
-                    confirmButtonColor: '#3498db'
-                });
-                event.target.value = '';
-                return;
-            }
-
-            if (file.size > maxSize) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Ukuran File Terlalu Besar',
-                    text: 'Maksimal ukuran file adalah 10MB.',
-                    confirmButtonColor: '#3498db'
-                });
-                event.target.value = '';
-                return;
-            }
-
-            // Show preview
-            const preview = document.getElementById('documentPreview');
-            const nameElement = document.getElementById('documentName');
-            const sizeElement = document.getElementById('documentSize');
-
-            nameElement.textContent = file.name;
-            sizeElement.textContent = formatFileSize(file.size);
-            preview.style.display = 'block';
-        }
-
-        function removeDocument() {
-            const input = document.getElementById('document');
-            const preview = document.getElementById('documentPreview');
-            input.value = '';
-            preview.style.display = 'none';
-        }
-
-        function removeCurrentDocument() {
-            if (confirm('Apakah Anda yakin ingin menghapus lampiran saat ini?')) {
-                // Add a hidden input to indicate document removal
-                const form = document.getElementById('editBlogForm');
-                let hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-                hiddenInput.name = 'remove_document';
-                hiddenInput.value = '1';
-                form.appendChild(hiddenInput);
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('addBlogForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                // Validasi form
+                if (!this.checkValidity()) {
+                    this.classList.add('was-validated');
+                    return;
+                }
                 
-                // Hide the current document preview
-                const currentDoc = document.querySelector('.document-section .alert');
-                if (currentDoc) {
-                    currentDoc.style.display = 'none';
+                // Debug: Check TinyMCE content
+                const titleContent = tinymce.get('title').getContent();
+                const contentContent = tinymce.get('content').getContent();
+                console.log('Title content:', titleContent);
+                console.log('Content length:', contentContent.length);
+                
+                // Debug: Check category selection
+                const parentSelect = document.getElementById('category_parent');
+                const childSelect = document.getElementById('category_child');
+                console.log('Parent category value:', parentSelect.value);
+                console.log('Child category value:', childSelect.value);
+                console.log('Child category display:', childSelect.style.display);
+                
+                // Ensure correct category is selected
+                if (childSelect.style.display !== 'none' && childSelect.value) {
+                    childSelect.setAttribute('name', 'category');
+                    parentSelect.removeAttribute('name');
+                    console.log('Using child category:', childSelect.value);
+                } else {
+                    parentSelect.setAttribute('name', 'category');
+                    childSelect.removeAttribute('name');
+                    console.log('Using parent category:', parentSelect.value);
+                }
+                
+                const croppedImage = document.getElementById('cropped_image');
+                if (!croppedImage || !croppedImage.value) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gambar Belum Di-crop',
+                        text: 'Silakan crop gambar terlebih dahulu sebelum menyimpan',
+                        confirmButtonColor: '#3498db'
+                    });
+                    return;
+                }
+                // Convert base64 to blob
+                fetch(croppedImage.value)
+                    .then(res => res.blob())
+                    .then(blob => {
+                        // Create new FormData
+                        const formData = new FormData();
+                        
+                        // Manually add all form fields
+                        formData.append('title', tinymce.get('title').getContent());
+                        formData.append('content', tinymce.get('content').getContent());
+                        
+                        // Handle category selection properly
+                        const parentSelect = document.getElementById('category_parent');
+                        const childSelect = document.getElementById('category_child');
+                        let categoryValue = '';
+                        
+                        if (childSelect.style.display !== 'none' && childSelect.value) {
+                            categoryValue = childSelect.value;
+                        } else {
+                            categoryValue = parentSelect.value;
+                        }
+                        
+                        console.log('Selected category value:', categoryValue);
+                        formData.append('category', categoryValue);
+                        
+                        // Validate category selection
+                        if (!categoryValue) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Kategori Belum Dipilih',
+                                text: 'Silakan pilih kategori terlebih dahulu',
+                                confirmButtonColor: '#3498db'
+                            });
+                            return;
+                        }
+                        
+                        formData.append('status', document.getElementById('status').value);
+                        formData.append('author_id', document.querySelector('input[name="author_id"]').value);
+                        formData.append('author_type', document.querySelector('input[name="author_type"]').value);
+                        
+                        // Add documents if any
+                        const documentsInput = document.getElementById('documents');
+                        if (documentsInput.files.length > 0) {
+                            for (let i = 0; i < documentsInput.files.length; i++) {
+                                formData.append('documents[]', documentsInput.files[i]);
+                            }
+                        }
+                        
+                        // Debug: Log form data
+                        console.log('Form data before modification:');
+                        for (let [key, value] of formData.entries()) {
+                            console.log(key, value);
+                        }
+                        
+                        // Add cropped image
+                        formData.append('image', blob, 'cropped_image.jpg');
+                        
+                        // Debug: Log form data after modification
+                        console.log('Form data after modification:');
+                        for (let [key, value] of formData.entries()) {
+                            console.log(key, value);
+                        }
+                        
+                        // Submit form
+                        fetch('save_blog.php', {
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! status: ${response.status}`);
+                                }
+                                return response.text();
+                            })
+                            .then(result => {
+                                console.log('Response from save_blog.php:', result);
+                                console.log('Response length:', result.length);
+                                console.log('Response trimmed:', result.trim());
+                                
+                                if (result.trim() === 'success') {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Berhasil!',
+                                        text: 'Blog berhasil disimpan',
+                                        confirmButtonColor: '#3498db'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            if (window.authorType === 'admin') {
+                                                window.location.href = './dashboard/admin/blogs_management.php';
+                                            } else {
+                                                window.location.href = './dashboard/users/blog_management.php';
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    throw new Error(`Gagal menyimpan blog. Response: ${result}`);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Gagal!',
+                                    text: `Terjadi kesalahan saat menyimpan blog: ${error.message}`,
+                                    confirmButtonColor: '#3498db'
+                                });
+                            });
+                    });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container-fluid px-4">
+        <div class="page-header">
+            <h2><i class="fas fa-plus-circle"></i>Tambah Blog Baru</h2>
+            <a href="<?= $_SESSION['author_type'] === 'admin' ? './dashboard/admin/blogs_management.php' : './dashboard/users/blog_management.php' ?>" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                <span>Kembali</span>
+            </a>
+        </div>
+
+        <?php if (isset($_SESSION['success'])): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i><?php echo $_SESSION['success']; ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php unset($_SESSION['success']);
+        endif; ?>
+
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i><?php echo $_SESSION['error']; ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php unset($_SESSION['error']);
+        endif; ?>
+
+        <form action="save_blog.php" method="POST" enctype="multipart/form-data" id="addBlogForm" class="needs-validation" novalidate>
+            <div class="blog-editor">
+                <div class="editor-main">
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-heading"></i>
+                            Informasi Utama
+                        </div>
+                        <div class="mb-4">
+                            <label for="title" class="form-label">Judul Blog</label>
+                            <textarea id="title" name="title" class="form-control" required placeholder="Masukkan judul blog Anda di sini..."></textarea>
+                            <div class="invalid-feedback">
+                                <i class="fas fa-exclamation-circle"></i>
+                                Judul blog harus diisi
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="content" class="form-label">Konten Blog</label>
+                            <textarea id="content" name="content" class="form-control" required></textarea>
+                            <div class="invalid-feedback">
+                                <i class="fas fa-exclamation-circle"></i>
+                                Konten blog harus diisi
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="editor-sidebar">
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-image"></i>
+                            Thumbnail Blog
+                        </div>
+                        <div class="thumbnail-section">
+                            <div class="custom-file-upload">
+                                <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+                            </div>
+                            <div class="mb-3">
+                                <div id="cropper-container" style="display: none;">
+                                    <img id="cropper-image" src="" alt="Preview">
+                                </div>
+                            </div>
+                            <input type="hidden" name="cropped_image" id="cropped_image">
+                            <div class="preview-label">
+                                <i class="fas fa-info-circle"></i>
+                                Format: JPG, PNG, GIF, WEBP (Max. 5MB)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-file-alt"></i>
+                            Materi Tambahan
+                        </div>
+                        <div class="document-section">
+                            <div class="custom-file-upload">
+                                <input type="file" id="documents" name="documents[]" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx" multiple>
+                            </div>
+                            <div class="preview-label">
+                                <i class="fas fa-info-circle"></i>
+                                Format: PDF, DOC, DOCX, TXT, PPT, PPTX (Max. 10MB per file)
+                            </div>
+                            <ul id="documentsPreview" class="mt-3" style="display: none;"></ul>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <div class="section-title">
+                            <i class="fas fa-tags"></i>
+                            Kategori & Status
+                        </div>
+                        <div class="mb-4">
+                            <label for="category" class="form-label">Kategori</label>
+                            <?php
+                            // Ambil semua kategori dan subkategori
+                            $categories = [];
+                            $res = $conn->query("SELECT id, category, parent_id FROM category ORDER BY category ASC");
+                            while ($row = $res->fetch_assoc()) {
+                                $categories[] = $row;
+                            }
+                            // Pisahkan parent dan child
+                            $parentCategories = array_filter($categories, function ($cat) {
+                                return $cat['parent_id'] === null;
+                            });
+                            $categoriesByParent = [];
+                            foreach ($categories as $cat) {
+                                $categoriesByParent[$cat['parent_id']][] = $cat;
+                            }
+                            ?>
+                            <select class="form-select" name="category_parent" id="category_parent" required>
+                                <option value="">-- Pilih Kategori Utama --</option>
+                                <?php foreach ($parentCategories as $cat): ?>
+                                    <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['category']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="invalid-feedback">
+                                <i class="fas fa-exclamation-circle"></i>
+                                Kategori harus dipilih
+                            </div>
+                            <select class="form-select mt-3" name="category" id="category_child" style="display:none;">
+                                <option value="">-- Pilih Subkategori --</option>
+                            </select>
+                            <div id="category-tags" class="mt-3"></div>
+                            <script>
+                                // Data kategori dari PHP ke JS
+                                const categories = <?= json_encode($categories) ?>;
+                                const categoriesByParent = {};
+                                categories.forEach(cat => {
+                                    if (!categoriesByParent[cat.parent_id]) categoriesByParent[cat.parent_id] = [];
+                                    categoriesByParent[cat.parent_id].push(cat);
+                                });
+                                const parentSelect = document.getElementById('category_parent');
+                                const childSelect = document.getElementById('category_child');
+                                const tagsDiv = document.getElementById('category-tags');
+                                parentSelect.addEventListener('change', function() {
+                                    const parentId = this.value;
+                                    childSelect.innerHTML = '<option value="">-- Pilih Subkategori --</option>';
+                                    tagsDiv.innerHTML = '';
+                                    if (categoriesByParent[parentId]) {
+                                        childSelect.style.display = '';
+                                        categoriesByParent[parentId].forEach(cat => {
+                                            childSelect.innerHTML += `<option value="${cat.id}">${cat.category}</option>`;
+                                        });
+                                    } else {
+                                        childSelect.style.display = 'none';
+                                    }
+                                    // Tag visual
+                                    if (parentId) {
+                                        const parentCat = categories.find(c => c.id == parentId);
+                                        tagsDiv.innerHTML = `<span class='badge bg-success me-1'>#${parentCat.category}</span>`;
+                                    }
+                                });
+                                childSelect.addEventListener('change', function() {
+                                    const parentId = parentSelect.value;
+                                    const childId = this.value;
+                                    tagsDiv.innerHTML = '';
+                                    if (parentId) {
+                                        const parentCat = categories.find(c => c.id == parentId);
+                                        tagsDiv.innerHTML += `<span class='badge bg-success me-1'>#${parentCat.category}</span>`;
+                                    }
+                                    if (childId) {
+                                        const childCat = categories.find(c => c.id == childId);
+                                        tagsDiv.innerHTML += `<span class='badge bg-info text-dark'>#${childCat.category}</span>`;
+                                    }
+                                });
+                            </script>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="status" class="form-label">Status Publikasi</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="draft">Draft</option>
+                                <option value="published">Published</option>
+                            </select>
+                        </div>
+
+                        <input type="hidden" name="author_id" value="<?= $_SESSION['author_id'] ?>">
+                        <input type="hidden" name="author_type" value="<?= $_SESSION['author_type'] ?>">
+
+                        <button type="submit" class="btn btn-green">
+                            <i class="fas fa-save"></i>Simpan Blog
+                        </button>
+                    </div>
+
+
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Add SweetAlert2 for better alerts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // SweetAlert untuk notifikasi sukses setelah redirect
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('add') === 'success') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Blog berhasil disimpan',
+                    confirmButtonColor: '#3498db'
+                });
+                // Hapus parameter dari URL agar tidak muncul lagi saat reload
+                if (window.history.replaceState) {
+                    const url = window.location.origin + window.location.pathname;
+                    window.history.replaceState({}, document.title, url);
                 }
             }
-        }
+        });
+    </script>
 
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
+    <script>
         document.getElementById('documents').addEventListener('change', function(event) {
             const files = event.target.files;
             const preview = document.getElementById('documentsPreview');
@@ -997,29 +1247,16 @@ $doc_stmt->close();
                 preview.style.display = 'block';
                 for (let i = 0; i < files.length; i++) {
                     const li = document.createElement('li');
-                    li.textContent = files[i].name + ' (' + (files[i].size/1024/1024).toFixed(2) + ' MB)';
+                    li.textContent = files[i].name + ' (' + (files[i].size / 1024 / 1024).toFixed(2) + ' MB)';
                     preview.appendChild(li);
                 }
             } else {
                 preview.style.display = 'none';
             }
         });
+    </script>
 
-        function removeDocument(docId, btn) {
-            // Remove from UI
-            const li = btn.closest('li');
-            li.parentNode.removeChild(li);
-            // Remove hidden input so it won't be kept
-            const input = li.querySelector('input[name="keep_documents[]"]');
-            if (input) input.remove();
-            // Add hidden input to mark for deletion
-            const delInput = document.createElement('input');
-            delInput.type = 'hidden';
-            delInput.name = 'delete_documents[]';
-            delInput.value = docId;
-            document.getElementById('editBlogForm').appendChild(delInput);
-        }
-
+    <script>
         document.getElementById('image').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -1061,214 +1298,6 @@ $doc_stmt->close();
             }
         }
     </script>
-    
-    <?php if(isset($_SESSION['success'])): ?>
-    <script>
-        alert('<?php echo $_SESSION['success']; ?>');
-    </script>
-    <?php unset($_SESSION['success']); endif; ?>
-
-    <?php if(isset($_SESSION['error'])): ?>
-    <script>
-        alert('<?php echo $_SESSION['error']; ?>');
-    </script>
-    <?php unset($_SESSION['error']); endif; ?>
-</head>
-<body>
-    <div class="container-fluid px-4">
-        <div class="page-header">
-            <h2><i class="fas fa-edit"></i>Edit Blog</h2>
-            <a href="<?= $_SESSION['author_type'] === 'admin' ? './dashboard/admin/blogs_management.php' : './dashboard/user/blog_management.php' ?>" class="back-button">
-                <i class="fas fa-arrow-left"></i>
-                <span>Kembali</span>
-            </a>
-        </div>
-
-        <?php if(isset($_SESSION['success'])): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i><?php echo $_SESSION['success']; ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        <?php unset($_SESSION['success']); endif; ?>
-
-        <?php if(isset($_SESSION['error'])): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i><?php echo $_SESSION['error']; ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        <?php unset($_SESSION['error']); endif; ?>
-
-        <form action="update_blog.php" method="POST" enctype="multipart/form-data" id="editBlogForm" class="needs-validation" novalidate>
-            <input type="hidden" name="id" value="<?= $blog['id'] ?>">
-            <input type="hidden" name="old_image" value="<?= htmlspecialchars($blog['image']) ?>">
-
-            <div class="blog-editor">
-                <div class="editor-main">
-                    <div class="form-section">
-                        <div class="section-title">
-                            <i class="fas fa-heading"></i>
-                            Informasi Utama
-                        </div>
-                        <div class="mb-4">
-                            <label for="title" class="form-label">Judul Blog</label>
-                            <textarea id="title" name="title" class="form-control" required placeholder="Masukkan judul blog Anda di sini..."><?= htmlspecialchars($blog['title']) ?></textarea>
-                            <div class="invalid-feedback">
-                                <i class="fas fa-exclamation-circle"></i>
-                                Judul blog harus diisi
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="content" class="form-label">Konten Blog</label>
-                            <textarea id="content" name="content" class="form-control" required><?= htmlspecialchars($blog['content']) ?></textarea>
-                            <div class="invalid-feedback">
-                                <i class="fas fa-exclamation-circle"></i>
-                                Konten blog harus diisi
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="editor-sidebar">
-                    <div class="form-section">
-                        <div class="section-title">
-                            <i class="fas fa-image"></i>
-                            Thumbnail Blog
-                        </div>
-                        <div class="thumbnail-section">
-                            <?php if ($blog['image']): ?>
-                            <div class="mb-4">
-                                <label class="form-label">Thumbnail Saat Ini:</label>
-                                <img src="uploads/<?= htmlspecialchars($blog['image']) ?>" alt="Current Thumbnail" class="current-thumbnail">
-                            </div>
-                            <?php endif; ?>
-
-                            <div class="custom-file-upload">
-                                <label class="file-upload-label">
-                                    <i class="fas fa-cloud-upload-alt"></i>
-                                    <span>Pilih atau seret gambar ke sini</span>
-                                </label>
-                                <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/gif,image/webp" onchange="previewThumbnail(event)">
-                            </div>
-                            <div class="preview-label">
-                                <i class="fas fa-info-circle"></i>
-                                Format: JPG, PNG, GIF, WEBP (Max. 5MB)
-                            </div>
-                            <img id="cropper-image" src="#" alt="Preview Thumbnail" style="display: none;">
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <div class="section-title">
-                            <i class="fas fa-file-alt"></i>
-                            Lampiran
-                        </div>
-                        <div class="document-section">
-                            <?php if (count($documents) > 0): ?>
-                                <div class="mb-4">
-                                    <label class="form-label">Lampiran Saat Ini:</label>
-                                    <ul class="list-group mb-2">
-                                        <?php foreach ($documents as $doc): ?>
-                                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                <span>
-                                                    <i class="fas fa-file-alt me-2"></i>
-                                                    <?= htmlspecialchars($doc['file_name']) ?>
-                                                </span>
-                                                <span>
-                                                    <a href="uploads/documents/<?= htmlspecialchars($doc['file_name']) ?>" target="_blank" class="btn btn-sm btn-outline-primary me-2">
-                                                        <i class="fas fa-download"></i> Unduh
-                                                    </a>
-                                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeDocument(<?= $doc['id'] ?>, this)"><i class="fas fa-trash"></i> Hapus</button>
-                                                    <input type="hidden" name="keep_documents[]" value="<?= $doc['id'] ?>">
-                                                </span>
-                                            </li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                </div>
-                            <?php endif; ?>
-                            <div class="custom-file-upload">
-                                <label class="file-upload-label">
-                                    <i class="fas fa-file-upload"></i>
-                                    <span>Upload File Lampiran (PDF, DOC, DOCX, TXT, PPT, PPTX)</span>
-                                </label>
-                                <input type="file" id="documents" name="documents[]" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx" multiple>
-                            </div>
-                            <div class="preview-label">
-                                <i class="fas fa-info-circle"></i>
-                                Format: PDF, DOC, DOCX, TXT, PPT, PPTX (Max. 10MB per file)
-                            </div>
-                            <ul id="documentsPreview" class="mt-3" style="display: none;"></ul>
-                        </div>
-                    </div>
-
-                    <div class="form-section">
-                        <div class="section-title">
-                            <i class="fas fa-tags"></i>
-                            Kategori & Status
-                        </div>
-                        <div class="mb-4">
-                            <label for="category" class="form-label">Kategori</label>
-                            <select class="form-select" name="category" id="category" required>
-                                <option value="">-- Pilih Kategori --</option>
-                                <?php
-                                $res = $conn->query("SELECT * FROM category ORDER BY category ASC");
-                                while ($row = $res->fetch_assoc()) {
-                                    $selected = ($row['id'] == $blog['category_id']) ? 'selected' : '';
-                                    echo '<option value="' . $row['id'] . '" ' . $selected . '>' . htmlspecialchars($row['category']) . '</option>';
-                                }
-                                ?>
-                            </select>
-                            <div class="invalid-feedback">
-                                <i class="fas fa-exclamation-circle"></i>
-                                Kategori harus dipilih
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="status" class="form-label">Status Publikasi</label>
-                            <select class="form-select" id="status" name="status" required>
-                                <option value="draft" <?= $blog['status'] === 'draft' ? 'selected' : '' ?>>Draft</option>
-                                <option value="published" <?= $blog['status'] === 'published' ? 'selected' : '' ?>>Published</option>
-                            </select>
-                        </div>
-
-                        <input type="hidden" name="author_id" value="<?= $_SESSION['author_id'] ?>">
-                        <input type="hidden" name="author_type" value="<?= $_SESSION['author_type'] ?>">
-
-                        <button type="submit" class="btn btn-green" id="updateBlogBtn">
-                            <i class="fas fa-save"></i>Update Blog
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-
-    <!-- Add SweetAlert2 for better alerts -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-    document.getElementById('editBlogForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const form = this;
-        if (!form.checkValidity()) {
-            form.classList.add('was-validated');
-            return;
-        }
-        Swal.fire({
-            title: 'Update Blog?',
-            text: 'Apakah Anda yakin ingin menyimpan perubahan blog ini?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, simpan!',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                form.submit();
-            }
-        });
-    });
-    </script>
 </body>
+
 </html>

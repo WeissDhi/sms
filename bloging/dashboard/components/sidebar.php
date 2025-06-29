@@ -60,6 +60,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link <?php echo ($current_page == 'analytics.php') ? 'active' : ''; ?>" href="../../dashboard/admin/analytics.php">
+                    <i class="bi bi-graph-up"></i> Analytics
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link <?php echo ($current_page == 'blogs_management.php') ? 'active' : ''; ?>" href="../../dashboard/admin/blogs_management.php">
                     <i class="bi bi-journal-text"></i> Manajemen Blog
                 </a>

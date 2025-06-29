@@ -682,9 +682,22 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
             display: block;
             margin: 0 auto;
         }
+
+        /* Hide original textareas when TinyMCE is loaded */
+        .tox-tinymce ~ textarea {
+            display: none !important;
+        }
+
+        /* Fallback styling for when TinyMCE fails to load */
+        .fallback-textarea {
+            display: block !important;
+            min-height: 200px;
+            resize: vertical;
+        }
     </style>
     <script>
         window.authorType = "<?= $_SESSION['author_type'] ?>";
+        
         // TinyMCE Title
         tinymce.init({
             selector: '#title',
@@ -694,7 +707,17 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
             height: 100,
             branding: false,
             statusbar: false,
-            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:20px; font-weight:bold }'
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:20px; font-weight:bold }',
+            setup: function(editor) {
+                editor.on('change keyup', function() {
+                    // Update hidden validation input
+                    const content = editor.getContent().trim();
+                    document.getElementById('title_validation').value = content;
+                    
+                    // Remove required attribute from original textarea to prevent validation errors
+                    document.getElementById('title').removeAttribute('required');
+                });
+            }
         });
 
         // TinyMCE Content
@@ -711,6 +734,16 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
             file_picker_types: 'image media',
             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
             images_reuse_filename: true,
+            setup: function(editor) {
+                editor.on('change keyup', function() {
+                    // Update hidden validation input
+                    const content = editor.getContent().trim();
+                    document.getElementById('content_validation').value = content;
+                    
+                    // Remove required attribute from original textarea to prevent validation errors
+                    document.getElementById('content').removeAttribute('required');
+                });
+            },
             images_upload_handler: function(blobInfo, progress) {
                 return new Promise((resolve, reject) => {
                     const xhr = new XMLHttpRequest();
@@ -761,6 +794,22 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
         let cropper;
         let croppedImageData = null;
 
+        // Fungsi updateCropData
+        function updateCropData() {
+            if (cropper) {
+                const canvas = cropper.getCroppedCanvas({
+                    maxWidth: 800,
+                    maxHeight: 800,
+                    fillColor: '#fff',
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high'
+                });
+                if (canvas) {
+                    document.getElementById('cropped_image').value = canvas.toDataURL('image/png');
+                }
+            }
+        }
+
         // Add image validation
         function validateImage(file) {
             const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
@@ -789,89 +838,140 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
             return true;
         }
 
-        function previewThumbnail(event) {
-            const file = event.target.files[0];
-            if (file) {
-                if (!validateImage(file)) {
-                    event.target.value = '';
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const image = document.getElementById('thumbnailPreview');
-                    image.src = e.target.result;
-                    image.style.display = "block";
-
-                    if (cropper) {
-                        cropper.destroy();
-                    }
-
-                    cropper = new Cropper(image, {
-                        aspectRatio: 16 / 9,
-                        viewMode: 1,
-                        ready: function() {
-                            // Set initial crop data
-                            updateCropData();
-                        },
-                        crop: function() {
-                            // Update crop data on every crop event
-                            updateCropData();
-                        }
-                    });
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function updateCropData() {
-            if (cropper) {
-                const canvas = cropper.getCroppedCanvas({
-                    maxWidth: 800,
-                    maxHeight: 800,
-                    fillColor: '#fff',
-                    imageSmoothingEnabled: true,
-                    imageSmoothingQuality: 'high'
-                });
-
-                if (canvas) {
-                    // Create a hidden input if it doesn't exist
-                    let hiddenInput = document.getElementById('cropped_image');
-                    if (!hiddenInput) {
-                        hiddenInput = document.createElement('input');
-                        hiddenInput.type = 'hidden';
-                        hiddenInput.id = 'cropped_image';
-                        hiddenInput.name = 'cropped_image';
-                        document.getElementById('addBlogForm').appendChild(hiddenInput);
-                    }
-                    hiddenInput.value = canvas.toDataURL('image/png');
-                }
-            }
-        }
-
-        // Form validation
-        (function() {
-            'use strict'
-            var forms = document.querySelectorAll('.needs-validation')
-            Array.prototype.slice.call(forms).forEach(function(form) {
-                form.addEventListener('submit', function(event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
-                    }
-                    form.classList.add('was-validated')
-                }, false)
-            })
-        })()
-
         document.addEventListener('DOMContentLoaded', function() {
+            // Check if TinyMCE is available
+            setTimeout(function() {
+                if (typeof tinymce === 'undefined') {
+                    console.warn('TinyMCE not available, using fallback textarea');
+                    const titleTextarea = document.getElementById('title');
+                    const contentTextarea = document.getElementById('content');
+                    
+                    if (titleTextarea) {
+                        titleTextarea.style.display = 'block';
+                        titleTextarea.classList.add('fallback-textarea');
+                        titleTextarea.setAttribute('required', 'required');
+                    }
+                    
+                    if (contentTextarea) {
+                        contentTextarea.style.display = 'block';
+                        contentTextarea.classList.add('fallback-textarea');
+                        contentTextarea.setAttribute('required', 'required');
+                    }
+                }
+            }, 3000); // Wait 3 seconds for TinyMCE to load
+
+            // Validasi input file gambar
+            const imageInput = document.getElementById('image');
+            imageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    if (!validateImage(file)) {
+                        this.value = '';
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const image = document.getElementById('cropper-image');
+                        image.src = e.target.result;
+                        document.getElementById('cropper-container').style.display = 'block';
+                        if (cropper) {
+                            cropper.destroy();
+                        }
+                        cropper = new Cropper(image, {
+                            aspectRatio: 16 / 9,
+                            viewMode: 1,
+                            ready: function() {
+                                updateCropData();
+                            },
+                            crop: function() {
+                                updateCropData();
+                            }
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Form submit handler
             document.getElementById('addBlogForm').addEventListener('submit', function(e) {
                 e.preventDefault();
-                // Validasi form
-                if (!this.checkValidity()) {
-                    this.classList.add('was-validated');
+                
+                // Validasi form manual menggunakan hidden inputs
+                const titleValidation = document.getElementById('title_validation');
+                const contentValidation = document.getElementById('content_validation');
+                const imageInput = document.getElementById('image');
+                const parentSelect = document.getElementById('category_parent');
+                const childSelect = document.getElementById('category_child');
+                
+                // Update validation inputs dengan content dari TinyMCE atau textarea fallback
+                let titleContent, contentContent;
+                
+                if (typeof tinymce !== 'undefined' && tinymce.get('title')) {
+                    titleContent = tinymce.get('title').getContent().trim();
+                    contentContent = tinymce.get('content').getContent().trim();
+                } else {
+                    // Fallback: use textarea values directly
+                    titleContent = document.getElementById('title').value.trim();
+                    contentContent = document.getElementById('content').value.trim();
+                }
+                
+                titleValidation.value = titleContent;
+                contentValidation.value = contentContent;
+                
+                // Validasi judul
+                if (!titleContent || titleContent === '<p></p>' || titleContent === '') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Judul Belum Diisi',
+                        text: 'Silakan isi judul blog terlebih dahulu',
+                        confirmButtonColor: '#3498db'
+                    });
                     return;
                 }
+                
+                // Validasi konten
+                if (!contentContent || contentContent === '<p></p>' || contentContent === '') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Konten Belum Diisi',
+                        text: 'Silakan isi konten blog terlebih dahulu',
+                        confirmButtonColor: '#3498db'
+                    });
+                    return;
+                }
+                
+                // Validasi gambar
+                if (!imageInput.files[0]) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gambar Belum Dipilih',
+                        text: 'Silakan pilih gambar thumbnail terlebih dahulu',
+                        confirmButtonColor: '#3498db'
+                    });
+                    return;
+                }
+                
+                // Debug: Check TinyMCE content
+                console.log('Title content:', titleContent);
+                console.log('Content length:', contentContent.length);
+                
+                // Debug: Check category selection
+                console.log('Parent category value:', parentSelect.value);
+                console.log('Child category value:', childSelect.value);
+                console.log('Child category display:', childSelect.style.display);
+                
+                // Ensure correct category is selected
+                if (childSelect.style.display !== 'none' && childSelect.value) {
+                    childSelect.setAttribute('name', 'category');
+                    parentSelect.removeAttribute('name');
+                    console.log('Using child category:', childSelect.value);
+                } else {
+                    parentSelect.setAttribute('name', 'category');
+                    childSelect.removeAttribute('name');
+                    console.log('Using parent category:', parentSelect.value);
+                }
+                
                 const croppedImage = document.getElementById('cropped_image');
                 if (!croppedImage || !croppedImage.value) {
                     Swal.fire({
@@ -882,22 +982,84 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                     });
                     return;
                 }
+                
                 // Convert base64 to blob
                 fetch(croppedImage.value)
                     .then(res => res.blob())
                     .then(blob => {
                         // Create new FormData
-                        const formData = new FormData(this);
-                        // Replace original image with cropped image
-                        formData.delete('image');
+                        const formData = new FormData();
+                        
+                        // Manually add all form fields
+                        formData.append('title', titleContent);
+                        formData.append('content', contentContent);
+                        
+                        // Handle category selection properly
+                        let categoryValue = '';
+                        
+                        if (childSelect.style.display !== 'none' && childSelect.value) {
+                            categoryValue = childSelect.value;
+                        } else {
+                            categoryValue = parentSelect.value;
+                        }
+                        
+                        console.log('Selected category value:', categoryValue);
+                        formData.append('category', categoryValue);
+                        
+                        // Validate category selection
+                        if (!categoryValue) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Kategori Belum Dipilih',
+                                text: 'Silakan pilih kategori terlebih dahulu',
+                                confirmButtonColor: '#3498db'
+                            });
+                            return;
+                        }
+                        
+                        formData.append('status', document.getElementById('status').value);
+                        formData.append('author_id', document.querySelector('input[name="author_id"]').value);
+                        formData.append('author_type', document.querySelector('input[name="author_type"]').value);
+                        
+                        // Add documents if any
+                        const documentsInput = document.getElementById('documents');
+                        if (documentsInput.files.length > 0) {
+                            for (let i = 0; i < documentsInput.files.length; i++) {
+                                formData.append('documents[]', documentsInput.files[i]);
+                            }
+                        }
+                        
+                        // Debug: Log form data
+                        console.log('Form data before modification:');
+                        for (let [key, value] of formData.entries()) {
+                            console.log(key, value);
+                        }
+                        
+                        // Add cropped image
                         formData.append('image', blob, 'cropped_image.jpg');
+                        
+                        // Debug: Log form data after modification
+                        console.log('Form data after modification:');
+                        for (let [key, value] of formData.entries()) {
+                            console.log(key, value);
+                        }
+                        
                         // Submit form
                         fetch('save_blog.php', {
                                 method: 'POST',
                                 body: formData
                             })
-                            .then(response => response.text())
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! status: ${response.status}`);
+                                }
+                                return response.text();
+                            })
                             .then(result => {
+                                console.log('Response from save_blog.php:', result);
+                                console.log('Response length:', result.length);
+                                console.log('Response trimmed:', result.trim());
+                                
                                 if (result.trim() === 'success') {
                                     Swal.fire({
                                         icon: 'success',
@@ -914,7 +1076,7 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                                         }
                                     });
                                 } else {
-                                    throw new Error('Gagal menyimpan blog');
+                                    throw new Error(`Gagal menyimpan blog. Response: ${result}`);
                                 }
                             })
                             .catch(error => {
@@ -922,12 +1084,50 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Gagal!',
-                                    text: 'Terjadi kesalahan saat menyimpan blog',
+                                    text: `Terjadi kesalahan saat menyimpan blog: ${error.message}`,
                                     confirmButtonColor: '#3498db'
                                 });
                             });
                     });
             });
+        });
+
+        // Handle TinyMCE loading errors
+        window.addEventListener('error', function(e) {
+            if (e.target.src && e.target.src.includes('tinymce')) {
+                console.warn('TinyMCE failed to load, using fallback textarea');
+                // Fallback: show original textareas if TinyMCE fails
+                const titleTextarea = document.getElementById('title');
+                const contentTextarea = document.getElementById('content');
+                
+                if (titleTextarea) {
+                    titleTextarea.style.display = 'block';
+                    titleTextarea.classList.add('fallback-textarea');
+                }
+                
+                if (contentTextarea) {
+                    contentTextarea.style.display = 'block';
+                    contentTextarea.classList.add('fallback-textarea');
+                }
+            }
+        });
+
+        // SweetAlert untuk notifikasi sukses setelah redirect
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('add') === 'success') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Blog berhasil disimpan',
+                    confirmButtonColor: '#3498db'
+                });
+                // Hapus parameter dari URL agar tidak muncul lagi saat reload
+                if (window.history.replaceState) {
+                    const url = window.location.origin + window.location.pathname;
+                    window.history.replaceState({}, document.title, url);
+                }
+            }
         });
     </script>
 </head>
@@ -958,7 +1158,7 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
         <?php unset($_SESSION['error']);
         endif; ?>
 
-        <form action="save_blog.php" method="POST" enctype="multipart/form-data" id="addBlogForm" class="needs-validation" novalidate>
+        <form action="save_blog.php" method="POST" enctype="multipart/form-data" id="addBlogForm" class="needs-validation">
             <div class="blog-editor">
                 <div class="editor-main">
                     <div class="form-section">
@@ -969,6 +1169,8 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                         <div class="mb-4">
                             <label for="title" class="form-label">Judul Blog</label>
                             <textarea id="title" name="title" class="form-control" required placeholder="Masukkan judul blog Anda di sini..."></textarea>
+                            <!-- Hidden input untuk validasi form -->
+                            <input type="hidden" id="title_validation" name="title_validation" required>
                             <div class="invalid-feedback">
                                 <i class="fas fa-exclamation-circle"></i>
                                 Judul blog harus diisi
@@ -978,6 +1180,8 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                         <div class="mb-4">
                             <label for="content" class="form-label">Konten Blog</label>
                             <textarea id="content" name="content" class="form-control" required></textarea>
+                            <!-- Hidden input untuk validasi form -->
+                            <input type="hidden" id="content_validation" name="content_validation" required>
                             <div class="invalid-feedback">
                                 <i class="fas fa-exclamation-circle"></i>
                                 Konten blog harus diisi
@@ -994,10 +1198,6 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                         </div>
                         <div class="thumbnail-section">
                             <div class="custom-file-upload">
-                                <label class="file-upload-label">
-                                    <i class="fas fa-cloud-upload-alt"></i>
-                                    <span>Pilih atau seret gambar ke sini</span>
-                                </label>
                                 <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
                             </div>
                             <div class="mb-3">
@@ -1019,10 +1219,6 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                         </div>
                         <div class="document-section">
                             <div class="custom-file-upload">
-                                <label class="file-upload-label">
-                                    <i class="fas fa-file-upload"></i>
-                                    <span>Upload File Materi (PDF, DOC, DOCX, TXT, PPT, PPTX)</span>
-                                </label>
                                 <input type="file" id="documents" name="documents[]" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx" multiple>
                             </div>
                             <div class="preview-label">
@@ -1111,16 +1307,6 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                                         tagsDiv.innerHTML += `<span class='badge bg-info text-dark'>#${childCat.category}</span>`;
                                     }
                                 });
-                                // Saat submit, pastikan value category diisi sesuai child jika ada, atau parent jika tidak ada child
-                                document.getElementById('addBlogForm').addEventListener('submit', function(e) {
-                                    if (childSelect.style.display !== 'none' && childSelect.value) {
-                                        childSelect.setAttribute('name', 'category');
-                                        parentSelect.removeAttribute('name');
-                                    } else {
-                                        parentSelect.setAttribute('name', 'category');
-                                        childSelect.removeAttribute('name');
-                                    }
-                                });
                             </script>
                         </div>
 
@@ -1149,26 +1335,6 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
     <!-- Add SweetAlert2 for better alerts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // SweetAlert untuk notifikasi sukses setelah redirect
-        document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('add') === 'success') {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: 'Blog berhasil disimpan',
-                    confirmButtonColor: '#3498db'
-                });
-                // Hapus parameter dari URL agar tidak muncul lagi saat reload
-                if (window.history.replaceState) {
-                    const url = window.location.origin + window.location.pathname;
-                    window.history.replaceState({}, document.title, url);
-                }
-            }
-        });
-    </script>
-
-    <script>
         document.getElementById('documents').addEventListener('change', function(event) {
             const files = event.target.files;
             const preview = document.getElementById('documentsPreview');
@@ -1184,49 +1350,6 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                 preview.style.display = 'none';
             }
         });
-    </script>
-
-    <script>
-        document.getElementById('image').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const image = document.getElementById('cropper-image');
-                    image.src = e.target.result;
-                    document.getElementById('cropper-container').style.display = 'block';
-                    if (cropper) {
-                        cropper.destroy();
-                    }
-                    cropper = new Cropper(image, {
-                        aspectRatio: 16 / 9,
-                        viewMode: 1,
-                        ready: function() {
-                            updateCropData();
-                        },
-                        crop: function() {
-                            updateCropData();
-                        }
-                    });
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        function updateCropData() {
-            if (cropper) {
-                const canvas = cropper.getCroppedCanvas({
-                    maxWidth: 800,
-                    maxHeight: 800,
-                    fillColor: '#fff',
-                    imageSmoothingEnabled: true,
-                    imageSmoothingQuality: 'high'
-                });
-                if (canvas) {
-                    document.getElementById('cropped_image').value = canvas.toDataURL('image/png');
-                }
-            }
-        }
     </script>
 </body>
 
