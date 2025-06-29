@@ -168,9 +168,9 @@ if (!function_exists('renderCategoryDropdown')) {
 
 <style>
     .custom-navbar {
-        background: #fff !important;
-        border-bottom: 3px solid #8fc333;
-        box-shadow: 0 2px 12px rgba(143, 195, 51, 0.08);
+        background: #FAFAF0 !important; /* Ivory */
+        border-bottom: 3px solid #2E7D32; /* Forest green */
+        box-shadow: 0 2px 12px rgba(46, 125, 50, 0.08);
         z-index: 100;
     }
     .navbar-brand span {
@@ -179,7 +179,7 @@ if (!function_exists('renderCategoryDropdown')) {
         letter-spacing: 1px;
     }
     .navbar-nav .nav-link {
-        color: #222 !important;
+        color: #2C2C2C !important; /* Charcoal */
         font-size: 1.08rem;
         position: relative;
         transition: color 0.2s;
@@ -187,7 +187,7 @@ if (!function_exists('renderCategoryDropdown')) {
         align-items: center;
     }
     .navbar-nav .nav-link:hover, .navbar-nav .nav-link.active {
-        color: #8fc333 !important;
+        color: #2E7D32 !important; /* Forest green */
     }
     .navbar-nav .nav-link::after {
         content: '';
@@ -196,7 +196,7 @@ if (!function_exists('renderCategoryDropdown')) {
         right: 0;
         bottom: 2px;
         height: 2px;
-        background: #8fc333;
+        background: #C5E1A5; /* Lime */
         transition: width 0.3s;
         width: 0;
         z-index: 1;
@@ -206,36 +206,37 @@ if (!function_exists('renderCategoryDropdown')) {
     }
     .dropdown-menu {
         border-radius: 14px;
-        box-shadow: 0 4px 18px rgba(143, 195, 51, 0.10);
-        border: 1.5px solid #e6f3d6;
+        box-shadow: 0 4px 18px rgba(46, 125, 50, 0.10);
+        border: 1.5px solid #C5E1A5; /* Lime */
         font-size: 1rem;
+        background: #EEEEEE; /* Soft gray */
     }
     .dropdown-item.active, .dropdown-item:active {
-        background: #8fc333;
+        background: #2E7D32; /* Forest green */
         color: #fff !important;
     }
     .dropdown-item:hover {
-        background: #f8faf5;
-        color: #8fc333;
+        background: #C5E1A5; /* Lime */
+        color: #2E7D32; /* Forest green */
     }
     .btn-success {
-        background: linear-gradient(90deg, #8fc333 70%, #00c6ff 100%);
+        background: #2E7D32; /* Forest green */
         border: none;
         font-weight: 600;
         letter-spacing: 0.5px;
-        box-shadow: 0 2px 8px rgba(143, 195, 51, 0.10);
+        box-shadow: 0 2px 8px rgba(46, 125, 50, 0.10);
     }
     .btn-success:hover {
-        background: #8fc333;
+        background: #1B5E20; /* Darker forest green */
         color: #fff;
     }
     .navbar-toggler {
         border-radius: 8px;
-        border: 2px solid #8fc333;
+        border: 2px solid #2E7D32; /* Forest green */
         padding: 6px 10px;
     }
     .navbar-toggler:focus {
-        box-shadow: 0 0 0 2px #8fc33333;
+        box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
     }
     @media (max-width: 991px) {
         .navbar-nav {
@@ -267,9 +268,9 @@ if (!function_exists('renderCategoryDropdown')) {
         position: absolute;
         min-width: 200px;
         border-radius: 12px;
-        box-shadow: 0 4px 18px rgba(143, 195, 51, 0.10);
-        border: 1.5px solid #e6f3d6;
-        background: #fff;
+        box-shadow: 0 4px 18px rgba(46, 125, 50, 0.10);
+        border: 1.5px solid #C5E1A5; /* Lime */
+        background: #EEEEEE; /* Soft gray */
     }
     /* Tampilkan submenu hanya saat hover tepat di atas menu utama */
     @media (min-width: 992px) {
@@ -282,14 +283,14 @@ if (!function_exists('renderCategoryDropdown')) {
             pointer-events: auto;
         }
     }
-    /* Hover warna hijau pada dropdown */
+    /* Hover warna lime pada dropdown */
     .dropdown-menu .dropdown-item:hover,
     .dropdown-menu .dropdown-item:focus {
-        background: #e6f3d6;
-        color: #8fc333 !important;
+        background: #C5E1A5; /* Lime */
+        color: #2E7D32 !important; /* Forest green */
     }
     .dropdown-menu .dropdown-item.active, .dropdown-menu .dropdown-item:active {
-        background: #8fc333;
+        background: #2E7D32; /* Forest green */
         color: #fff !important;
     }
 </style>

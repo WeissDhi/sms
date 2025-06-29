@@ -38,10 +38,10 @@ include './components/navbar.php';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .hero-section {
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('img/mesir-bg.jpg');
+            background: linear-gradient(rgba(46, 125, 50, 0.7), rgba(46, 125, 50, 0.7)), url('img/mesir-bg.jpg');
             background-size: cover;
             background-position: center;
-            color: white;
+            color: #FAFAF0; /* Ivory */
             padding: 100px 0;
             margin-bottom: 50px;
             position: relative;
@@ -54,7 +54,7 @@ include './components/navbar.php';
             left: 0;
             right: 0;
             height: 100px;
-            background: linear-gradient(to top, #fff, transparent);
+            background: linear-gradient(to top, #FAFAF0, transparent); /* Ivory */
         }
 
         .feature-card {
@@ -62,22 +62,23 @@ include './components/navbar.php';
             border-radius: 15px;
             transition: transform 0.3s ease;
             margin-bottom: 30px;
-            background: #fff;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            background: #EEEEEE; /* Soft gray */
+            box-shadow: 0 5px 15px rgba(46,125,50,0.08);
         }
 
         .feature-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(46,125,50,0.18);
         }
 
         .feature-icon {
             font-size: 2.5rem;
-            color: #28a745;
+            color: #2E7D32; /* Forest green */
             margin-bottom: 20px;
         }
 
         .quote-section {
-            background-color: #f8f9fa;
+            background-color: #EEEEEE; /* Soft gray */
             padding: 60px 0;
             margin: 50px 0;
         }
@@ -85,16 +86,17 @@ include './components/navbar.php';
         .arabic-text {
             font-family: 'Traditional Arabic', serif;
             font-size: 2rem;
-            color: #28a745;
+            color: #2E7D32; /* Forest green */
             margin-bottom: 20px;
         }
 
         .mission-card {
-            border-left: 4px solid #28a745;
+            border-left: 4px solid #2E7D32; /* Forest green */
             padding: 20px;
             margin: 20px 0;
-            background: #f8f9fa;
+            background: #C5E1A5; /* Lime */
             border-radius: 0 15px 15px 0;
+            color: #2C2C2C; /* Charcoal */
         }
 
         .team-section {
@@ -112,8 +114,22 @@ include './components/navbar.php';
             border-radius: 50%;
             margin-bottom: 20px;
             object-fit: cover;
-            border: 5px solid #fff;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 5px solid #FAFAF0; /* Ivory */
+            box-shadow: 0 5px 15px rgba(46,125,50,0.08);
+        }
+        .card.border-0.shadow-sm {
+            background: #EEEEEE; /* Soft gray */
+        }
+        .card-body p, .card-body h2, .card-body .lead {
+            color: #2C2C2C; /* Charcoal */
+        }
+        .badge.bg-success {
+            background: #2E7D32 !important; /* Forest green */
+            color: #FAFAF0 !important; /* Ivory */
+        }
+        body {
+            background: #FAFAF0 !important; /* Ivory */
+            color: #2C2C2C;
         }
     </style>
 </head>
@@ -126,7 +142,7 @@ include './components/navbar.php';
             <h1 class="display-3 fw-bold mb-4">Syukron Makmun Society-Mesir</h1>
             <p class="lead fs-4">Blog Islami dari Negeri Para Ulama</p>
             <div class="mt-4">
-                <span class="badge bg-success p-2 px-4 fs-6">Sejak 2024</span>
+                <span class="badge bg-success p-2 px-4 fs-6">Sejak 2025</span>
             </div>
         </div>
     </section>

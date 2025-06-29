@@ -73,7 +73,7 @@ $result = $conn->query($sql);
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(to right, #eef2f3, #8e9eab);
+            background: #FAFAF0; /* Ivory */
         }
 
         .search-bar {
@@ -82,33 +82,42 @@ $result = $conn->query($sql);
 
         .search-bar input {
             border-radius: 30px 0 0 30px;
-            border-color: #8fc333;
+            border-color: #2E7D32; /* Forest green */
         }
 
         .search-bar input:focus {
-            border-color: #8fc333 !important;
-            box-shadow: 0 0 0 0.2rem rgba(143, 195, 51, 0.25);
+            border-color: #2E7D32 !important;
+            box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.25);
             outline: none;
         }
 
         .search-bar button {
             border-radius: 0 30px 30px 0;
+            background: linear-gradient(135deg, #2E7D32, #C5E1A5); /* Forest green to lime */
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        .search-bar button:hover {
+            background: #2E7D32;
+            color: #fff;
         }
 
         .card {
             transition: all 0.4s ease;
-            border: 3px solid #8fc333;
+            border: 3px solid #2E7D32; /* Forest green */
             border-radius: 20px;
             overflow: hidden;
-            background: rgba(255, 255, 255, 0.98);
+            background: #EEEEEE; /* Soft gray */
             backdrop-filter: blur(6px);
-            box-shadow: 0 8px 25px rgba(143, 195, 51, 0.45);
+            box-shadow: 0 8px 25px rgba(46, 125, 50, 0.18);
             position: relative;
         }
 
         .card:hover {
             transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 15px 35px rgba(143, 195, 51, 0.6);
+            box-shadow: 0 15px 35px rgba(46, 125, 50, 0.25);
         }
 
         .card-img-top {
@@ -128,7 +137,7 @@ $result = $conn->query($sql);
         .card-body h5 {
             font-weight: 600;
             font-size: 1.1rem;
-            color: #333;
+            color: #2C2C2C; /* Charcoal */
         }
 
         .card-body p {
@@ -141,6 +150,18 @@ $result = $conn->query($sql);
             margin-right: 5px;
         }
 
+        .bg-success {
+            background: #2E7D32 !important; /* Forest green */
+            color: #fff !important;
+        }
+        .bg-light {
+            background: #C5E1A5 !important; /* Lime */
+            color: #2E7D32 !important;
+        }
+        .text-success {
+            color: #2E7D32 !important;
+        }
+
         .meta-info {
             font-size: 0.8rem;
             color: #777;
@@ -149,11 +170,11 @@ $result = $conn->query($sql);
         .icon {
             margin-right: 5px;
             vertical-align: middle;
-            color: #6c757d;
+            color: #2E7D32; /* Forest green */
         }
 
         .no-results {
-            background: #fff;
+            background: #EEEEEE; /* Soft gray */
             padding: 50px;
             border-radius: 10px;
             text-align: center;
@@ -163,7 +184,7 @@ $result = $conn->query($sql);
         }
 
         .btn-read-more {
-            background: linear-gradient(135deg, #8fc333, #00c6ff);
+            background: linear-gradient(135deg, #2E7D32, #C5E1A5); /* Forest green to lime */
             color: white;
             padding: 8px 20px;
             border: none;
@@ -178,7 +199,7 @@ $result = $conn->query($sql);
         }
 
         .btn-read-more:hover {
-            background: linear-gradient(135deg, #8fc333, #8fc333);
+            background: #2E7D32;
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             color: #fff;

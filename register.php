@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background: rgb(255, 255, 255);
+            background: #FAFAF0; /* Ivory */
         }
 
         .register-container {
@@ -49,11 +49,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .register-form {
-            background: #fff;
+            background: #EEEEEE; /* Soft gray */
             padding: 3rem 2rem;
             border-radius: 20px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.05);
-            border: 3px solid #8fc333;
+            box-shadow: 0 0 30px rgba(46, 125, 50, 0.08);
+            border: 3px solid #2E7D32; /* Forest green */
         }
 
         .logo {
@@ -68,13 +68,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .form-control:focus {
-            border-color: #8fc333;
-            box-shadow: 0 0 0 0.2rem rgba(143, 195, 51, 0.25);
+            border-color: #2E7D32; /* Forest green */
+            box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.18);
             transition: 0.3s;
         }
 
         .divider {
-            border-left: 2px solid #dee2e6;
+            border-left: 2px solid #C5E1A5; /* Lime */
             height: 80%;
             margin: auto;
         }
@@ -85,18 +85,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .btn-success {
-            background-color: #0d6efd;
-            /* warna biru Bootstrap default */
-            border-color: #0d6efd;
-            color: white;
+            background: linear-gradient(135deg, #2E7D32, #C5E1A5); /* Forest green to lime */
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .btn-success:hover {
+            background: #2E7D32;
+            border: none;
+            color: #fff;
+            transform: scale(1.02);
         }
 
-        .btn-success:hover {
-            background-color: #8fc333;
-            /* warna hijau */
-            border-color: #8fc333;
-            transform: scale(1.02);
-            transition: all 0.3s ease;
+        .register-form h4, .register-form label, .register-form p, .register-form .form-label {
+            color: #2C2C2C; /* Charcoal */
+        }
+
+        .alert-danger {
+            background: #F57C00;
+            color: #fff;
+            border: none;
+        }
+        .alert-success {
+            background: #C5E1A5;
+            color: #2E7D32;
+            border: none;
         }
 
         @media (max-width: 992px) {

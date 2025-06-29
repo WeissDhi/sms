@@ -21,13 +21,14 @@
       <div class="col-md-4">
         <h5 class="fw-bold mb-3">Kategori</h5>
         <ul class="list-unstyled">
-          <li><a href="#" class="footer-link">Esai</a></li>
-          <li><a href="#" class="footer-link">Humaniora</a></li>
-          <li><a href="#" class="footer-link">Islamologi</a></li>
-          <li><a href="#" class="footer-link">Opini</a></li>
-          <li><a href="#" class="footer-link">Resensi</a></li>
-          <li><a href="#" class="footer-link">Sastra</a></li>
-          <li><a href="#" class="footer-link">Warta</a></li>
+          <?php
+          // Ambil kategori dari database
+          $footer_categories = [];
+          $resCat = $conn->query("SELECT id, category FROM category ORDER BY category ASC LIMIT 7");
+          while ($cat = $resCat->fetch_assoc()) {
+              echo '<li><a href="category.php?id=' . $cat['id'] . '" class="footer-link">' . htmlspecialchars($cat['category']) . '</a></li>';
+          }
+          ?>
         </ul>
       </div>
 

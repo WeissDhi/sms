@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background: rgb(255, 255, 255);
+            background: #FAFAF0; /* Ivory */
         }
 
         .login-container {
@@ -59,11 +59,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .login-form {
-            background: #fff;
+            background: #EEEEEE; /* Soft gray */
             padding: 3rem 2rem;
             border-radius: 20px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.05);
-            border: 3px solid #8fc333;
+            box-shadow: 0 0 30px rgba(46, 125, 50, 0.08);
+            border: 3px solid #2E7D32; /* Forest green */
         }
 
         .logo {
@@ -78,13 +78,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .form-control:focus {
-            border-color: #8fc333;
-            box-shadow: 0 0 0 0.2rem rgba(143, 195, 51, 0.25);
+            border-color: #2E7D32; /* Forest green */
+            box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.18);
             transition: 0.3s;
         }
 
         .divider {
-            border-left: 2px solid #dee2e6;
+            border-left: 2px solid #C5E1A5; /* Lime */
             height: 80%;
             margin: auto;
         }
@@ -94,11 +94,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transition: all 0.8s ease;
         }
 
+        .btn-primary {
+            background: linear-gradient(135deg, #2E7D32, #C5E1A5); /* Forest green to lime */
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            transition: background 0.3s, transform 0.3s;
+        }
         .btn-primary:hover {
-            background-color: #75a728;
-            border-color: #75a728;
+            background: #2E7D32;
+            border: none;
+            color: #fff;
             transform: scale(1.02);
-            transition: all 0.3s ease;
+        }
+
+        .login-form h4, .login-form label, .login-form p, .login-form .form-label {
+            color: #2C2C2C; /* Charcoal */
+        }
+
+        .alert-danger {
+            background: #F57C00;
+            color: #fff;
+            border: none;
         }
 
         @media (max-width: 992px) {

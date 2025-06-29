@@ -75,24 +75,24 @@ if (isset($_GET['category'])) {
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(to right, #eef2f3, #8e9eab);
+            background: #FAFAF0; /* Ivory */
         }
 
         .card {
             transition: all 0.4s ease;
-            border: 3px solid #8fc333;
+            border: 3px solid #2E7D32; /* Forest green */
             border-radius: 20px;
             overflow: hidden;
-            background: rgba(255, 255, 255, 0.98);
+            background: #EEEEEE; /* Soft gray */
             backdrop-filter: blur(6px);
-            box-shadow: 0 8px 25px rgba(143, 195, 51, 0.45);
+            box-shadow: 0 8px 25px rgba(46, 125, 50, 0.18);
             position: relative;
             margin-bottom: 30px;
         }
 
         .card:hover {
             transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 15px 35px rgba(143, 195, 51, 0.6);
+            box-shadow: 0 15px 35px rgba(46, 125, 50, 0.25);
         }
 
         .card-img-top {
@@ -112,7 +112,7 @@ if (isset($_GET['category'])) {
         .card-body h5 {
             font-weight: 600;
             font-size: 1.1rem;
-            color: #333;
+            color: #2C2C2C; /* Charcoal */
         }
 
         .card-body p {
@@ -128,11 +128,11 @@ if (isset($_GET['category'])) {
         .icon {
             margin-right: 5px;
             vertical-align: middle;
-            color: #6c757d;
+            color: #2E7D32; /* Forest green */
         }
 
         .btn-read-more {
-            background: linear-gradient(135deg, #8fc333, #00c6ff);
+            background: linear-gradient(135deg, #2E7D32, #C5E1A5); /* Forest green to lime */
             color: white;
             padding: 8px 20px;
             border: none;
@@ -147,7 +147,7 @@ if (isset($_GET['category'])) {
         }
 
         .btn-read-more:hover {
-            background: linear-gradient(135deg, #8fc333, #8fc333);
+            background: #2E7D32;
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             color: #fff;
@@ -163,12 +163,22 @@ if (isset($_GET['category'])) {
         }
 
         .category-title {
-            color: #333;
+            color: #2C2C2C; /* Charcoal */
             font-weight: 600;
             margin-bottom: 30px;
             padding-bottom: 15px;
-            border-bottom: 3px solid #8fc333;
+            border-bottom: 3px solid #2E7D32; /* Forest green */
             display: inline-block;
+        }
+
+        .no-results {
+            background: #EEEEEE; /* Soft gray */
+            padding: 50px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.2rem;
+            color: #777;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
     </style>
 

@@ -98,41 +98,16 @@ if (!$result_trending) {
 
   <?php include './components/navbar.php'; ?>
 
-
   <!-- start banner Area -->
-  <section
-    class="banner-area relative"
-    id="home"
-    data-parallax="scroll"
-    data-image-src="img/header-bg.jpg">
-    <div class="overlay-bg overlay"></div>
-    <div class="container">
-      <div class="row fullscreen">
-        <div
-          class="banner-content d-flex align-items-center col-lg-12 col-md-12">
-          <h1>
-           Syukron Ma'mun Society-Mesir hadir sebagai media digital yang mendokumentasikan pemikiran, karya tulis, dan kegiatan para alumni Daarul Rahman Cabang Kairo dalam bentuk blog.
-          </h1>
-        </div>
-        <div
-          class="head-bottom-meta d-flex justify-content-between align-items-end col-lg-12">
-          <div class="col-lg-6 flex-row d-flex meta-left no-padding">
-          </div>
-          <div
-            class="col-lg-6 flex-row d-flex meta-right no-padding justify-content-end">
-            <div class="user-meta">
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  
+  <!-- Banner section dihapus sesuai permintaan -->
+
   <style>
     body {
-      background: #f8faf5;
+      background: #FAFAF0; /* Ivory */
       font-family: 'Poppins', Arial, sans-serif;
-      color: #222;
+      color: #2C2C2C; /* Charcoal */
+      max-width: 100vw;
+      overflow-x: hidden;
     }
     /* Container Section Card */
     .category-area,
@@ -141,9 +116,9 @@ if (!$result_trending) {
     .categories-area,
     .featured-article-area,
     .team-area {
-      background: #fff;
+      background: #EEEEEE; /* Soft gray */
       border-radius: 24px;
-      box-shadow: 0 4px 16px rgba(143, 195, 51, 0.08);
+      box-shadow: 0 4px 16px rgba(46, 125, 50, 0.08); /* Forest green shadow */
       padding: 36px 24px 32px 24px;
       margin-bottom: 48px;
       position: relative;
@@ -163,14 +138,30 @@ if (!$result_trending) {
   font-size: 32px; 
   line-height: 1.5;
   font-weight: 600;
+  color: #2C2C2C; /* Charcoal */
 }
     /* Section Divider */
     .section-divider {
       width: 80px;
       height: 4px;
-      background: linear-gradient(90deg, #8fc333 60%, #00c6ff 100%);
+      background: linear-gradient(90deg, #2E7D32 60%, #C5E1A5 100%); /* Forest green to lime */
       border-radius: 2px;
       margin: 24px auto 0 auto;
+    }
+    .row {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+
+    [class*="col-"] {
+      padding-left: 8px !important;
+      padding-right: 8px !important;
+    }
+
+    img, .card, .featured-img {
+      max-width: 100%;
+      height: auto;
+      box-sizing: border-box;
     }
   </style>
   <!-- End banner Area -->
@@ -627,35 +618,35 @@ if (!$result_trending) {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    background-color: #28a745;
+    background-color: #2E7D32; /* Forest green */
     color: white;
     padding: 14px 20px;
     border-radius: 50px;
     text-decoration: none;
     font-weight: bold;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);
     z-index: 9999;
     transition: background-color 0.3s ease;
   }
 
   .btn-tambah-artikel:hover {
-    background-color: #218838;
+    background-color: #1B5E20; /* Darker forest green */
   }
 
   .card {
     transition: all 0.4s ease;
-    border: 3px solid #8fc333;
+    border: 3px solid #2E7D32; /* Forest green */
     border-radius: 20px;
     overflow: hidden;
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(6px);
-    box-shadow: 0 8px 25px rgba(143, 195, 51, 0.45);
+    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.45); /* Forest green shadow */
     position: relative;
   }
 
   .card:hover {
     transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 15px 35px rgba(143, 195, 51, 0.6);
+    box-shadow: 0 15px 35px rgba(46, 125, 50, 0.6); /* Forest green shadow */
   }
 
   .card-img-top {
@@ -675,7 +666,7 @@ if (!$result_trending) {
   .card-body h5 {
     font-weight: 600;
     font-size: 1.1rem;
-    color: #333;
+    color: #2C2C2C; /* Charcoal */
   }
 
   .card-body p {
@@ -695,7 +686,7 @@ if (!$result_trending) {
   }
 
   .btn-read-more {
-    background: linear-gradient(135deg, #8fc333, #00c6ff);
+    background: linear-gradient(135deg, #2E7D32, #C5E1A5); /* Forest green to lime */
     color: white;
     padding: 8px 20px;
     border-radius: 30px;
@@ -710,7 +701,7 @@ if (!$result_trending) {
   }
 
   .btn-read-more:hover {
-    background: linear-gradient(135deg, #8fc333, #8fc333);
+    background: linear-gradient(135deg, #2E7D32, #2E7D32); /* Forest green */
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     color: #fff;
@@ -726,7 +717,7 @@ if (!$result_trending) {
   }
 
   .no-results {
-    background: #fff;
+    background: #EEEEEE; /* Soft gray */
     padding: 50px;
     border-radius: 10px;
     text-align: center;
@@ -740,26 +731,26 @@ if (!$result_trending) {
     background: rgba(255, 255, 255, 0.98);
     border-radius: 20px;
     padding: 2rem;
-    box-shadow: 0 8px 25px rgba(143, 195, 51, 0.45);
-    border: 3px solid #8fc333;
+    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.45); /* Forest green shadow */
+    border: 3px solid #2E7D32; /* Forest green */
     transition: all 0.4s ease;
   }
 
   .stat-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 15px 35px rgba(143, 195, 51, 0.6);
+    box-shadow: 0 15px 35px rgba(46, 125, 50, 0.6); /* Forest green shadow */
   }
 
   .stat-icon {
     font-size: 3rem;
-    color: #8fc333;
+    color: #2E7D32; /* Forest green */
     margin-bottom: 1rem;
   }
 
   .stat-number {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #333;
+    color: #2C2C2C; /* Charcoal */
     margin-bottom: 0.5rem;
   }
 
@@ -775,25 +766,25 @@ if (!$result_trending) {
     border-radius: 20px;
     padding: 2rem;
     text-align: center;
-    box-shadow: 0 8px 25px rgba(143, 195, 51, 0.45);
-    border: 3px solid #8fc333;
+    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.45); /* Forest green shadow */
+    border: 3px solid #2E7D32; /* Forest green */
     transition: all 0.4s ease;
     height: 100%;
   }
 
   .category-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 15px 35px rgba(143, 195, 51, 0.6);
+    box-shadow: 0 15px 35px rgba(46, 125, 50, 0.6); /* Forest green shadow */
   }
 
   .category-icon {
     font-size: 3rem;
-    color: #8fc333;
+    color: #2E7D32; /* Forest green */
     margin-bottom: 1rem;
   }
 
   .category-content h4 {
-    color: #333;
+    color: #2C2C2C; /* Charcoal */
     font-weight: 600;
     margin-bottom: 0.5rem;
   }
@@ -804,7 +795,7 @@ if (!$result_trending) {
   }
 
   .btn-category {
-    background: linear-gradient(135deg, #8fc333, #00c6ff);
+    background: linear-gradient(135deg, #2E7D32, #C5E1A5); /* Forest green to lime */
     color: white;
     padding: 10px 20px;
     border-radius: 25px;
@@ -818,7 +809,7 @@ if (!$result_trending) {
   }
 
   .btn-category:hover {
-    background: linear-gradient(135deg, #8fc333, #8fc333);
+    background: linear-gradient(135deg, #2E7D32, #2E7D32); /* Forest green */
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     color: #fff;
@@ -829,14 +820,14 @@ if (!$result_trending) {
     background: rgba(255, 255, 255, 0.98);
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 8px 25px rgba(143, 195, 51, 0.45);
-    border: 3px solid #8fc333;
+    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.45); /* Forest green shadow */
+    border: 3px solid #2E7D32; /* Forest green */
     transition: all 0.4s ease;
   }
 
   .featured-article-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 15px 35px rgba(143, 195, 51, 0.6);
+    box-shadow: 0 15px 35px rgba(46, 125, 50, 0.6); /* Forest green shadow */
   }
 
   .featured-img {
@@ -850,7 +841,7 @@ if (!$result_trending) {
   }
 
   .featured-badge {
-    background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+    background: linear-gradient(135deg, #F57C00, #FF9800); /* Orange burnt gradient */
     color: white;
     padding: 8px 16px;
     border-radius: 20px;
@@ -861,7 +852,7 @@ if (!$result_trending) {
   }
 
   .featured-content h2 {
-    color: #333;
+    color: #2C2C2C; /* Charcoal */
     font-weight: 600;
     margin-bottom: 1rem;
     font-size: 1.5rem;
@@ -887,11 +878,11 @@ if (!$result_trending) {
 
   .featured-meta i {
     margin-right: 5px;
-    color: #8fc333;
+    color: #2E7D32; /* Forest green */
   }
 
   .btn-featured {
-    background: linear-gradient(135deg, #8fc333, #00c6ff);
+    background: linear-gradient(135deg, #2E7D32, #C5E1A5); /* Forest green to lime */
     color: white;
     padding: 12px 24px;
     border-radius: 25px;
@@ -905,7 +896,7 @@ if (!$result_trending) {
   }
 
   .btn-featured:hover {
-    background: linear-gradient(135deg, #8fc333, #8fc333);
+    background: linear-gradient(135deg, #2E7D32, #2E7D32); /* Forest green */
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     color: #fff;
@@ -913,7 +904,7 @@ if (!$result_trending) {
 
   /* Newsletter Styles */
   .newsletter-area {
-    background: linear-gradient(135deg, #8fc333, #00c6ff);
+    background: linear-gradient(135deg, #2E7D32, #C5E1A5); /* Forest green to lime */
     color: white;
   }
 
@@ -946,7 +937,7 @@ if (!$result_trending) {
   }
 
   .btn-newsletter {
-    background: #333;
+    background: #2C2C2C; /* Charcoal */
     color: white;
     border-radius: 0 25px 25px 0;
     border: none;
@@ -956,7 +947,7 @@ if (!$result_trending) {
   }
 
   .btn-newsletter:hover {
-    background: #222;
+    background: #1a1a1a; /* Darker charcoal */
     color: white;
     transform: translateY(-2px);
   }
@@ -991,7 +982,7 @@ if (!$result_trending) {
 
   /* Team Section Styles */
   .team-left h3 {
-    color: #333;
+    color: #2C2C2C; /* Charcoal */
     font-weight: 600;
     margin-bottom: 1rem;
     margin-top: 2rem;
@@ -1017,22 +1008,22 @@ if (!$result_trending) {
   }
 
   .team-left strong {
-    color: #8fc333;
+    color: #2E7D32; /* Forest green */
   }
 
   .single-team {
     background: rgba(255, 255, 255, 0.98);
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 8px 25px rgba(143, 195, 51, 0.45);
-    border: 3px solid #8fc333;
+    box-shadow: 0 8px 25px rgba(46, 125, 50, 0.45); /* Forest green shadow */
+    border: 3px solid #2E7D32; /* Forest green */
     transition: all 0.4s ease;
     margin: 0 10px;
   }
 
   .single-team:hover {
     transform: translateY(-8px);
-    box-shadow: 0 15px 35px rgba(143, 195, 51, 0.6);
+    box-shadow: 0 15px 35px rgba(46, 125, 50, 0.6); /* Forest green shadow */
   }
 
   .single-team .thumb {
@@ -1057,7 +1048,7 @@ if (!$result_trending) {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(143, 195, 51, 0.8);
+    background: rgba(46, 125, 50, 0.8); /* Forest green overlay */
     opacity: 0;
     transition: opacity 0.3s ease;
   }
@@ -1082,7 +1073,7 @@ if (!$result_trending) {
   }
 
   .single-team .meta-text h4 {
-    color: #333;
+    color: #2C2C2C; /* Charcoal */
     font-weight: 600;
     margin-bottom: 0.5rem;
   }
