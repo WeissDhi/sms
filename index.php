@@ -468,7 +468,7 @@ if (!$result_trending) {
         </div>
       </div>
       <div class="row justify-content-center d-flex align-items-center">
-        <div class="col-lg-6 team-left">
+        <div class="col-lg-8 team-left">
           <h3>Visi Kami</h3>
           <p>
             Menjadi media digital terdepan yang mendokumentasikan pemikiran, karya tulis, dan kegiatan para alumni
@@ -488,38 +488,8 @@ if (!$result_trending) {
             <li><strong>Inovasi:</strong> Terus berinovasi dalam cara berbagi informasi</li>
             <li><strong>Kontribusi:</strong> Memberikan manfaat positif bagi masyarakat</li>
           </ul>
-        </div>
-        <div class="col-lg-6 team-right d-flex justify-content-center">
-          <div class="row active-team-carusel">
-            <div class="single-team">
-              <div class="thumb">
-                <img class="img-fluid" src="img/team1.jpg" alt="Tim Pengembang" />
-                <div class="align-items-center justify-content-center d-flex">
-                  <a href="#"><i class="fa fa-facebook"></i></a>
-                  <a href="#"><i class="fa fa-twitter"></i></a>
-                  <a href="#"><i class="fa fa-linkedin"></i></a>
-                </div>
-              </div>
-              <div class="meta-text mt-30 text-center">
-                <h4>Tim Pengembang</h4>
-                <p>Bertanggung jawab atas pengembangan dan pemeliharaan platform blog</p>
-              </div>
-            </div>
-            <div class="single-team">
-              <div class="thumb">
-                <img class="img-fluid" src="img/team2.jpg" alt="Tim Konten" />
-                <div class="align-items-center justify-content-center d-flex">
-                  <a href="#"><i class="fa fa-facebook"></i></a>
-                  <a href="#"><i class="fa fa-twitter"></i></a>
-                  <a href="#"><i class="fa fa-linkedin"></i></a>
-                </div>
-              </div>
-              <div class="meta-text mt-30 text-center">
-                <h4>Tim Konten</h4>
-                <p>Mengelola dan memastikan kualitas konten yang dipublikasikan</p>
-              </div>
-            </div>
-          </div>
+
+          <a href="tentangkami.php" class="btn btn-featured mt-4">Tentang Kami</a>
         </div>
       </div>
     </div>
