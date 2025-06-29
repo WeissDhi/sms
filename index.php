@@ -98,9 +98,6 @@ if (!$result_trending) {
 
   <?php include './components/navbar.php'; ?>
 
-  <!-- start banner Area -->
-  <!-- Banner section dihapus sesuai permintaan -->
-
   <style>
     body {
       background: #FAFAF0;
@@ -176,6 +173,15 @@ if (!$result_trending) {
       max-width: 100%;
       height: auto;
       box-sizing: border-box;
+    }
+
+    /* Center last two trending cards if only two in last row */
+    @media (min-width: 992px) {
+      .fashion-area .row.justify-content-center > .col-lg-4:nth-last-child(-n+2):nth-child(n+4) {
+        margin-left: auto;
+        margin-right: auto;
+        float: none;
+      }
     }
   </style>
   <!-- End banner Area -->
@@ -271,9 +277,19 @@ if (!$result_trending) {
           </div>
         </div>
       </div>
-      <div class="row">
+      <div class="row justify-content-center">
         <?php if ($result_trending && mysqli_num_rows($result_trending) > 0): ?>
-          <?php while ($row = mysqli_fetch_assoc($result_trending)): ?>
+          <?php
+            $index = 0;
+            $total = mysqli_num_rows($result_trending);
+            mysqli_data_seek($result_trending, 0);
+            while ($row = mysqli_fetch_assoc($result_trending)):
+              $index++;
+              // Jika ada 5 artikel dan ini kartu ke-4, break row dan mulai row baru
+              if ($total == 5 && $index == 4) {
+                echo '<div class="w-100 d-none d-lg-block"></div><div class="row justify-content-center w-100" style="margin:0;">';
+              }
+          ?>
             <div class="col-lg-4 col-md-6 mb-4">
               <div class="card h-100">
                 <?php if ($row['image']): ?>
@@ -304,7 +320,12 @@ if (!$result_trending) {
                 </div>
               </div>
             </div>
-          <?php endwhile; ?>
+          <?php
+              if ($total == 5 && $index == 5) {
+                echo '</div>';
+              }
+            endwhile;
+          ?>
         <?php else: ?>
           <div class="col-12">
             <div class="no-results">Belum ada artikel trending minggu ini.</div>
