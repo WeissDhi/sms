@@ -1215,7 +1215,7 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                     <div class="form-section">
                         <div class="section-title">
                             <i class="fas fa-file-alt"></i>
-                            Materi Tambahan
+                            Materi Tambahan (optional)
                         </div>
                         <div class="document-section">
                             <div class="custom-file-upload">
