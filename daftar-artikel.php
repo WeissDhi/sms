@@ -109,21 +109,19 @@ $result = $conn->query($sql);
         }
 
         .card {
-            transition: all 0.4s ease;
             border: 3px solid #2E7D32;
-            /* Forest green */
             border-radius: 20px;
             overflow: hidden;
-            background: #EEEEEE;
-            /* Soft gray */
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(6px);
-            box-shadow: 0 8px 25px rgba(46, 125, 50, 0.18);
+            box-shadow: 0 8px 25px rgba(46, 125, 50, 0.45);
             position: relative;
+            transition: all 0.4s ease;
         }
 
         .card:hover {
             transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 15px 35px rgba(46, 125, 50, 0.25);
+            box-shadow: 0 15px 35px rgba(46, 125, 50, 0.6);
         }
 
         .card-img-top {
@@ -181,8 +179,7 @@ $result = $conn->query($sql);
         .icon {
             margin-right: 5px;
             vertical-align: middle;
-            color: #2E7D32;
-            /* Forest green */
+            color: #6c757d;
         }
 
         .no-results {
@@ -258,8 +255,9 @@ $result = $conn->query($sql);
 
                                 <!-- Meta Info -->
                                 <div class="meta-info mb-2">
-                                    <span class="icon">📅</span><?= date('d M Y', strtotime($row['created_at'])) ?><br>
-                                    <span class="icon">✍️</span>
+                                    <span class="icon">📅</span><?= date('d M Y', strtotime($row['created_at'])) ?>
+                                    <span class="icon ms-3">👁️</span><?= number_format($row['views']) ?> views
+                                    <span class="icon ms-3">✍️</span>
                                     <?php if ($row['author_type'] === 'admin'): ?>
                                         <?= htmlspecialchars($row['admin_first'] . ' ' . $row['admin_last']) ?>
                                     <?php elseif ($row['author_type'] === 'user'): ?>
@@ -299,7 +297,7 @@ $result = $conn->query($sql);
                                 </div>
 
                                 <!-- Konten Ringkas -->
-                                <p class="card-text mb-3"><?= mb_strimwidth(strip_tags($row['content']), 0, 100, '...') ?></p>
+                                <p class="card-text mb-3"><?= mb_strimwidth(strip_tags($row['content']), 0, 120, '...') ?></p>
 
                                 <!-- Tombol -->
                                 <a href="<?= htmlspecialchars($row['slug']) ?>" class="btn btn-read-more mt-auto">
