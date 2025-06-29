@@ -45,6 +45,8 @@ $doc_stmt->close();
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tiny.cloud/1/nj9l4dp2auxgapch64yc16dhhguiiat5xsafdy8dj0g2zsm7/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         :root {
@@ -245,6 +247,19 @@ $doc_stmt->close();
 
         .current-thumbnail:hover {
             transform: scale(1.05);
+        }
+
+        #cropper-container {
+            max-width: 100%;
+            max-height: 1500px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        #cropper-image {
+            max-width: 100%;
+            max-height: 1500px;
+            display: block;
+            margin: 0 auto;
         }
 
         .form-section {
@@ -603,7 +618,7 @@ $doc_stmt->close();
         }
 
         .current-thumbnail:hover {
-            transform: scale(1.05);
+            transform: scale(1.02);
         }
 
         /* Submit Button */
@@ -815,6 +830,9 @@ $doc_stmt->close();
             }
         });
 
+        let cropper;
+        let croppedImageData = null;
+
         // Add image validation
         function validateImage(file) {
             const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
@@ -841,6 +859,45 @@ $doc_stmt->close();
             }
 
             return true;
+        }
+
+        function previewThumbnail(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (!validateImage(file)) {
+                    event.target.value = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const image = document.getElementById('cropper-image');
+                    image.src = e.target.result;
+                    image.style.display = "block";
+
+                    if (cropper) cropper.destroy();
+
+                    cropper = new Cropper(image, {
+                        aspectRatio: 16 / 9,
+                        viewMode: 1,
+                        autoCropArea: 0.65,
+                        crop: function(event) {
+                            const canvas = cropper.getCroppedCanvas({
+                                width: 800,
+                                height: 450
+                            });
+                            
+                            canvas.toBlob(function(blob) {
+                                croppedImageData = new File([blob], file.name, {
+                                    type: 'image/jpeg',
+                                    lastModified: new Date().getTime()
+                                });
+                            }, 'image/jpeg', 0.9);
+                        }
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
         }
 
         // Form validation
@@ -966,12 +1023,43 @@ $doc_stmt->close();
         document.getElementById('image').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
-                if (!validateImage(file)) {
-                    e.target.value = '';
-                    return;
-                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const image = document.getElementById('cropper-image');
+                    image.src = e.target.result;
+                    document.getElementById('cropper-container').style.display = 'block';
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+                    cropper = new Cropper(image, {
+                        aspectRatio: 16 / 9,
+                        viewMode: 1,
+                        ready: function() {
+                            updateCropData();
+                        },
+                        crop: function() {
+                            updateCropData();
+                        }
+                    });
+                };
+                reader.readAsDataURL(file);
             }
         });
+
+        function updateCropData() {
+            if (cropper) {
+                const canvas = cropper.getCroppedCanvas({
+                    maxWidth: 800,
+                    maxHeight: 800,
+                    fillColor: '#fff',
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high'
+                });
+                if (canvas) {
+                    document.getElementById('cropped_image').value = canvas.toDataURL('image/png');
+                }
+            }
+        }
     </script>
     
     <?php if(isset($_SESSION['success'])): ?>
@@ -1060,12 +1148,13 @@ $doc_stmt->close();
                                     <i class="fas fa-cloud-upload-alt"></i>
                                     <span>Pilih atau seret gambar ke sini</span>
                                 </label>
-                                <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/gif,image/webp">
+                                <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/gif,image/webp" onchange="previewThumbnail(event)">
                             </div>
                             <div class="preview-label">
                                 <i class="fas fa-info-circle"></i>
                                 Format: JPG, PNG, GIF, WEBP (Max. 5MB)
                             </div>
+                            <img id="cropper-image" src="#" alt="Preview Thumbnail" style="display: none;">
                         </div>
                     </div>
 
