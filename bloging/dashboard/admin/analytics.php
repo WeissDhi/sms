@@ -81,6 +81,7 @@ $avg_views_per_article = $stats['total_articles'] > 0 ? round($stats['total_view
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="shortcut icon" href="../../../img/sms.png" />
     <style>
         .analytics-card {
             border-radius: 15px;
@@ -124,10 +125,21 @@ $avg_views_per_article = $stats['total_articles'] > 0 ? round($stats['total_view
             font-size: 0.8rem;
         }
 
-        .rank-1 { background: #ffd700; }
-        .rank-2 { background: #c0c0c0; }
-        .rank-3 { background: #cd7f32; }
-        .rank-other { background: #6c757d; }
+        .rank-1 {
+            background: #ffd700;
+        }
+
+        .rank-2 {
+            background: #c0c0c0;
+        }
+
+        .rank-3 {
+            background: #cd7f32;
+        }
+
+        .rank-other {
+            background: #6c757d;
+        }
     </style>
 </head>
 
@@ -168,18 +180,6 @@ $avg_views_per_article = $stats['total_articles'] > 0 ? round($stats['total_view
                 </div>
             </div>
 
-            <div class="col-12 col-md-6 col-lg-3">
-                <div class="card analytics-card">
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center mb-3">
-                            <i class="bi bi-graph-up text-success me-2 fs-4"></i>
-                            <h6 class="mb-0">Engagement Rate</h6>
-                        </div>
-                        <div class="metric-value text-success"><?= $engagement_rate ?>%</div>
-                        <div class="metric-label">Rata-rata engagement per artikel</div>
-                    </div>
-                </div>
-            </div>
 
             <div class="col-12 col-md-6 col-lg-3">
                 <div class="card analytics-card">
@@ -232,9 +232,9 @@ $avg_views_per_article = $stats['total_articles'] > 0 ? round($stats['total_view
                             Top Contributors
                         </h5>
                         <div class="recent-activity">
-                            <?php 
+                            <?php
                             $rank = 1;
-                            while ($contributor = $top_contributors->fetch_assoc()): 
+                            while ($contributor = $top_contributors->fetch_assoc()):
                             ?>
                                 <div class="activity-item mb-3">
                                     <div class="d-flex align-items-center">
@@ -250,9 +250,9 @@ $avg_views_per_article = $stats['total_articles'] > 0 ? round($stats['total_view
                                         </div>
                                     </div>
                                 </div>
-                            <?php 
+                            <?php
                                 $rank++;
-                            endwhile; 
+                            endwhile;
                             ?>
                         </div>
                     </div>
@@ -283,9 +283,9 @@ $avg_views_per_article = $stats['total_articles'] > 0 ? round($stats['total_view
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php 
+                                    <?php
                                     $rank = 1;
-                                    while ($article = $most_engaging->fetch_assoc()): 
+                                    while ($article = $most_engaging->fetch_assoc()):
                                         $engagement_score = $article['views'] + $article['comment_count'] + $article['like_count'];
                                     ?>
                                         <tr>
@@ -306,9 +306,9 @@ $avg_views_per_article = $stats['total_articles'] > 0 ? round($stats['total_view
                                                 <span class="badge bg-success"><?= number_format($engagement_score) ?></span>
                                             </td>
                                         </tr>
-                                    <?php 
+                                    <?php
                                         $rank++;
-                                    endwhile; 
+                                    endwhile;
                                     ?>
                                 </tbody>
                             </table>
@@ -387,4 +387,4 @@ $avg_views_per_article = $stats['total_articles'] > 0 ? round($stats['total_view
     </script>
 </body>
 
-</html> 
+</html>

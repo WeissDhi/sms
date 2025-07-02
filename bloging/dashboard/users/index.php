@@ -71,6 +71,7 @@ $recent_comments = $comments_stmt->get_result();
 <head>
     <meta charset="UTF-8">
     <title>Dashboard User</title>
+    <link rel="shortcut icon" href="../../../img/sms.png" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>

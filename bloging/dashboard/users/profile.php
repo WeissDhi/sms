@@ -146,6 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="id">
 
 <head>
+    <link rel="shortcut icon" href="../../../img/sms.png" />
     <meta charset="UTF-8">
     <title>Profil Saya</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -158,7 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             --warning-color: #ffc107;
             --info-color: #0dcaf0;
         }
-        
+
         .profile-header {
             background: linear-gradient(135deg, var(--primary-color), #0a58ca);
             color: white;
@@ -167,7 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-radius: 0 0 1rem 1rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        
+
         .stats-card {
             background: white;
             border-radius: 1rem;
@@ -177,28 +178,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border: none;
             height: 100%;
         }
-        
+
         .stats-card:hover {
             transform: translateY(-5px);
         }
-        
+
         .stats-icon {
             font-size: 2rem;
             margin-bottom: 1rem;
             color: var(--primary-color);
         }
-        
+
         .stats-number {
             font-size: 2rem;
             font-weight: bold;
             margin-bottom: 0.5rem;
         }
-        
+
         .stats-label {
             color: var(--secondary-color);
             font-size: 0.9rem;
         }
-        
+
         .content-card {
             background: white;
             border-radius: 1rem;
@@ -206,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
             margin-bottom: 1.5rem;
         }
-        
+
         .content-card .card-title {
             color: var(--primary-color);
             font-weight: 600;
@@ -214,7 +215,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding-bottom: 0.5rem;
             border-bottom: 2px solid #f0f0f0;
         }
-        
+
         .article-item {
             padding: 1rem;
             border-radius: 0.5rem;
@@ -222,12 +223,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background: #f8f9fa;
             transition: transform 0.2s;
         }
-        
+
         .article-item:hover {
             transform: translateX(5px);
             background: #f0f0f0;
         }
-        
+
         .comment-item {
             padding: 1rem;
             border-radius: 0.5rem;
@@ -235,19 +236,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background: #f8f9fa;
             border-left: 4px solid var(--primary-color);
         }
-        
+
         .badge {
             padding: 0.5em 0.8em;
             font-weight: 500;
         }
-        
+
         .thumbnail-container {
             width: 100px;
             height: 60px;
             overflow: hidden;
             border-radius: 0.5rem;
         }
-        
+
         .thumbnail-container img {
             width: 100%;
             height: 100%;
@@ -272,7 +273,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="bg-light">
     <?php include '../components/navbar.php' ?>
     <?php include '../components/user-sidebar.php' ?>
-    
+
     <?php if ($update_message): ?>
         <div class="alert alert-info alert-dismissible fade show m-3" role="alert">
             <?= htmlspecialchars($update_message) ?>
@@ -400,7 +401,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <h3 class="card-title">
                         <i class="bi bi-chat-dots"></i> Komentar
                     </h3>
-                    
+
                     <!-- Tabs -->
                     <ul class="nav nav-tabs mb-3" id="commentTabs" role="tablist">
                         <li class="nav-item" role="presentation">
@@ -431,7 +432,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             <div>
                                                 <p class="mb-1"><?= htmlspecialchars($comment['comment']) ?></p>
                                                 <small class="text-muted">
-                                                    Pada artikel: 
+                                                    Pada artikel:
                                                     <a href="../../view_detail.php?id=<?= $comment['blog_id'] ?>" class="text-decoration-none">
                                                         <?= strip_tags($comment['blog_title']) ?>
                                                     </a>
@@ -466,7 +467,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                 </div>
                                                 <p class="mb-1"><?= htmlspecialchars($comment['comment']) ?></p>
                                                 <small class="text-muted">
-                                                    Pada artikel: 
+                                                    Pada artikel:
                                                     <a href="../../view_detail.php?id=<?= $comment['blog_id'] ?>" class="text-decoration-none">
                                                         <?= strip_tags($comment['blog_title']) ?>
                                                     </a>
@@ -500,7 +501,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                 <small class="text-muted">
                                                     Membalas komentar Anda: "<?= htmlspecialchars(substr($reply['parent_comment'], 0, 50)) ?>..."
                                                     <br>
-                                                    Pada artikel: 
+                                                    Pada artikel:
                                                     <a href="../../view_detail.php?id=<?= $reply['blog_id'] ?>" class="text-decoration-none">
                                                         <?= strip_tags($reply['blog_title']) ?>
                                                     </a>
@@ -566,16 +567,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="list-group-item d-flex justify-content-between align-items-center">
                             <span>Rata-rata Views/Artikel</span>
                             <span class="badge bg-info">
-                                <?= $stats['total_articles'] > 0 
-                                    ? number_format($stats['total_views'] / $stats['total_articles'], 1) 
+                                <?= $stats['total_articles'] > 0
+                                    ? number_format($stats['total_views'] / $stats['total_articles'], 1)
                                     : 0 ?>
                             </span>
                         </div>
                         <div class="list-group-item d-flex justify-content-between align-items-center">
                             <span>Rata-rata Komentar/Artikel</span>
                             <span class="badge bg-primary">
-                                <?= $stats['total_articles'] > 0 
-                                    ? number_format($stats['total_comments'] / $stats['total_articles'], 1) 
+                                <?= $stats['total_articles'] > 0
+                                    ? number_format($stats['total_comments'] / $stats['total_articles'], 1)
                                     : 0 ?>
                             </span>
                         </div>

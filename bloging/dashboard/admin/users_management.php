@@ -31,6 +31,8 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
+    <link rel="shortcut icon" href="../../../img/sms.png" />
+    
     <style>
         :root {
             --primary-color: #2c3e50;
