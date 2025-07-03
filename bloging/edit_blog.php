@@ -1061,6 +1061,72 @@ $doc_stmt->close();
                 }
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Helper untuk cek dan toggle warning
+            function toggleWarning(input, feedback, getValue) {
+                const val = getValue();
+                if (val) {
+                    feedback.style.display = 'none';
+                } else {
+                    feedback.style.display = 'block';
+                }
+            }
+
+            // Judul Blog
+            const titleInput = document.getElementById('title');
+            const titleFeedback = titleInput.parentElement.querySelector('.invalid-feedback');
+            function bindTitleTinyMCE() {
+                if (typeof tinymce !== 'undefined' && tinymce.get('title')) {
+                    tinymce.get('title').on('input keyup change', function() {
+                        toggleWarning(titleInput, titleFeedback, () => tinymce.get('title').getContent({format: 'text'}).trim());
+                    });
+                }
+            }
+            if (typeof tinymce !== 'undefined' && tinymce.get('title')) {
+                bindTitleTinyMCE();
+            } else {
+                titleInput.addEventListener('input', function() {
+                    toggleWarning(titleInput, titleFeedback, () => titleInput.value.trim());
+                });
+            }
+            toggleWarning(titleInput, titleFeedback, () => (typeof tinymce !== 'undefined' && tinymce.get('title')) ? tinymce.get('title').getContent({format: 'text'}).trim() : titleInput.value.trim());
+
+            // Konten Blog
+            const contentInput = document.getElementById('content');
+            const contentFeedback = contentInput.parentElement.querySelector('.invalid-feedback');
+            function bindContentTinyMCE() {
+                if (typeof tinymce !== 'undefined' && tinymce.get('content')) {
+                    tinymce.get('content').on('input keyup change', function() {
+                        toggleWarning(contentInput, contentFeedback, () => tinymce.get('content').getContent({format: 'text'}).trim());
+                    });
+                }
+            }
+            if (typeof tinymce !== 'undefined' && tinymce.get('content')) {
+                bindContentTinyMCE();
+            } else {
+                contentInput.addEventListener('input', function() {
+                    toggleWarning(contentInput, contentFeedback, () => contentInput.value.trim());
+                });
+            }
+            toggleWarning(contentInput, contentFeedback, () => (typeof tinymce !== 'undefined' && tinymce.get('content')) ? tinymce.get('content').getContent({format: 'text'}).trim() : contentInput.value.trim());
+
+            // Kategori
+            const categorySelect = document.getElementById('category');
+            const categoryFeedback = categorySelect.parentElement.querySelector('.invalid-feedback');
+            categorySelect.addEventListener('change', function() {
+                toggleWarning(categorySelect, categoryFeedback, () => categorySelect.value);
+            });
+            toggleWarning(categorySelect, categoryFeedback, () => categorySelect.value);
+
+            // Jika TinyMCE baru diinisialisasi setelah DOMContentLoaded
+            if (typeof tinymce !== 'undefined') {
+                tinymce.on('AddEditor', function(e) {
+                    if (e.editor.id === 'title') bindTitleTinyMCE();
+                    if (e.editor.id === 'content') bindContentTinyMCE();
+                });
+            }
+        });
     </script>
     
     <?php if(isset($_SESSION['success'])): ?>
@@ -1113,7 +1179,7 @@ $doc_stmt->close();
                         <div class="mb-4">
                             <label for="title" class="form-label">Judul Blog</label>
                             <textarea id="title" name="title" class="form-control" required placeholder="Masukkan judul blog Anda di sini..."><?= htmlspecialchars($blog['title']) ?></textarea>
-                            <div class="invalid-feedback">
+                            <div class="invalid-feedback" style="display:block">
                                 <i class="fas fa-exclamation-circle"></i>
                                 Judul blog harus diisi
                             </div>
@@ -1122,7 +1188,7 @@ $doc_stmt->close();
                         <div class="mb-4">
                             <label for="content" class="form-label">Konten Blog</label>
                             <textarea id="content" name="content" class="form-control" required><?= htmlspecialchars($blog['content']) ?></textarea>
-                            <div class="invalid-feedback">
+                            <div class="invalid-feedback" style="display:block">
                                 <i class="fas fa-exclamation-circle"></i>
                                 Konten blog harus diisi
                             </div>
@@ -1219,7 +1285,7 @@ $doc_stmt->close();
                                 }
                                 ?>
                             </select>
-                            <div class="invalid-feedback">
+                            <div class="invalid-feedback" style="display:block">
                                 <i class="fas fa-exclamation-circle"></i>
                                 Kategori harus dipilih
                             </div>
@@ -1270,6 +1336,71 @@ $doc_stmt->close();
             }
         });
     });
+    </script>
+
+    <script>
+    function toggleWarning(input, feedback, getValue) {
+        const val = getValue();
+        if (val) {
+            feedback.style.display = 'none';
+        } else {
+            feedback.style.display = 'block';
+        }
+    }
+
+    function setupDynamicValidation() {
+        // Judul Blog
+        const titleInput = document.getElementById('title');
+        const titleFeedback = titleInput.parentElement.querySelector('.invalid-feedback');
+        if (typeof tinymce !== 'undefined' && tinymce.get('title')) {
+            tinymce.get('title').on('input keyup change', function() {
+                toggleWarning(titleInput, titleFeedback, () => tinymce.get('title').getContent({format: 'text'}).trim());
+            });
+            // Cek awal
+            toggleWarning(titleInput, titleFeedback, () => tinymce.get('title').getContent({format: 'text'}).trim());
+        } else {
+            titleInput.addEventListener('input', function() {
+                toggleWarning(titleInput, titleFeedback, () => titleInput.value.trim());
+            });
+            toggleWarning(titleInput, titleFeedback, () => titleInput.value.trim());
+        }
+
+        // Konten Blog
+        const contentInput = document.getElementById('content');
+        const contentFeedback = contentInput.parentElement.querySelector('.invalid-feedback');
+        if (typeof tinymce !== 'undefined' && tinymce.get('content')) {
+            tinymce.get('content').on('input keyup change', function() {
+                toggleWarning(contentInput, contentFeedback, () => tinymce.get('content').getContent({format: 'text'}).trim());
+            });
+            toggleWarning(contentInput, contentFeedback, () => tinymce.get('content').getContent({format: 'text'}).trim());
+        } else {
+            contentInput.addEventListener('input', function() {
+                toggleWarning(contentInput, contentFeedback, () => contentInput.value.trim());
+            });
+            toggleWarning(contentInput, contentFeedback, () => contentInput.value.trim());
+        }
+
+        // Kategori
+        const categorySelect = document.getElementById('category');
+        const categoryFeedback = categorySelect.parentElement.querySelector('.invalid-feedback');
+        categorySelect.addEventListener('change', function() {
+            toggleWarning(categorySelect, categoryFeedback, () => categorySelect.value);
+        });
+        toggleWarning(categorySelect, categoryFeedback, () => categorySelect.value);
+    }
+
+    // Jalankan validasi dinamis setelah TinyMCE siap
+    if (typeof tinymce !== 'undefined') {
+        tinymce.on('AddEditor', function(e) {
+            if (e.editor.id === 'title' || e.editor.id === 'content') {
+                setupDynamicValidation();
+            }
+        });
+        // Untuk kasus editor sudah siap sebelum event AddEditor
+        setTimeout(setupDynamicValidation, 1000);
+    } else {
+        document.addEventListener('DOMContentLoaded', setupDynamicValidation);
+    }
     </script>
 </body>
 </html>

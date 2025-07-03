@@ -1130,6 +1130,84 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                 }
             }
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Helper untuk cek dan toggle warning
+            function toggleWarning(input, feedback, getValue) {
+                const val = getValue();
+                if (val) {
+                    feedback.style.display = 'none';
+                } else {
+                    feedback.style.display = 'block';
+                }
+            }
+
+            // Judul Blog
+            const titleInput = document.getElementById('title');
+            const titleFeedback = titleInput.parentElement.querySelector('.invalid-feedback');
+            // Untuk TinyMCE
+            function bindTitleTinyMCE() {
+                if (typeof tinymce !== 'undefined' && tinymce.get('title')) {
+                    tinymce.get('title').on('input keyup change', function() {
+                        toggleWarning(titleInput, titleFeedback, () => tinymce.get('title').getContent({format: 'text'}).trim());
+                    });
+                }
+            }
+            if (typeof tinymce !== 'undefined' && tinymce.get('title')) {
+                bindTitleTinyMCE();
+            } else {
+                titleInput.addEventListener('input', function() {
+                    toggleWarning(titleInput, titleFeedback, () => titleInput.value.trim());
+                });
+            }
+            // Cek awal
+            toggleWarning(titleInput, titleFeedback, () => (typeof tinymce !== 'undefined' && tinymce.get('title')) ? tinymce.get('title').getContent({format: 'text'}).trim() : titleInput.value.trim());
+
+            // Konten Blog
+            const contentInput = document.getElementById('content');
+            const contentFeedback = contentInput.parentElement.querySelector('.invalid-feedback');
+            function bindContentTinyMCE() {
+                if (typeof tinymce !== 'undefined' && tinymce.get('content')) {
+                    tinymce.get('content').on('input keyup change', function() {
+                        toggleWarning(contentInput, contentFeedback, () => tinymce.get('content').getContent({format: 'text'}).trim());
+                    });
+                }
+            }
+            if (typeof tinymce !== 'undefined' && tinymce.get('content')) {
+                bindContentTinyMCE();
+            } else {
+                contentInput.addEventListener('input', function() {
+                    toggleWarning(contentInput, contentFeedback, () => contentInput.value.trim());
+                });
+            }
+            toggleWarning(contentInput, contentFeedback, () => (typeof tinymce !== 'undefined' && tinymce.get('content')) ? tinymce.get('content').getContent({format: 'text'}).trim() : contentInput.value.trim());
+
+            // Kategori (parent)
+            const parentSelect = document.getElementById('category_parent');
+            const parentFeedback = parentSelect.parentElement.querySelector('.invalid-feedback');
+            parentSelect.addEventListener('change', function() {
+                toggleWarning(parentSelect, parentFeedback, () => parentSelect.value);
+            });
+            toggleWarning(parentSelect, parentFeedback, () => parentSelect.value);
+
+            // Kategori (child, jika ada)
+            const childSelect = document.getElementById('category_child');
+            if (childSelect) {
+                const childFeedback = childSelect.parentElement.querySelector('.invalid-feedback');
+                childSelect.addEventListener('change', function() {
+                    toggleWarning(childSelect, childFeedback, () => childSelect.value);
+                });
+                toggleWarning(childSelect, childFeedback, () => childSelect.value);
+            }
+
+            // Jika TinyMCE baru diinisialisasi setelah DOMContentLoaded
+            if (typeof tinymce !== 'undefined') {
+                tinymce.on('AddEditor', function(e) {
+                    if (e.editor.id === 'title') bindTitleTinyMCE();
+                    if (e.editor.id === 'content') bindContentTinyMCE();
+                });
+            }
+        });
     </script>
 </head>
 
@@ -1172,7 +1250,7 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                             <textarea id="title" name="title" class="form-control" required placeholder="Masukkan judul blog Anda di sini..."></textarea>
                             <!-- Hidden input untuk validasi form -->
                             <input type="hidden" id="title_validation" name="title_validation" required>
-                            <div class="invalid-feedback">
+                            <div class="invalid-feedback" style="display:block">
                                 <i class="fas fa-exclamation-circle"></i>
                                 Judul blog harus diisi
                             </div>
@@ -1183,7 +1261,7 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                             <textarea id="content" name="content" class="form-control" required></textarea>
                             <!-- Hidden input untuk validasi form -->
                             <input type="hidden" id="content_validation" name="content_validation" required>
-                            <div class="invalid-feedback">
+                            <div class="invalid-feedback" style="display:block">
                                 <i class="fas fa-exclamation-circle"></i>
                                 Konten blog harus diisi
                             </div>
@@ -1258,7 +1336,7 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                                     <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['category']) ?></option>
                                 <?php endforeach; ?>
                             </select>
-                            <div class="invalid-feedback">
+                            <div class="invalid-feedback" style="display:block">
                                 <i class="fas fa-exclamation-circle"></i>
                                 Kategori harus dipilih
                             </div>
