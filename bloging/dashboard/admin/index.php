@@ -297,6 +297,13 @@ $storage_stats = [
             color: #0a58ca;
             text-decoration: underline;
         }
+
+        .offcanvas-backdrop {
+            display: block !important;
+            opacity: 0.5 !important;
+            background-color: #000 !important;
+            z-index: 1040 !important;
+        }
     </style>
 </head>
 
@@ -606,6 +613,12 @@ $storage_stats = [
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.addEventListener('hidden.bs.offcanvas', function () {
+        document.querySelectorAll('.offcanvas-backdrop').forEach(e => e.remove());
+        document.body.classList.remove('offcanvas-backdrop');
+    });
+    </script>
     <script>
         // Prepare data for category chart
         const categoryData = {

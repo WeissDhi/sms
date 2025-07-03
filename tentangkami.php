@@ -30,12 +30,12 @@ include './components/navbar.php';
         href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700"
         rel="stylesheet" />
     <!--CSS============================================= -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/linearicons.css" />
     <link rel="stylesheet" href="css/font-awesome.min.css" />
-    <link rel="stylesheet" href="css/bootstrap.css" />
+    <!-- <link rel="stylesheet" href="css/bootstrap.css" /> -->
     <link rel="stylesheet" href="css/owl.carousel.css" />
     <link rel="stylesheet" href="css/main.css" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
@@ -332,7 +332,6 @@ include './components/navbar.php';
                     <div class="card-body p-5 text-center">
                         <h3 class="h4 mb-4">Ikuti Kami di Media Sosial</h3>
                         <p class="lead mb-4">Dapatkan update terbaru dan konten inspiratif melalui media sosial kami</p>
-                        
                         <div class="row justify-content-center">
                             <div class="col-md-6 mb-3">
                                 <a href="https://www.instagram.com/ikdar_cairo" target="_blank" class="social-media-card">

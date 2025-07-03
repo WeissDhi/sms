@@ -35,18 +35,19 @@
       <!-- Sosial Media + Scroll Top -->
       <div class="col-md-4">
         <h5 class="fw-bold mb-3">Ikuti Kami</h5>
-        <div class="d-flex gap-3">
-          <a href="https://facebook.com/ikdar.cairo" class="social-icon bg-light text-dark rounded-circle d-flex align-items-center justify-content-center facebook-icon">
-            <i class="fa fa-facebook"></i>
-          </a>
-          <a href="https://instagram.com/ikdar_cairo" class="social-icon bg-light text-dark rounded-circle d-flex align-items-center justify-content-center instagram-icon">
-            <i class="fa fa-instagram"></i>
-          </a>
+        <div class="d-flex flex-column align-items-center">
+          <div class="d-flex justify-content-center align-items-center gap-3 mb-3">
+            <a href="https://facebook.com/ikdar.cairo" class="social-icon bg-light text-dark rounded-circle d-flex align-items-center justify-content-center facebook-icon">
+              <i class="fa fa-facebook"></i>
+            </a>
+            <a href="https://instagram.com/ikdar_cairo" class="social-icon bg-light text-dark rounded-circle d-flex align-items-center justify-content-center instagram-icon">
+              <i class="fa fa-instagram"></i>
+            </a>
+          </div>
+          <button onclick="scrollToTop()" class="btn btn-outline-light btn-sm mt-3 mx-auto">
+            ↑ Kembali ke atas
+          </button>
         </div>
-
-        <button onclick="scrollToTop()" class="btn btn-outline-light btn-sm mt-4">
-          ↑ Kembali ke atas
-        </button>
       </div>
     </div>
 
@@ -76,10 +77,14 @@
   }
 
   .social-icon {
-    width: 40px;
-    height: 40px;
-    font-size: 18px;
-    transition: all 0.3s ease;
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 18px !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
   }
 
   .social-icon:hover {
@@ -97,6 +102,20 @@
 
   .footer-area {
     background: linear-gradient(to right, #1d1d1d, #111);
+  }
+  .footer-area .container {
+    max-width: 1140px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media (max-width: 600px) {
+    .footer-area .row.g-4 > div {
+      text-align: center;
+    }
+    .footer-area .d-flex {
+      justify-content: center !important;
+    }
   }
 </style>
 
