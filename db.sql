@@ -11,46 +11,25 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
 -- Database: `blog_db`
---
-
 -- --------------------------------------------------------
 
---
 -- Table structure for table `admin`
---
-
 DROP TABLE IF EXISTS `admin`;
 CREATE TABLE IF NOT EXISTS `admin` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `first_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `last_name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `username` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `first_name` varchar(255) NOT NULL,
+  `last_name` varchar(255) NOT NULL,
+  `username` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 );
 
---
 -- Dumping data for table `admin`
---
-
 INSERT INTO `admin` (`id`, `first_name`, `last_name`, `username`, `password`) VALUES
-(1, 'Elias', 'A', 'admin', '$2y$10$kggeKkIs6rEWf.p/6muJCOepa8zY4DcDU3CBZua8iNc9SBM3MMGym'),
-(2, 'Elias', 'A', 'admin', 'admin123');
+(1, 'Admin', '', 'admin', 'admin123');
 
--- --------------------------------------------------------
-
---
 -- Table structure for table `blogs`
---
-
 DROP TABLE IF EXISTS `blogs`;
 CREATE TABLE IF NOT EXISTS `blogs` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -68,23 +47,17 @@ CREATE TABLE IF NOT EXISTS `blogs` (
   UNIQUE KEY `slug` (`slug`)
 );
 
---
 -- Table structure for table `category`
---
-
 DROP TABLE IF EXISTS `category`;
 CREATE TABLE IF NOT EXISTS `category` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `category` varchar(127) COLLATE utf8mb4_general_ci NOT NULL,
+  `category` varchar(127) NOT NULL,
   `parent_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `parent_id` (`parent_id`)
 );
 
---
 -- Dumping data for table `category`
---
-
 INSERT INTO `category` (`id`, `category`, `parent_id`) VALUES
 (1, 'Resensi', NULL),
 (2, 'Buku', 1),
@@ -98,16 +71,11 @@ INSERT INTO `category` (`id`, `category`, `parent_id`) VALUES
 (10, 'Islamologi', NULL),
 (11, 'Humaniora', NULL);
 
--- --------------------------------------------------------
-
---
 -- Table structure for table `comment`
---
-
 DROP TABLE IF EXISTS `comment`;
 CREATE TABLE IF NOT EXISTS `comment` (
   `comment_id` int NOT NULL AUTO_INCREMENT,
-  `comment` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `comment` text NOT NULL,
   `user_id` int NOT NULL,
   `blog_id` int NOT NULL,
   `parent_id` int DEFAULT NULL,
@@ -120,12 +88,7 @@ CREATE TABLE IF NOT EXISTS `comment` (
   KEY `parent_id` (`parent_id`)
 );
 
--- --------------------------------------------------------
-
---
 -- Table structure for table `documents`
---
-
 DROP TABLE IF EXISTS `documents`;
 CREATE TABLE IF NOT EXISTS `documents` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -137,30 +100,20 @@ CREATE TABLE IF NOT EXISTS `documents` (
   KEY `blog_id` (`blog_id`)
 );
 
--- --------------------------------------------------------
-
---
 -- Table structure for table `post`
---
-
 DROP TABLE IF EXISTS `post`;
 CREATE TABLE IF NOT EXISTS `post` (
   `post_id` int NOT NULL AUTO_INCREMENT,
-  `post_title` varchar(127) COLLATE utf8mb4_general_ci NOT NULL,
-  `post_text` text COLLATE utf8mb4_general_ci NOT NULL,
+  `post_title` varchar(127) NOT NULL,
+  `post_text` text NOT NULL,
   `category` int NOT NULL,
   `publish` int NOT NULL DEFAULT '1',
-  `cover_url` varchar(255) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'default.jpg',
+  `cover_url` varchar(255) NOT NULL DEFAULT 'default.jpg',
   `crated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`post_id`)
 );
 
--- --------------------------------------------------------
-
---
 -- Table structure for table `post_like`
---
-
 DROP TABLE IF EXISTS `post_like`;
 CREATE TABLE IF NOT EXISTS `post_like` (
   `like_id` int NOT NULL AUTO_INCREMENT,
@@ -170,26 +123,19 @@ CREATE TABLE IF NOT EXISTS `post_like` (
   PRIMARY KEY (`like_id`)
 );
 
--- --------------------------------------------------------
-
---
 -- Table structure for table `users`
---
-
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `fname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `username` varchar(255) CHARACTER SET utf8mb4_general_ci NOT NULL,
-  `password` varchar(255) CHARACTER SET utf8mb4_general_ci NOT NULL,
+  `fname` varchar(255) NOT NULL,
+  `username` varchar(191) NOT NULL,
+  `password` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
 );
 
---
--- Dumping data for table `users`
---
 
+-- Dumping data for table `users`
 INSERT INTO `users` (`id`, `fname`, `username`, `password`) VALUES
 (3, 'Khalid Jemal', 'khalid', '$2y$10$LoZNyJVQpBu/M7BEQdUmlOVVXaV65TxZwLAFejNBdD5a/JxjJAEwG'),
 (6, 'John Jr', 'jr_john', '$2y$10$KpVvp9ixSCn/9FMR3k0tn.0Oul5lf2jGaCGPOgKyyxQTdyMk8xtlG'),
@@ -199,17 +145,8 @@ INSERT INTO `users` (`id`, `fname`, `username`, `password`) VALUES
 (12, 'laahiq', 'laahiq', 'laahiq123'),
 (17, 'Teuku ARdhi', 'ardhi', 'ardhi123');
 
---
--- Constraints for dumped tables
---
-
---
 -- Constraints for table `category`
---
 ALTER TABLE `category`
   ADD CONSTRAINT `category_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `category` (`id`) ON DELETE CASCADE;
-COMMIT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+COMMIT;

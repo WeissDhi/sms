@@ -121,6 +121,14 @@ if (isset($_SESSION['username'])) {
                             <i class="bi bi-house"></i> Kembali ke Beranda
                         </a>
                     </li>
+                    <?php if (isset(
+                        $_SESSION['author_type']) && $_SESSION['author_type'] === 'admin') : ?>
+                    <li>
+                        <a class="dropdown-item" href="../admin/edit_profile.php">
+                            <i class="bi bi-person"></i> Edit Profile
+                        </a>
+                    </li>
+                    <?php endif; ?>
                     <li><hr class="dropdown-divider"></li>
                     <li>
                         <a class="dropdown-item text-danger" href="../../../logout.php">
