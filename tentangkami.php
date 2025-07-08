@@ -14,7 +14,10 @@ include './components/navbar.php';
         name="viewport"
         content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <!-- Favicon-->
-    <link rel="shortcut icon" href="img/sms.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="img/sms.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/sms.png">
+    <link rel="shortcut icon" href="img/sms.png">
+    <link rel="apple-touch-icon" href="img/sms.png">
     <!-- Author Meta -->
     <meta name="author" content="colorlib" />
     <!-- Meta Description -->
@@ -43,12 +46,13 @@ include './components/navbar.php';
             background: linear-gradient(rgba(46, 125, 50, 0.7), rgba(46, 125, 50, 0.7)), url('img/mesir-bg.jpg');
             background-size: cover;
             background-position: center;
-            color: #FAFAF0; /* Ivory */
+            color: #FAFAF0;
+            /* Ivory */
             padding: 100px 0;
             margin-bottom: 50px;
             position: relative;
         }
-        
+
         .hero-section::after {
             content: '';
             position: absolute;
@@ -56,7 +60,8 @@ include './components/navbar.php';
             left: 0;
             right: 0;
             height: 100px;
-            background: linear-gradient(to top, #FAFAF0, transparent); /* Ivory */
+            background: linear-gradient(to top, #FAFAF0, transparent);
+            /* Ivory */
         }
 
         .feature-card {
@@ -64,23 +69,26 @@ include './components/navbar.php';
             border-radius: 15px;
             transition: transform 0.3s ease;
             margin-bottom: 30px;
-            background: #EEEEEE; /* Soft gray */
-            box-shadow: 0 5px 15px rgba(46,125,50,0.08);
+            background: #EEEEEE;
+            /* Soft gray */
+            box-shadow: 0 5px 15px rgba(46, 125, 50, 0.08);
         }
 
         .feature-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(46,125,50,0.18);
+            box-shadow: 0 8px 25px rgba(46, 125, 50, 0.18);
         }
 
         .feature-icon {
             font-size: 2.5rem;
-            color: #2E7D32; /* Forest green */
+            color: #2E7D32;
+            /* Forest green */
             margin-bottom: 20px;
         }
 
         .quote-section {
-            background-color: #EEEEEE; /* Soft gray */
+            background-color: #EEEEEE;
+            /* Soft gray */
             padding: 60px 0;
             margin: 50px 0;
         }
@@ -88,17 +96,21 @@ include './components/navbar.php';
         .arabic-text {
             font-family: 'Traditional Arabic', serif;
             font-size: 2rem;
-            color: #2E7D32; /* Forest green */
+            color: #2E7D32;
+            /* Forest green */
             margin-bottom: 20px;
         }
 
         .mission-card {
-            border-left: 4px solid #2E7D32; /* Forest green */
+            border-left: 4px solid #2E7D32;
+            /* Forest green */
             padding: 20px;
             margin: 20px 0;
-            background: #C5E1A5; /* Lime */
+            background: #C5E1A5;
+            /* Lime */
             border-radius: 0 15px 15px 0;
-            color: #2C2C2C; /* Charcoal */
+            color: #2C2C2C;
+            /* Charcoal */
         }
 
         .team-section {
@@ -116,21 +128,33 @@ include './components/navbar.php';
             border-radius: 50%;
             margin-bottom: 20px;
             object-fit: cover;
-            border: 5px solid #FAFAF0; /* Ivory */
-            box-shadow: 0 5px 15px rgba(46,125,50,0.08);
+            border: 5px solid #FAFAF0;
+            /* Ivory */
+            box-shadow: 0 5px 15px rgba(46, 125, 50, 0.08);
         }
+
         .card.border-0.shadow-sm {
-            background: #EEEEEE; /* Soft gray */
+            background: #EEEEEE;
+            /* Soft gray */
         }
-        .card-body p, .card-body h2, .card-body .lead {
-            color: #2C2C2C; /* Charcoal */
+
+        .card-body p,
+        .card-body h2,
+        .card-body .lead {
+            color: #2C2C2C;
+            /* Charcoal */
         }
+
         .badge.bg-success {
-            background: #2E7D32 !important; /* Forest green */
-            color: #FAFAF0 !important; /* Ivory */
+            background: #2E7D32 !important;
+            /* Forest green */
+            color: #FAFAF0 !important;
+            /* Ivory */
         }
+
         body {
-            background: #FAFAF0 !important; /* Ivory */
+            background: #FAFAF0 !important;
+            /* Ivory */
             color: #2C2C2C;
         }
 
@@ -145,7 +169,8 @@ include './components/navbar.php';
         }
 
         .social-card {
-            background: #EEEEEE; /* Soft gray */
+            background: #EEEEEE;
+            /* Soft gray */
             border-radius: 15px;
             padding: 25px 20px;
             text-align: center;
@@ -173,7 +198,7 @@ include './components/navbar.php';
 
         .social-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(46,125,50,0.2);
+            box-shadow: 0 10px 25px rgba(46, 125, 50, 0.2);
             border-color: #2E7D32;
         }
 
@@ -198,20 +223,24 @@ include './components/navbar.php';
             height: 70px;
             border-radius: 50%;
             margin: 0 auto 15px auto;
-            box-shadow: 0 2px 8px rgba(46,125,50,0.08);
+            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.08);
         }
+
         .instagram-card .social-icon {
             background: radial-gradient(circle at 30% 110%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
             color: #fff;
         }
+
         .facebook-card .social-icon {
             background: #3b5998;
             color: #fff;
         }
+
         .social-card:hover .social-icon {
-            box-shadow: 0 4px 16px rgba(46,125,50,0.18);
+            box-shadow: 0 4px 16px rgba(46, 125, 50, 0.18);
             transform: scale(1.12) rotate(-6deg);
         }
+
         .social-content h5 {
             font-weight: 600;
             margin-bottom: 5px;

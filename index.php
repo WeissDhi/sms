@@ -71,7 +71,10 @@ if (!$result_trending) {
     name="viewport"
     content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <!-- Favicon-->
-  <link rel="shortcut icon" href="img/sms.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="img/sms.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/sms.png">
+  <link rel="shortcut icon" href="img/sms.png">
+  <link rel="apple-touch-icon" href="img/sms.png">
   <!-- Author Meta -->
   <meta name="author" content="colorlib" />
   <!-- Meta Description -->
@@ -81,7 +84,7 @@ if (!$result_trending) {
   <!-- meta character set -->
   <meta charset="UTF-8" />
   <!-- Site Title -->
-  <title>Blogger</title>
+  <title>Syukron Makmun Society Blog</title>
 
   <link
     href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700"
