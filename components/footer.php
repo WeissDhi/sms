@@ -35,19 +35,17 @@
       <!-- Sosial Media + Scroll Top -->
       <div class="col-md-4">
         <h5 class="fw-bold mb-3">Ikuti Kami</h5>
-        <div class="d-flex flex-column align-items-center">
-          <div class="d-flex justify-content-center align-items-center gap-3 mb-3">
-            <a href="https://facebook.com/ikdar.cairo" class="social-icon bg-light text-dark rounded-circle d-flex align-items-center justify-content-center facebook-icon">
-              <i class="fa fa-facebook"></i>
-            </a>
-            <a href="https://instagram.com/ikdar_cairo" class="social-icon bg-light text-dark rounded-circle d-flex align-items-center justify-content-center instagram-icon">
-              <i class="fa fa-instagram"></i>
-            </a>
-          </div>
-          <button onclick="scrollToTop()" class="btn btn-outline-light btn-sm mt-3 mx-auto">
-            ↑ Kembali ke atas
-          </button>
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <a href="https://facebook.com/ikdar.cairo" class="social-icon bg-light text-dark rounded-circle d-flex align-items-center justify-content-center facebook-icon">
+            <i class="fa fa-facebook"></i>
+          </a>
+          <a href="https://instagram.com/ikdar_cairo" class="social-icon bg-light text-dark rounded-circle d-flex align-items-center justify-content-center instagram-icon">
+            <i class="fa fa-instagram"></i>
+          </a>
         </div>
+        <button onclick="scrollToTop()" class="btn btn-outline-light btn-sm">
+          ↑ Kembali ke atas
+        </button>
       </div>
     </div>
 
