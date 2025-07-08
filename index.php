@@ -615,11 +615,7 @@ if (!$result_trending) {
 <?php if (session_status() === PHP_SESSION_NONE) {
   session_start();
 } ?>
-<!-- Tombol Tambah Artikel -->
-<a href="<?= isset($_SESSION['author_id']) && in_array($_SESSION['author_type'], ['user', 'admin']) ? 'bloging/add_blog.php' : 'login.php' ?>"
-  class="btn-tambah-artikel">
-  + Tambah Artikel
-</a>
+
 
 
 <style>

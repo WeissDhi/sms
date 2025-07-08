@@ -9,11 +9,13 @@ if (!isset($_SESSION['author_id']) || $_SESSION['author_type'] !== 'admin') {
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
+    $stmt = $conn->prepare("DELETE FROM penulis WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
+    header("Location: penulis_management.php");
+    exit;
 }
 
-header("Location: users_management.php");
+header("Location: penulis_management.php");
 exit;
 ?>

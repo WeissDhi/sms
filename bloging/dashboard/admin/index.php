@@ -34,14 +34,14 @@ $recent_comments = $conn->query("
     SELECT c.*, 
            CASE 
                WHEN a.id IS NOT NULL THEN a.first_name
-               ELSE u.fname 
+               ELSE p.fname 
            END as user_name,
            b.title as post_title,
            b.slug as post_slug,
            c.created_at
     FROM comment c 
-    LEFT JOIN users u ON c.user_id = u.id
-    LEFT JOIN admin a ON c.user_id = a.id
+    LEFT JOIN penulis p ON c.penulis_id = p.id
+    LEFT JOIN admin a ON c.penulis_id = a.id
     JOIN blogs b ON c.blog_id = b.id 
     WHERE c.status = 'active'
     ORDER BY c.created_at DESC 
@@ -57,11 +57,11 @@ $most_viewed = $conn->query("
     SELECT b.*, 
            CASE 
                WHEN b.author_type = 'admin' THEN a.first_name
-               ELSE u.fname 
+               ELSE p.fname 
            END as author_name
     FROM blogs b
     LEFT JOIN admin a ON b.author_type = 'admin' AND b.author_id = a.id
-    LEFT JOIN users u ON b.author_type = 'user' AND b.author_id = u.id
+    LEFT JOIN penulis p ON b.author_type = 'user' AND b.author_id = p.id
     ORDER BY b.views DESC 
     LIMIT 5
 ");
@@ -71,11 +71,11 @@ $recent_articles = $conn->query("
     SELECT b.*, 
            CASE 
                WHEN b.author_type = 'admin' THEN a.first_name
-               ELSE u.fname 
+               ELSE p.fname 
            END as author_name
     FROM blogs b
     LEFT JOIN admin a ON b.author_type = 'admin' AND b.author_id = a.id
-    LEFT JOIN users u ON b.author_type = 'user' AND b.author_id = u.id
+    LEFT JOIN penulis p ON b.author_type = 'user' AND b.author_id = p.id
     ORDER BY b.created_at DESC 
     LIMIT 5
 ");
@@ -85,14 +85,14 @@ $top_contributors = $conn->query("
     SELECT 
         CASE 
             WHEN b.author_type = 'admin' THEN a.first_name
-            ELSE u.fname 
+            ELSE p.fname 
         END as author_name,
         COUNT(b.id) as article_count,
         SUM(b.views) as total_views,
         b.author_type
     FROM blogs b
     LEFT JOIN admin a ON b.author_type = 'admin' AND b.author_id = a.id
-    LEFT JOIN users u ON b.author_type = 'user' AND b.author_id = u.id
+    LEFT JOIN penulis p ON b.author_type = 'user' AND b.author_id = p.id
     GROUP BY b.author_id, b.author_type
     ORDER BY article_count DESC, total_views DESC
     LIMIT 10
@@ -116,12 +116,12 @@ $most_engaging = $conn->query("
         b.*,
         CASE 
             WHEN b.author_type = 'admin' THEN a.first_name
-            ELSE u.fname 
+            ELSE p.fname 
         END as author_name,
         (b.views + COALESCE(comment_count, 0)) as engagement_score
     FROM blogs b
     LEFT JOIN admin a ON b.author_type = 'admin' AND b.author_id = a.id
-    LEFT JOIN users u ON b.author_type = 'user' AND b.author_id = u.id
+    LEFT JOIN penulis p ON b.author_type = 'user' AND b.author_id = p.id
     LEFT JOIN (
         SELECT blog_id, COUNT(*) as comment_count 
         FROM comment 

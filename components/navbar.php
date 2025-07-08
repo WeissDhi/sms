@@ -7,7 +7,7 @@ if (session_status() == PHP_SESSION_NONE) {
 // $conn = new mysqli($host, $user, $pass, $dbname);
 
 // Dashboard & User info
-$dashboardLink = '#';
+$dashboardLink = './bloging/dashboard/penulis/index.php';
 $showDashboard = false;
 $displayName = '';
 
@@ -15,14 +15,18 @@ if (isset($_SESSION['author_type'])) {
     $showDashboard = true;
     if ($_SESSION['author_type'] === 'admin') {
         $dashboardLink = './bloging/dashboard/admin/index.php';
-    } elseif ($_SESSION['author_type'] === 'user') {
-        $dashboardLink = './bloging/dashboard/users/index.php';
+    } elseif ($_SESSION['author_type'] === 'penulis') {
+        $dashboardLink = './bloging/dashboard/penulis/index.php';
+    } elseif ($_SESSION['author_type'] === 'pengguna') {
+        $dashboardLink = './bloging/dashboard/pengguna/index.php';
     }
     if (isset($_SESSION['username'])) {
         if ($_SESSION['author_type'] === 'admin') {
             $stmt = $conn->prepare("SELECT first_name FROM admin WHERE username = ?");
-        } else {
-            $stmt = $conn->prepare("SELECT fname FROM users WHERE username = ?");
+        } elseif ($_SESSION['author_type'] === 'penulis') {
+            $stmt = $conn->prepare("SELECT fname FROM penulis WHERE username = ?");
+        } elseif ($_SESSION['author_type'] === 'pengguna') {
+            $stmt = $conn->prepare("SELECT nama FROM pengguna WHERE username = ?");
         }
         $stmt->bind_param("s", $_SESSION['username']);
         if ($stmt->execute()) {

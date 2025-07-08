@@ -2,47 +2,10 @@
 include 'config.php';
 session_start();
 
-header('Content-Type: application/json; charset=utf-8');
-
-$author_id = $_SESSION['author_id'] ?? null;
-$author_type = $_SESSION['author_type'] ?? null;
+// Set proper headers
+header('Content-Type: text/plain; charset=utf-8');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Jika pengguna ingin menyimpan artikel ke dashboard
-    if (
-        isset($_POST['blog_id']) && 
-        $author_type === 'pengguna' && 
-        $author_id
-    ) {
-        $blog_id = intval($_POST['blog_id']);
-        // Cek apakah sudah pernah disimpan
-        $stmt = $conn->prepare("SELECT id FROM saved_articles WHERE pengguna_id = ? AND blog_id = ?");
-        $stmt->bind_param("ii", $author_id, $blog_id);
-        $stmt->execute();
-        $stmt->store_result();
-        if ($stmt->num_rows > 0) {
-            echo json_encode(['status' => 'error', 'message' => 'Artikel sudah pernah disimpan.']);
-            exit;
-        }
-        $stmt->close();
-        // Simpan ke tabel saved_articles
-        $stmt = $conn->prepare("INSERT INTO saved_articles (pengguna_id, blog_id) VALUES (?, ?)");
-        $stmt->bind_param("ii", $author_id, $blog_id);
-        if ($stmt->execute()) {
-            echo json_encode(['status' => 'success', 'message' => 'Artikel berhasil disimpan.']);
-        } else {
-            echo json_encode(['status' => 'error', 'message' => 'Gagal menyimpan artikel.']);
-        }
-        $stmt->close();
-        $conn->close();
-        exit;
-    }
-    // Jika admin/penulis, tolak aksi save ke dashboard
-    if (isset($_POST['blog_id']) && in_array($author_type, ['admin','penulis'])) {
-        echo json_encode(['status' => 'error', 'message' => 'Hanya pengguna yang dapat menyimpan artikel ke dashboard.']);
-        exit;
-    }
-    // Fitur lama: pembuatan blog (admin/penulis)
     try {
         // Debug: Log received data
         error_log("POST data received: " . print_r($_POST, true));
@@ -80,6 +43,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (!in_array($status, ['draft', 'published'])) {
             throw new Exception("Status tidak valid");
         }
+
+        // Ambil dari session
+        $author_id = $_SESSION['author_id'] ?? null;
+        $author_type = $_SESSION['author_type'] ?? null;
 
         if (!$author_id || !$author_type) {
             die("Author tidak terdeteksi. Silakan login ulang.");

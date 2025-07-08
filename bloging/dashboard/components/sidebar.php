@@ -104,8 +104,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?php echo ($current_page == 'users_management.php') ? 'active' : ''; ?>" href="../../dashboard/admin/users_management.php">
-                    <i class="bi bi-people"></i> Manajemen User
+                <a class="nav-link <?php echo ($current_page == 'penulis_management.php') ? 'active' : ''; ?>" href="../../dashboard/admin/penulis_management.php">
+                    <i class="bi bi-people"></i> Manajemen Penulis
                 </a>
             </li>
         </ul>

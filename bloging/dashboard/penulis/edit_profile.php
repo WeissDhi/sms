@@ -2,16 +2,16 @@
 session_start();
 include '../../config.php';
 
-if (!isset($_SESSION['author_id']) || $_SESSION['author_type'] !== 'user') {
+if (!isset($_SESSION['author_id']) || $_SESSION['author_type'] !== 'penulis') {
     header("Location: ../../login.php");
     exit;
 }
 
-$user_id = $_SESSION['author_id'];
+$penulis_id = $_SESSION['author_id'];
 
-// Ambil data user
-$stmt = $conn->prepare("SELECT fname, username FROM users WHERE id = ?");
-$stmt->bind_param("i", $user_id);
+// Ambil data penulis
+$stmt = $conn->prepare("SELECT fname, username FROM penulis WHERE id = ?");
+$stmt->bind_param("i", $penulis_id);
 $stmt->execute();
 $stmt->bind_result($fname, $username);
 $stmt->fetch();
@@ -24,8 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $new_fname = trim($_POST['fname']);
         $new_username = trim($_POST['username']);
 
-        $update_stmt = $conn->prepare("UPDATE users SET fname = ?, username = ? WHERE id = ?");
-        $update_stmt->bind_param("ssi", $new_fname, $new_username, $user_id);
+        $update_stmt = $conn->prepare("UPDATE penulis SET fname = ?, username = ? WHERE id = ?");
+        $update_stmt->bind_param("ssi", $new_fname, $new_username, $penulis_id);
         if ($update_stmt->execute()) {
             $update_message = 'Profil berhasil diperbarui!';
             $fname = $new_fname;
@@ -40,8 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['update_password'])) {
         $new_password = $_POST['new_password'];
 
-        $pass_stmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
-        $pass_stmt->bind_param("si", $new_password, $user_id);
+        $pass_stmt = $conn->prepare("UPDATE penulis SET password = ? WHERE id = ?");
+        $pass_stmt->bind_param("si", $new_password, $penulis_id);
         if ($pass_stmt->execute()) {
             $update_message = 'Password berhasil diubah!';
         } else {

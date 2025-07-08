@@ -102,17 +102,17 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <div class="offcanvas-body">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link <?php echo ($current_page == 'index.php') ? 'active' : ''; ?>" href="../../dashboard/users/index.php">
+                <a class="nav-link <?php echo ($current_page == 'index.php') ? 'active' : ''; ?>" href="../../dashboard/penulis/index.php">
                     <i class="bi bi-speedometer2"></i> Dashboard
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?php echo ($current_page == 'blog_management.php') ? 'active' : ''; ?>" href="../../dashboard/users/blog_management.php">
+                <a class="nav-link <?php echo ($current_page == 'blog_management.php') ? 'active' : ''; ?>" href="../../dashboard/penulis/blog_management.php">
                     <i class="bi bi-journal-text"></i> Manajemen Blog
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?php echo ($current_page == 'profile.php') ? 'active' : ''; ?>" href="../../dashboard/users/profile.php">
+                <a class="nav-link <?php echo ($current_page == 'profile.php') ? 'active' : ''; ?>" href="../../dashboard/penulis/profile.php">
                     <i class="bi bi-person"></i> Profil
                 </a>
             </li>

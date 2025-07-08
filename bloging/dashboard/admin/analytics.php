@@ -10,13 +10,13 @@ if (!isset($_SESSION['author_id']) || $_SESSION['author_type'] !== 'admin') {
 
 // Get advanced statistics
 $stats = [
-    'total_users' => $conn->query("SELECT COUNT(*) as count FROM users")->fetch_assoc()['count'],
+    'total_users' => $conn->query("SELECT COUNT(*) as count FROM penulis")->fetch_assoc()['count'],
     'total_articles' => $conn->query("SELECT COUNT(*) as count FROM blogs")->fetch_assoc()['count'],
     'published_articles' => $conn->query("SELECT COUNT(*) as count FROM blogs WHERE status = 'published'")->fetch_assoc()['count'],
     'total_views' => $conn->query("SELECT SUM(views) as total FROM blogs")->fetch_assoc()['total'] ?? 0,
     'total_comments' => $conn->query("SELECT COUNT(*) as count FROM comment")->fetch_assoc()['count'],
     'total_likes' => $conn->query("SELECT COUNT(*) as count FROM post_like")->fetch_assoc()['count'],
-    'active_users_7d' => $conn->query("SELECT COUNT(DISTINCT user_id) as count FROM comment WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)")->fetch_assoc()['count'],
+    'active_users_7d' => $conn->query("SELECT COUNT(DISTINCT penulis_id) as count FROM comment WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)")->fetch_assoc()['count'],
     'new_articles_7d' => $conn->query("SELECT COUNT(*) as count FROM blogs WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)")->fetch_assoc()['count']
 ];
 
@@ -25,14 +25,14 @@ $top_contributors = $conn->query("
     SELECT 
         CASE 
             WHEN b.author_type = 'admin' THEN a.first_name
-            ELSE u.fname 
+            ELSE p.fname 
         END as author_name,
         COUNT(b.id) as article_count,
         SUM(b.views) as total_views,
         b.author_type
     FROM blogs b
     LEFT JOIN admin a ON b.author_type = 'admin' AND b.author_id = a.id
-    LEFT JOIN users u ON b.author_type = 'user' AND b.author_id = u.id
+    LEFT JOIN penulis p ON b.author_type = 'penulis' AND b.author_id = p.id
     GROUP BY b.author_id, b.author_type
     ORDER BY article_count DESC, total_views DESC
     LIMIT 10
@@ -56,13 +56,13 @@ $most_engaging = $conn->query("
         b.*,
         CASE 
             WHEN b.author_type = 'admin' THEN a.first_name
-            ELSE u.fname 
+            ELSE p.fname 
         END as author_name,
         (SELECT COUNT(*) FROM comment WHERE blog_id = b.id AND status = 'active') as comment_count,
         (SELECT COUNT(*) FROM post_like WHERE post_id = b.id) as like_count
     FROM blogs b
     LEFT JOIN admin a ON b.author_type = 'admin' AND b.author_id = a.id
-    LEFT JOIN users u ON b.author_type = 'user' AND b.author_id = u.id
+    LEFT JOIN penulis p ON b.author_type = 'penulis' AND b.author_id = p.id
     ORDER BY b.views DESC
     LIMIT 10
 ");

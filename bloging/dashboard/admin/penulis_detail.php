@@ -20,24 +20,24 @@ if (!$is_admin && !$is_own_profile) {
 }
 
 // Get user details
-$user_query = $conn->prepare("SELECT * FROM users WHERE id = ?");
+$user_query = $conn->prepare("SELECT * FROM penulis WHERE id = ?");
 $user_query->bind_param("i", $user_id);
 $user_query->execute();
 $user = $user_query->get_result()->fetch_assoc();
 
 if (!$user) {
-    header("Location: " . ($is_admin ? "user_management.php" : "../index.php"));
+    header("Location: " . ($is_admin ? "penulis_management.php" : "../index.php"));
     exit;
 }
 
 // Get user statistics
 $stats_query = "
     SELECT 
-        (SELECT COUNT(*) FROM blogs WHERE author_id = ? AND author_type = 'user') as total_articles,
-        (SELECT COUNT(*) FROM blogs WHERE author_id = ? AND author_type = 'user' AND status = 'published') as published_articles,
-        (SELECT COUNT(*) FROM blogs WHERE author_id = ? AND author_type = 'user' AND status = 'draft') as draft_articles,
-        (SELECT COUNT(*) FROM comment WHERE user_id = ?) as total_comments,
-        (SELECT SUM(views) FROM blogs WHERE author_id = ? AND author_type = 'user') as total_views
+        (SELECT COUNT(*) FROM blogs WHERE author_id = ? AND author_type = 'penulis') as total_articles,
+        (SELECT COUNT(*) FROM blogs WHERE author_id = ? AND author_type = 'penulis' AND status = 'published') as published_articles,
+        (SELECT COUNT(*) FROM blogs WHERE author_id = ? AND author_type = 'penulis' AND status = 'draft') as draft_articles,
+        (SELECT COUNT(*) FROM comment WHERE penulis_id = ?) as total_comments,
+        (SELECT SUM(views) FROM blogs WHERE author_id = ? AND author_type = 'penulis') as total_views
 ";
 $stats_stmt = $conn->prepare($stats_query);
 $stats_stmt->bind_param("iiiii", $user_id, $user_id, $user_id, $user_id, $user_id);
@@ -49,7 +49,7 @@ $articles_query = "
     SELECT b.*, c.category as category_name 
     FROM blogs b 
     LEFT JOIN category c ON b.category_id = c.id 
-    WHERE b.author_id = ? AND b.author_type = 'user' 
+    WHERE b.author_id = ? AND b.author_type = 'penulis' 
     ORDER BY b.created_at DESC 
     LIMIT 5
 ";
@@ -63,7 +63,7 @@ $comments_query = "
     SELECT c.*, b.title as blog_title 
     FROM comment c 
     JOIN blogs b ON c.blog_id = b.id 
-    WHERE c.user_id = ? 
+    WHERE c.penulis_id = ? 
     ORDER BY c.created_at DESC 
     LIMIT 5
 ";
@@ -77,7 +77,7 @@ $top_articles_query = "
     SELECT b.*, c.category as category_name 
     FROM blogs b 
     LEFT JOIN category c ON b.category_id = c.id 
-    WHERE b.author_id = ? AND b.author_type = 'user' 
+    WHERE b.author_id = ? AND b.author_type = 'penulis' 
     ORDER BY b.views DESC 
     LIMIT 3
 ";

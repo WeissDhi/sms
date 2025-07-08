@@ -21,18 +21,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Cek user biasa
-    $user_query = $conn->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
-    $user_query->bind_param("ss", $username, $password);
-    $user_query->execute();
-    $user_result = $user_query->get_result();
+    // Cek penulis biasa
+    $penulis_query = $conn->prepare("SELECT * FROM penulis WHERE username = ? AND password = ?");
+    $penulis_query->bind_param("ss", $username, $password);
+    $penulis_query->execute();
+    $penulis_result = $penulis_query->get_result();
 
-    if ($user_result->num_rows > 0) {
-        $user = $user_result->fetch_assoc();
-        $_SESSION['author_id'] = $user['id'];
-        $_SESSION['author_type'] = 'user';
-        $_SESSION['username'] = $user['username'];
+    if ($penulis_result->num_rows > 0) {
+        $penulis = $penulis_result->fetch_assoc();
+        $_SESSION['author_id'] = $penulis['id'];
+        $_SESSION['author_type'] = 'penulis';
+        $_SESSION['username'] = $penulis['username'];
         header("Location: index.php");
+        exit;
+    }
+
+    // Cek pengguna biasa
+    $pengguna_query = $conn->prepare("SELECT * FROM pengguna WHERE username = ? AND password = ?");
+    $pengguna_query->bind_param("ss", $username, $password);
+    $pengguna_query->execute();
+    $pengguna_result = $pengguna_query->get_result();
+
+    if ($pengguna_result->num_rows > 0) {
+        $pengguna = $pengguna_result->fetch_assoc();
+        $_SESSION['pengguna_id'] = $pengguna['id'];
+        $_SESSION['author_id'] = $pengguna['id'];
+        $_SESSION['author_type'] = 'pengguna';
+        $_SESSION['username'] = $pengguna['username'];
+        header("Location: bloging/dashboard/pengguna/index.php");
         exit;
     }
 
@@ -167,7 +183,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" id="password" name="password" class="form-control" required>
+                            <div class="input-group">
+                                <input type="password" id="password" name="password" class="form-control" required>
+                                <span class="input-group-text bg-white border-start-0" id="togglePassword" style="cursor:pointer;">
+                                    <i class="bi bi-eye" id="eyeIcon"></i>
+                                </span>
+                            </div>
                         </div>
                         <div class="d-grid mb-3">
                             <button type="submit" class="btn btn-primary">Login</button>
@@ -200,6 +221,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 form.style.opacity = 1;
                 form.style.transform = "translateY(0)";
             }, 200);
+
+            // Show/hide password
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
+            togglePassword.addEventListener('click', function () {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                eyeIcon.classList.toggle('bi-eye');
+                eyeIcon.classList.toggle('bi-eye-slash');
+            });
         });
     </script>
 </body>

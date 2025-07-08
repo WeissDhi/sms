@@ -9,6 +9,6 @@ if (!isset($_SESSION['author_type'])) {
 if ($_SESSION['author_type'] === 'admin') {
     header("Location: ./admin/index.php");
 } else {
-    header("Location: ./users/index.php");
+    header("Location: ./penulis/index.php");
 }
 exit;

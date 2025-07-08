@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($author_type === 'admin') {
             header("Location: ./dashboard/admin/blogs_management.php?edit=success");
         } else {
-            header("Location: ./dashboard/users/blog_management.php?edit=success");
+            header("Location: ./dashboard/penulis/blog_management.php?edit=success");
         }
         exit;
     } else {
