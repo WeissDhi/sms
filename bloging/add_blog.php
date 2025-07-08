@@ -147,6 +147,7 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
             font-size: 1.1rem;
             position: relative;
             overflow: hidden;
+            margin-bottom: 2rem;
         }
 
         .btn-green::before {
