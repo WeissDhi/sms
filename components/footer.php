@@ -13,7 +13,7 @@
       <div class="col-md-4">
         <h5 class="fw-bold mb-3">Tentang Kami</h5>
         <p class="small text-light">
-          IKDAR CAIRO adalah platform yang dikelola oleh mahasiswa Indonesia di Kairo, bertujuan untuk menyebarkan informasi dan pemikiran dalam berbagai bidang seperti humaniora, Islamologi, dan sastra.
+          Syukron Ma'mun Society Mesir adalah platform yang dikelola oleh mahasiswa Indonesia di Kairo, bertujuan untuk menyebarkan informasi dan pemikiran dalam berbagai bidang seperti humaniora, Islamologi, dan sastra.
         </p>
       </div>
 
