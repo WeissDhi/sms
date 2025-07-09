@@ -362,9 +362,6 @@ $storage_stats = [
                     <a href="../../../index.php" class="btn btn-outline-primary home-btn d-inline-flex align-items-center gap-2">
                         <i class="bi bi-house-door-fill"></i> Kembali ke Home
                     </a>
-                    <a href="../add_blog.php" class="btn btn-success home-btn d-inline-flex align-items-center gap-2">
-                        <i class="bi bi-plus-circle-fill"></i> Tambah Artikel
-                    </a>
                 </div>
             </div>
         </div>
@@ -378,7 +375,7 @@ $storage_stats = [
                 </h5>
             </div>
             <div class="col-6 col-md-3">
-                <div class="card shortcut-card bg-primary bg-gradient text-white h-100" onclick="window.location.href='../add_blog.php'">
+                <div class="card shortcut-card bg-primary bg-gradient text-white h-100" onclick="window.location.href='../../add_blog.php'">
                     <div class="card-body p-4 text-center">
                         <i class="bi bi-plus-circle-fill shortcut-icon"></i>
                         <h6 class="mb-0">Tambah Artikel</h6>
