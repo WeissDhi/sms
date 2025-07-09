@@ -8,16 +8,19 @@ if (!isset($_SESSION['author_id']) || $_SESSION['author_type'] !== 'admin') {
     exit;
 }
 
-// Get basic statistics
+// Get basic statistics - Updated to match actual database structure
 $stats = [
-    'total_users' => $conn->query("SELECT COUNT(*) as count FROM users")->fetch_assoc()['count'],
+    'total_pengguna' => $conn->query("SELECT COUNT(*) as count FROM pengguna")->fetch_assoc()['count'],
+    'total_penulis' => $conn->query("SELECT COUNT(*) as count FROM penulis")->fetch_assoc()['count'],
     'total_admins' => $conn->query("SELECT COUNT(*) as count FROM admin")->fetch_assoc()['count'],
     'total_articles' => $conn->query("SELECT COUNT(*) as count FROM blogs")->fetch_assoc()['count'],
     'published_articles' => $conn->query("SELECT COUNT(*) as count FROM blogs WHERE status = 'published'")->fetch_assoc()['count'],
     'draft_articles' => $conn->query("SELECT COUNT(*) as count FROM blogs WHERE status = 'draft'")->fetch_assoc()['count'],
-    'total_comments' => $conn->query("SELECT COUNT(*) as count FROM comment")->fetch_assoc()['count'],
+    'total_comments' => $conn->query("SELECT COUNT(*) as count FROM comment WHERE status = 'active'")->fetch_assoc()['count'],
     'total_views' => $conn->query("SELECT SUM(views) as total FROM blogs")->fetch_assoc()['total'] ?? 0,
-    'total_documents' => $conn->query("SELECT COUNT(*) as count FROM documents")->fetch_assoc()['count']
+    'total_documents' => $conn->query("SELECT COUNT(*) as count FROM documents")->fetch_assoc()['count'],
+    'total_categories' => $conn->query("SELECT COUNT(*) as count FROM category")->fetch_assoc()['count'],
+    'total_saved_articles' => $conn->query("SELECT COUNT(*) as count FROM saved_articles")->fetch_assoc()['count']
 ];
 
 // Get articles by category
@@ -25,23 +28,26 @@ $category_stats = $conn->query("
     SELECT c.category, COUNT(b.id) as article_count 
     FROM category c 
     LEFT JOIN blogs b ON c.id = b.category_id 
-    GROUP BY c.id 
+    GROUP BY c.id, c.category
     ORDER BY article_count DESC
 ");
 
-// Get recent comments with user info
+// Get recent comments with user info - Fixed to match database structure
 $recent_comments = $conn->query("
     SELECT c.*, 
            CASE 
-               WHEN a.id IS NOT NULL THEN a.first_name
-               ELSE p.fname 
+               WHEN c.author_type = 'admin' THEN a.first_name
+               WHEN c.author_type = 'penulis' THEN p.fname
+               WHEN c.author_type = 'pengguna' THEN pg.nama
+               ELSE 'Unknown'
            END as user_name,
            b.title as post_title,
            b.slug as post_slug,
            c.created_at
     FROM comment c 
-    LEFT JOIN penulis p ON c.penulis_id = p.id
-    LEFT JOIN admin a ON c.penulis_id = a.id
+    LEFT JOIN penulis p ON c.penulis_id = p.id AND c.author_type = 'penulis'
+    LEFT JOIN admin a ON c.penulis_id = a.id AND c.author_type = 'admin'
+    LEFT JOIN pengguna pg ON c.pengguna_id = pg.id AND c.author_type = 'pengguna'
     JOIN blogs b ON c.blog_id = b.id 
     WHERE c.status = 'active'
     ORDER BY c.created_at DESC 
@@ -52,47 +58,50 @@ if (!$recent_comments) {
     die("Error in recent comments query: " . $conn->error);
 }
 
-// Get most viewed articles
+// Get most viewed articles - Fixed to match database structure
 $most_viewed = $conn->query("
     SELECT b.*, 
            CASE 
                WHEN b.author_type = 'admin' THEN a.first_name
-               ELSE p.fname 
+               WHEN b.author_type = 'penulis' THEN p.fname
+               ELSE 'Unknown'
            END as author_name
     FROM blogs b
     LEFT JOIN admin a ON b.author_type = 'admin' AND b.author_id = a.id
-    LEFT JOIN penulis p ON b.author_type = 'user' AND b.author_id = p.id
+    LEFT JOIN penulis p ON b.author_type = 'penulis' AND b.author_id = p.id
     ORDER BY b.views DESC 
     LIMIT 5
 ");
 
-// Get recent articles
+// Get recent articles - Fixed to match database structure
 $recent_articles = $conn->query("
     SELECT b.*, 
            CASE 
                WHEN b.author_type = 'admin' THEN a.first_name
-               ELSE p.fname 
+               WHEN b.author_type = 'penulis' THEN p.fname
+               ELSE 'Unknown'
            END as author_name
     FROM blogs b
     LEFT JOIN admin a ON b.author_type = 'admin' AND b.author_id = a.id
-    LEFT JOIN penulis p ON b.author_type = 'user' AND b.author_id = p.id
+    LEFT JOIN penulis p ON b.author_type = 'penulis' AND b.author_id = p.id
     ORDER BY b.created_at DESC 
     LIMIT 5
 ");
 
-// Get top contributors (users with most articles)
+// Get top contributors (users with most articles) - Fixed to match database structure
 $top_contributors = $conn->query("
     SELECT 
         CASE 
             WHEN b.author_type = 'admin' THEN a.first_name
-            ELSE p.fname 
+            WHEN b.author_type = 'penulis' THEN p.fname
+            ELSE 'Unknown'
         END as author_name,
         COUNT(b.id) as article_count,
         SUM(b.views) as total_views,
         b.author_type
     FROM blogs b
     LEFT JOIN admin a ON b.author_type = 'admin' AND b.author_id = a.id
-    LEFT JOIN penulis p ON b.author_type = 'user' AND b.author_id = p.id
+    LEFT JOIN penulis p ON b.author_type = 'penulis' AND b.author_id = p.id
     GROUP BY b.author_id, b.author_type
     ORDER BY article_count DESC, total_views DESC
     LIMIT 10
@@ -116,12 +125,13 @@ $most_engaging = $conn->query("
         b.*,
         CASE 
             WHEN b.author_type = 'admin' THEN a.first_name
-            ELSE p.fname 
+            WHEN b.author_type = 'penulis' THEN p.fname
+            ELSE 'Unknown'
         END as author_name,
         (b.views + COALESCE(comment_count, 0)) as engagement_score
     FROM blogs b
     LEFT JOIN admin a ON b.author_type = 'admin' AND b.author_id = a.id
-    LEFT JOIN penulis p ON b.author_type = 'user' AND b.author_id = p.id
+    LEFT JOIN penulis p ON b.author_type = 'penulis' AND b.author_id = p.id
     LEFT JOIN (
         SELECT blog_id, COUNT(*) as comment_count 
         FROM comment 
@@ -140,9 +150,17 @@ $system_stats = [
 ];
 
 // Get recent user registrations
-$recent_users = $conn->query("
+$recent_pengguna = $conn->query("
+    SELECT nama, username, created_at
+    FROM pengguna 
+    ORDER BY created_at DESC 
+    LIMIT 5
+");
+
+// Get recent penulis registrations
+$recent_penulis = $conn->query("
     SELECT fname, username, id
-    FROM users 
+    FROM penulis 
     ORDER BY id DESC 
     LIMIT 5
 ");
@@ -304,6 +322,31 @@ $storage_stats = [
             background-color: #000 !important;
             z-index: 1040 !important;
         }
+
+        .shortcut-card {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .shortcut-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .shortcut-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .action-buttons {
+            position: sticky;
+            top: 20px;
+            z-index: 1000;
+        }
     </style>
 </head>
 
@@ -315,9 +358,56 @@ $storage_stats = [
         <div class="row mb-4">
             <div class="col-12 d-flex justify-content-between align-items-center">
                 <h2 class="mb-0 fw-bold text-dark">Dashboard Admin</h2>
-                <a href="../../../index.php" class="btn btn-outline-primary home-btn d-inline-flex align-items-center gap-2">
-                    <i class="bi bi-house-door-fill"></i> Kembali ke Home
-                </a>
+                <div class="d-flex gap-2">
+                    <a href="../../../index.php" class="btn btn-outline-primary home-btn d-inline-flex align-items-center gap-2">
+                        <i class="bi bi-house-door-fill"></i> Kembali ke Home
+                    </a>
+                    <a href="../add_blog.php" class="btn btn-success home-btn d-inline-flex align-items-center gap-2">
+                        <i class="bi bi-plus-circle-fill"></i> Tambah Artikel
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Action Shortcuts -->
+        <div class="row g-4 mb-5">
+            <div class="col-12">
+                <h5 class="mb-3 fw-bold text-dark">
+                    <i class="bi bi-lightning-fill text-warning me-2"></i>
+                    Quick Actions
+                </h5>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card shortcut-card bg-primary bg-gradient text-white h-100" onclick="window.location.href='../add_blog.php'">
+                    <div class="card-body p-4 text-center">
+                        <i class="bi bi-plus-circle-fill shortcut-icon"></i>
+                        <h6 class="mb-0">Tambah Artikel</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card shortcut-card bg-success bg-gradient text-white h-100" onclick="window.location.href='penulis_management.php'">
+                    <div class="card-body p-4 text-center">
+                        <i class="bi bi-person-plus-fill shortcut-icon"></i>
+                        <h6 class="mb-0">Kelola Penulis</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card shortcut-card bg-info bg-gradient text-white h-100" onclick="window.location.href='pengguna_management.php'">
+                    <div class="card-body p-4 text-center">
+                        <i class="bi bi-people-fill shortcut-icon"></i>
+                        <h6 class="mb-0">Kelola Pengguna</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card shortcut-card bg-warning bg-gradient text-white h-100" onclick="window.location.href='blogs_management.php'">
+                    <div class="card-body p-4 text-center">
+                        <i class="bi bi-file-text-fill shortcut-icon"></i>
+                        <h6 class="mb-0">Kelola Artikel</h6>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -329,8 +419,8 @@ $storage_stats = [
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h6 class="card-title text-white-50 mb-2">Total Pengguna</h6>
-                                <h2 class="mb-0 fw-bold"><?= number_format($stats['total_users']) ?></h2>
-                                <small class="text-white-50">+<?= $stats['total_admins'] ?> Admin</small>
+                                <h2 class="mb-0 fw-bold"><?= number_format($stats['total_pengguna']) ?></h2>
+                                <small class="text-white-50">Pembaca</small>
                             </div>
                             <i class="bi bi-people-fill stat-icon"></i>
                         </div>
@@ -339,6 +429,20 @@ $storage_stats = [
             </div>
             <div class="col-12 col-md-6 col-lg-3">
                 <div class="card stat-card bg-success bg-gradient text-white h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title text-white-50 mb-2">Total Penulis</h6>
+                                <h2 class="mb-0 fw-bold"><?= number_format($stats['total_penulis']) ?></h2>
+                                <small class="text-white-50">+<?= $stats['total_admins'] ?> Admin</small>
+                            </div>
+                            <i class="bi bi-pencil-square-fill stat-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card stat-card bg-info bg-gradient text-white h-100">
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -355,7 +459,7 @@ $storage_stats = [
                 </div>
             </div>
             <div class="col-12 col-md-6 col-lg-3">
-                <div class="card stat-card bg-info bg-gradient text-white h-100">
+                <div class="card stat-card bg-warning bg-gradient text-white h-100">
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -368,8 +472,12 @@ $storage_stats = [
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Additional Statistics Row -->
+        <div class="row g-4 mb-5">
             <div class="col-12 col-md-6 col-lg-3">
-                <div class="card stat-card bg-warning bg-gradient text-white h-100">
+                <div class="card stat-card bg-secondary bg-gradient text-white h-100">
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -378,6 +486,48 @@ $storage_stats = [
                                 <small class="text-white-50">Avg: <?= $system_stats['avg_comments_per_article'] ?>/artikel</small>
                             </div>
                             <i class="bi bi-chat-dots-fill stat-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card stat-card bg-dark bg-gradient text-white h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title text-white-50 mb-2">Total Kategori</h6>
+                                <h2 class="mb-0 fw-bold"><?= number_format($stats['total_categories']) ?></h2>
+                                <small class="text-white-50">Kategori Artikel</small>
+                            </div>
+                            <i class="bi bi-tags-fill stat-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card stat-card bg-danger bg-gradient text-white h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title text-white-50 mb-2">Total Dokumen</h6>
+                                <h2 class="mb-0 fw-bold"><?= number_format($stats['total_documents']) ?></h2>
+                                <small class="text-white-50">File Terlampir</small>
+                            </div>
+                            <i class="bi bi-file-earmark-fill stat-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card stat-card bg-info bg-gradient text-white h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-title text-white-50 mb-2">Artikel Tersimpan</h6>
+                                <h2 class="mb-0 fw-bold"><?= number_format($stats['total_saved_articles']) ?></h2>
+                                <small class="text-white-50">Oleh Pengguna</small>
+                            </div>
+                            <i class="bi bi-bookmark-fill stat-icon"></i>
                         </div>
                     </div>
                 </div>
