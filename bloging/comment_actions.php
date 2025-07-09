@@ -4,16 +4,15 @@ include 'config.php';
 
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['author_id'])) {
-    echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
-    exit;
-}
-
 $action = $_POST['action'] ?? '';
 $response = ['status' => 'error', 'message' => 'Invalid action'];
 
 switch ($action) {
     case 'add':
+        if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
+            echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
+            exit;
+        }
         if (!isset($_POST['blog_id']) || !isset($_POST['comment'])) {
             $response = ['status' => 'error', 'message' => 'Missing required fields'];
             break;
@@ -22,7 +21,7 @@ switch ($action) {
         $blog_id = intval($_POST['blog_id']);
         $comment = trim($_POST['comment']);
         $parent_id = isset($_POST['parent_id']) ? intval($_POST['parent_id']) : null;
-        $user_id = $_SESSION['author_id'];
+        $author_id = $_SESSION['author_id'];
         $author_type = $_SESSION['author_type'];
 
         if (empty($comment)) {
@@ -30,8 +29,28 @@ switch ($action) {
             break;
         }
 
-        $stmt = $conn->prepare("INSERT INTO comment (comment, user_id, blog_id, parent_id) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("siii", $comment, $user_id, $blog_id, $parent_id);
+        // Tentukan kolom id sesuai author_type
+        $penulis_id = null;
+        $pengguna_id = null;
+        if ($author_type === 'penulis' || $author_type === 'admin') {
+            $penulis_id = $author_id;
+        } else if ($author_type === 'pengguna') {
+            $pengguna_id = $author_id;
+        } else {
+            $response = ['status' => 'error', 'message' => 'Unknown author type'];
+            break;
+        }
+
+        $stmt = $conn->prepare("INSERT INTO comment (comment, penulis_id, pengguna_id, blog_id, parent_id, author_type) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param(
+            "siiiss",
+            $comment,
+            $penulis_id,
+            $pengguna_id,
+            $blog_id,
+            $parent_id,
+            $author_type
+        );
         
         if ($stmt->execute()) {
             $comment_id = $conn->insert_id;
@@ -46,6 +65,10 @@ switch ($action) {
         break;
 
     case 'delete':
+        if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
+            echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
+            exit;
+        }
         if (!isset($_POST['comment_id'])) {
             $response = ['status' => 'error', 'message' => 'Missing comment ID'];
             break;
@@ -53,9 +76,11 @@ switch ($action) {
 
         $comment_id = intval($_POST['comment_id']);
         $is_admin = $_SESSION['author_type'] === 'admin';
+        $author_id = $_SESSION['author_id'];
+        $author_type = $_SESSION['author_type'];
 
         // Get comment details
-        $stmt = $conn->prepare("SELECT user_id FROM comment WHERE comment_id = ?");
+        $stmt = $conn->prepare("SELECT penulis_id, pengguna_id, author_type FROM comment WHERE comment_id = ?");
         $stmt->bind_param("i", $comment_id);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -67,12 +92,20 @@ switch ($action) {
         }
 
         // Check if user is authorized to delete
-        if (!$is_admin && $comment['user_id'] != $_SESSION['author_id']) {
+        $canDelete = false;
+        if ($is_admin) {
+            $canDelete = true;
+        } else if ($author_type === 'penulis' && $comment['author_type'] === 'penulis' && $author_id == $comment['penulis_id']) {
+            $canDelete = true;
+        } else if ($author_type === 'pengguna' && $comment['author_type'] === 'pengguna' && $author_id == $comment['pengguna_id']) {
+            $canDelete = true;
+        }
+        if (!$canDelete) {
             $response = ['status' => 'error', 'message' => 'Unauthorized to delete this comment'];
             break;
         }
 
-        // Soft delete for regular users, hard delete for admin
+        // Soft delete for non-admin, hard delete for admin
         if ($is_admin) {
             $stmt = $conn->prepare("DELETE FROM comment WHERE comment_id = ?");
         } else {
@@ -95,11 +128,17 @@ switch ($action) {
 
         $comment_id = intval($_POST['comment_id']);
         $stmt = $conn->prepare("
-            SELECT c.*, u.fname as username, 
-                   CASE WHEN a.id IS NOT NULL THEN a.first_name ELSE u.fname END as author_name
+            SELECT c.*, 
+                CASE 
+                    WHEN c.author_type = 'admin' THEN a.first_name
+                    WHEN c.author_type = 'penulis' THEN p.fname
+                    WHEN c.author_type = 'pengguna' THEN g.nama
+                    ELSE 'Unknown'
+                END as author_name
             FROM comment c
-            LEFT JOIN users u ON c.user_id = u.id
-            LEFT JOIN admin a ON c.user_id = a.id
+            LEFT JOIN admin a ON c.author_type = 'admin' AND c.penulis_id = a.id
+            LEFT JOIN penulis p ON c.author_type = 'penulis' AND c.penulis_id = p.id
+            LEFT JOIN pengguna g ON c.author_type = 'pengguna' AND c.pengguna_id = g.id
             WHERE c.parent_id = ? AND c.status = 'active'
             ORDER BY c.created_at ASC
         ");
@@ -107,11 +146,9 @@ switch ($action) {
         $stmt->execute();
         $result = $stmt->get_result();
         $replies = [];
-        
         while ($reply = $result->fetch_assoc()) {
             $replies[] = $reply;
         }
-        
         $response = ['status' => 'success', 'replies' => $replies];
         break;
 }

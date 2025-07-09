@@ -9,12 +9,15 @@ if (isset($_GET['slug'])) {
                c.category as category_name,
                CASE 
                    WHEN b.author_type = 'admin' THEN a.first_name
-                   ELSE u.fname 
+                   WHEN b.author_type = 'penulis' THEN p.fname
+                   WHEN b.author_type = 'pengguna' THEN g.nama
+                   ELSE 'Unknown'
                END as author_name
         FROM blogs b
         LEFT JOIN category c ON b.category_id = c.id
         LEFT JOIN admin a ON b.author_type = 'admin' AND b.author_id = a.id
-        LEFT JOIN users u ON b.author_type = 'user' AND b.author_id = u.id
+        LEFT JOIN penulis p ON b.author_type = 'penulis' AND b.author_id = p.id
+        LEFT JOIN pengguna g ON b.author_type = 'pengguna' AND b.author_id = g.id
         WHERE b.slug = ?
     ");
     $stmt->bind_param("s", $slug);
@@ -25,12 +28,15 @@ if (isset($_GET['slug'])) {
                c.category as category_name,
                CASE 
                    WHEN b.author_type = 'admin' THEN a.first_name
-                   ELSE u.fname 
+                   WHEN b.author_type = 'penulis' THEN p.fname
+                   WHEN b.author_type = 'pengguna' THEN g.nama
+                   ELSE 'Unknown'
                END as author_name
         FROM blogs b
         LEFT JOIN category c ON b.category_id = c.id
         LEFT JOIN admin a ON b.author_type = 'admin' AND b.author_id = a.id
-        LEFT JOIN users u ON b.author_type = 'user' AND b.author_id = u.id
+        LEFT JOIN penulis p ON b.author_type = 'penulis' AND b.author_id = p.id
+        LEFT JOIN pengguna g ON b.author_type = 'pengguna' AND b.author_id = g.id
         WHERE b.id = ?
     ");
     $stmt->bind_param("i", $id);
@@ -85,6 +91,9 @@ while ($cat = $resCat->fetch_assoc()) {
 // Setelah $blog sudah didapatkan, ambil dokumen terkait
 $documents = [];
 $doc_stmt = $conn->prepare("SELECT * FROM documents WHERE blog_id = ?");
+if ($doc_stmt === false) {
+    die("Prepare failed (documents): (" . $conn->errno . ") " . $conn->error);
+}
 $doc_stmt->bind_param("i", $id);
 $doc_stmt->execute();
 $doc_result = $doc_stmt->get_result();
@@ -99,13 +108,17 @@ $doc_stmt->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="../img/sms.png" />
     <title><?= strip_tags($blog['title']) ?></title>
+    <link rel="shortcut icon" href="./img/sms.png" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // Tambahkan variabel global untuk author id dan type
+        const CURRENT_AUTHOR_ID = <?= isset($_SESSION['author_id']) ? intval($_SESSION['author_id']) : 'null' ?>;
+        const CURRENT_AUTHOR_TYPE = <?= isset($_SESSION['author_type']) ? json_encode($_SESSION['author_type']) : 'null' ?>;
+        
         // Additional client-side view tracking for analytics (optional)
         window.addEventListener('load', function() {
             // Send an additional tracking request for analytics purposes
@@ -167,7 +180,7 @@ $doc_stmt->close();
             margin-top: 2rem;
             margin-bottom: 1rem;
             color: #2c3e50;
-        }
+        }   
 
         .blog-content ul,
         .blog-content ol {
@@ -250,7 +263,27 @@ $doc_stmt->close();
     <div class="container py-4">
         <div class="card blog-detail-card">
             <div class="card-body">
-                <h1 class="card-title mb-4" style="font-weight:700; color:#333; font-size:2rem;"><?= strip_tags($blog['title']) ?></h1>
+                <h1 class="card-title mb-4" style="font-weight:700; color:#333; font-size:2rem;">
+                    <?= strip_tags($blog['title']) ?>
+                </h1>
+
+                <!-- Tombol Share & Save -->
+                <div class="mb-3 d-flex gap-2 align-items-center">
+                    <!-- Share Button -->
+                    <button class="btn btn-outline-primary btn-sm" id="shareBtn" type="button">
+                        <i class="bi bi-share"></i> Bagikan
+                    </button>
+                    <!-- Save Button (hanya untuk pengguna) -->
+                    <?php if (isset($_SESSION['author_type']) && $_SESSION['author_type'] === 'pengguna'): ?>
+                        <button class="btn btn-outline-success btn-sm" id="saveBtn" type="button">
+                            <i class="bi bi-bookmark"></i> Simpan
+                        </button>
+                    <?php else: ?>
+                        <button class="btn btn-outline-success btn-sm" id="saveBtn" type="button">
+                            <i class="bi bi-bookmark"></i> Simpan
+                        </button>
+                    <?php endif; ?>
+                </div>
 
                 <!-- Meta Info & Badge Kategori -->
                 <div class="d-flex flex-wrap gap-2 mb-4 align-items-center">
@@ -338,7 +371,7 @@ $doc_stmt->close();
                 <h5 class="mb-0">Komentar</h5>
             </div>
             <div class="card-body">
-                <?php if (isset($_SESSION['author_id'])): ?>
+                <?php if (isset($_SESSION['author_id']) && isset($_SESSION['author_type']) && $_SESSION['author_type'] === 'pengguna'): ?>
                     <!-- Comment Form -->
                     <form id="commentForm" class="mb-4">
                         <input type="hidden" name="blog_id" value="<?= $id ?>">
@@ -358,14 +391,23 @@ $doc_stmt->close();
                     <?php
                     $stmt = $conn->prepare("
                         SELECT c.*, 
-                               CASE WHEN a.id IS NOT NULL THEN a.first_name ELSE u.fname END as author_name,
+                               CASE 
+                                   WHEN c.author_type = 'admin' THEN a.first_name
+                                   WHEN c.author_type = 'penulis' THEN p.fname
+                                   WHEN c.author_type = 'pengguna' THEN g.nama
+                                   ELSE 'Unknown'
+                               END as author_name,
                                (SELECT COUNT(*) FROM comment WHERE parent_id = c.comment_id AND status = 'active') as reply_count
                         FROM comment c
-                        LEFT JOIN users u ON c.user_id = u.id
-                        LEFT JOIN admin a ON c.user_id = a.id
+                        LEFT JOIN admin a ON c.author_type = 'admin' AND c.penulis_id = a.id
+                        LEFT JOIN penulis p ON c.author_type = 'penulis' AND c.penulis_id = p.id
+                        LEFT JOIN pengguna g ON c.author_type = 'pengguna' AND c.pengguna_id = g.id
                         WHERE c.blog_id = ? AND c.parent_id IS NULL AND c.status = 'active'
                         ORDER BY c.created_at DESC
                     ");
+                    if ($stmt === false) {
+                        die("Prepare failed (comment): (" . $conn->errno . ") " . $conn->error);
+                    }
                     $stmt->bind_param("i", $id);
                     $stmt->execute();
                     $comments = $stmt->get_result();
@@ -383,11 +425,20 @@ $doc_stmt->close();
                                     </div>
                                     <p class="mb-1"><?= nl2br(htmlspecialchars($comment['comment'])) ?></p>
                                     <div class="d-flex gap-2">
-                                        <?php if (isset($_SESSION['author_id'])): ?>
+                                        <?php if (isset($_SESSION['author_id']) && isset($_SESSION['author_type']) && $_SESSION['author_type'] === 'pengguna'): ?>
                                             <button class="btn btn-sm btn-outline-secondary reply-btn">
                                                 <i class="bi bi-reply"></i> Balas
                                             </button>
-                                            <?php if ($_SESSION['author_type'] === 'admin' || ($_SESSION['author_type'] === 'user' && $_SESSION['author_id'] == $comment['user_id'])): ?>
+                                            <?php 
+                                            $canDelete = false;
+                                            if ($_SESSION['author_type'] === 'admin' && $comment['author_type'] === 'admin' && $_SESSION['author_id'] == $comment['penulis_id']) {
+                                                $canDelete = true;
+                                            } else if ($_SESSION['author_type'] === 'penulis' && $comment['author_type'] === 'penulis' && $_SESSION['author_id'] == $comment['penulis_id']) {
+                                                $canDelete = true;
+                                            } else if ($_SESSION['author_type'] === 'pengguna' && $comment['author_type'] === 'pengguna' && $_SESSION['author_id'] == $comment['pengguna_id']) {
+                                                $canDelete = true;
+                                            }
+                                            if ($canDelete): ?>
                                                 <button class="btn btn-sm btn-outline-danger delete-comment-btn">
                                                     <i class="bi bi-trash"></i> Hapus
                                                 </button>
@@ -400,6 +451,7 @@ $doc_stmt->close();
                                         <?php endif; ?>
                                     </div>
                                     <!-- Reply Form (Hidden by default) -->
+                                    <?php if (isset($_SESSION['author_id']) && isset($_SESSION['author_type']) && $_SESSION['author_type'] === 'pengguna'): ?>
                                     <div class="reply-form mt-2" style="display: none;">
                                         <form class="replyForm">
                                             <input type="hidden" name="blog_id" value="<?= $id ?>">
@@ -413,6 +465,7 @@ $doc_stmt->close();
                                             </div>
                                         </form>
                                     </div>
+                                    <?php endif; ?>
                                     <!-- Replies Container -->
                                     <div class="replies-container mt-2"></div>
                                 </div>
@@ -477,7 +530,7 @@ $doc_stmt->close();
                 });
             });
 
-            // Handle view replies buttons
+            // Handle view replies buttons (SELALU AKTIF UNTUK SEMUA USER)
             document.querySelectorAll('.view-replies-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const commentDiv = this.closest('.comment');
@@ -491,6 +544,73 @@ $doc_stmt->close();
                             repliesContainer.style.display === 'none' ? 'block' : 'none';
                     }
                 });
+            });
+
+            // Share button
+            document.getElementById('shareBtn')?.addEventListener('click', function() {
+                const url = window.location.href;
+                if (navigator.share) {
+                    navigator.share({
+                        title: document.title,
+                        url: url
+                    });
+                } else {
+                    // Fallback: copy to clipboard
+                    navigator.clipboard.writeText(url).then(function() {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'URL Disalin!',
+                            text: 'Link blog sudah disalin ke clipboard.',
+                            confirmButtonColor: '#3498db'
+                        });
+                    });
+                }
+            });
+
+            // Save button
+            document.getElementById('saveBtn')?.addEventListener('click', function() {
+                <?php if (!isset($_SESSION['author_id']) || (isset($_SESSION['author_type']) && $_SESSION['author_type'] !== 'pengguna')): ?>
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Login Diperlukan',
+                        text: 'Silakan login sebagai pengguna untuk menyimpan artikel.',
+                        confirmButtonColor: '#3498db'
+                    });
+                    return;
+                <?php else: ?>
+                    // Kirim request AJAX untuk save
+                    fetch('bloging/save_blog.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: 'blog_id=<?= $id ?>'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Disimpan!',
+                                text: 'Artikel berhasil disimpan ke dashboard Anda.',
+                                confirmButtonColor: '#3498db'
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal!',
+                                text: data.message || 'Gagal menyimpan artikel.',
+                                confirmButtonColor: '#d33'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: 'Terjadi kesalahan saat menyimpan artikel.',
+                            confirmButtonColor: '#d33'
+                        });
+                    });
+                <?php endif; ?>
             });
         });
 
@@ -581,7 +701,17 @@ $doc_stmt->close();
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        container.innerHTML = data.replies.map(reply => `
+                        container.innerHTML = data.replies.map(reply => {
+                            // Tentukan apakah tombol hapus boleh muncul
+                            let canDelete = false;
+                            if (CURRENT_AUTHOR_TYPE === 'admin') {
+                                canDelete = true;
+                            } else if (CURRENT_AUTHOR_TYPE === 'penulis' && reply.author_type === 'penulis' && CURRENT_AUTHOR_ID == reply.penulis_id) {
+                                canDelete = true;
+                            } else if (CURRENT_AUTHOR_TYPE === 'pengguna' && reply.author_type === 'pengguna' && CURRENT_AUTHOR_ID == reply.pengguna_id) {
+                                canDelete = true;
+                            }
+                            return `
                         <div class="reply ms-4 mt-2 p-2 border-start">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h6 class="mb-1">${reply.author_name}</h6>
@@ -590,12 +720,13 @@ $doc_stmt->close();
                                 </small>
                             </div>
                             <p class="mb-1">${reply.comment}</p>
-                            ${(reply.user_id == <?= $_SESSION['author_id'] ?? 0 ?> || <?= $_SESSION['author_type'] === 'admin' ? 'true' : 'false' ?>) ? 
+                            ${canDelete ? 
                                 `<button class="btn btn-sm btn-outline-danger delete-reply-btn" data-reply-id="${reply.comment_id}">
                                     <i class="bi bi-trash"></i> Hapus
                                 </button>` : ''}
                         </div>
-                    `).join('');
+                    `;
+                        }).join('');
 
                         // Add event listeners to delete buttons
                         container.querySelectorAll('.delete-reply-btn').forEach(btn => {

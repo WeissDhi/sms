@@ -19,11 +19,11 @@ $stmt = $conn->prepare("
            category.category AS category_name,
            admin.first_name AS admin_first,
            admin.last_name AS admin_last,
-           users.fname AS user_name
+           penulis.fname AS user_name
     FROM blogs
     LEFT JOIN category ON blogs.category_id = category.id
     LEFT JOIN admin ON blogs.author_type = 'admin' AND blogs.author_id = admin.id
-    LEFT JOIN users ON blogs.author_type = 'user' AND blogs.author_id = users.id
+    LEFT JOIN penulis ON blogs.author_type = 'penulis' AND blogs.author_id = penulis.id
     WHERE blogs.status = 'published' AND blogs.category_id = ?
     ORDER BY blogs.created_at DESC
 ");
@@ -208,7 +208,7 @@ if (isset($_GET['category'])) {
                                     <span class="icon">✍️</span>
                                     <?php if ($row['author_type'] === 'admin'): ?>
                                         <?= htmlspecialchars($row['admin_first'] . ' ' . $row['admin_last']) ?>
-                                    <?php elseif ($row['author_type'] === 'user'): ?>
+                                    <?php elseif ($row['author_type'] === 'penulis'): ?>
                                         <?= htmlspecialchars($row['user_name']) ?>
                                     <?php else: ?>
                                         Tidak diketahui

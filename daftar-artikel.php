@@ -9,7 +9,7 @@ if (isset($_SESSION['author_type'])) {
     $showDashboard = true;
     if ($_SESSION['author_type'] === 'admin') {
         $dashboardLink = './bloging/dashboard/admin/index.php';
-    } elseif ($_SESSION['author_type'] === 'user') {
+    } elseif ($_SESSION['author_type'] === 'penulis') {
         $dashboardLink = './bloging/dashboard/users/index.php';
     }
 }
@@ -34,7 +34,7 @@ $sql = "
     FROM blogs
     LEFT JOIN category ON blogs.category_id = category.id
     LEFT JOIN admin ON blogs.author_type = 'admin' AND blogs.author_id = admin.id
-    LEFT JOIN users ON blogs.author_type = 'user' AND blogs.author_id = users.id
+    LEFT JOIN users ON blogs.author_type = 'penulis' AND blogs.author_id = users.id
     WHERE blogs.status = 'published'
 ";
 
@@ -261,7 +261,7 @@ $result = $conn->query($sql);
                                     <span class="icon ms-3">✍️</span>
                                     <?php if ($row['author_type'] === 'admin'): ?>
                                         <?= htmlspecialchars($row['admin_first'] . ' ' . $row['admin_last']) ?>
-                                    <?php elseif ($row['author_type'] === 'user'): ?>
+                                    <?php elseif ($row['author_type'] === 'penulis'): ?>
                                         <?= htmlspecialchars($row['user_name']) ?>
                                     <?php else: ?>
                                         Tidak diketahui

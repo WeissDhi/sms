@@ -3,12 +3,13 @@ session_start();
 include './bloging/config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $fname = trim($_POST['fname']);
+    $nama = trim($_POST['fname']);
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
+    $email = trim($_POST['email']);
 
-    // Cek apakah username sudah ada
-    $check = $conn->prepare("SELECT id FROM users WHERE username = ?");
+    // Cek apakah username sudah ada di tabel pengguna
+    $check = $conn->prepare("SELECT id FROM pengguna WHERE username = ?");
     $check->bind_param("s", $username);
     $check->execute();
     $result = $check->get_result();
@@ -16,9 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($result->num_rows > 0) {
         $error = "Username sudah digunakan!";
     } else {
-        // Insert user baru
-        $stmt = $conn->prepare("INSERT INTO users (fname, username, password) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $fname, $username, $password);
+        // Insert pengguna baru
+        $stmt = $conn->prepare("INSERT INTO pengguna (nama, username, password, email) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $nama, $username, $password, $email);
 
         if ($stmt->execute()) {
             $success = "Registrasi berhasil! Silakan login.";
@@ -169,6 +170,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
                             <input type="text" id="username" name="username" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" id="email" name="email" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>

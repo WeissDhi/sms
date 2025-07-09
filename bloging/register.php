@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = trim($_POST['password']);
 
     // Cek apakah username sudah ada
-    $check = $conn->prepare("SELECT id FROM users WHERE username = ?");
+    $check = $conn->prepare("SELECT id FROM penulis WHERE username = ?");
     $check->bind_param("s", $username);
     $check->execute();
     $result = $check->get_result();
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Username sudah digunakan!";
     } else {
         // Insert user baru
-        $stmt = $conn->prepare("INSERT INTO users (fname, username, password) VALUES (?, ?, ?)");
+        $stmt = $conn->prepare("INSERT INTO penulis (fname, username, password) VALUES (?, ?, ?)");
         $stmt->bind_param("sss", $fname, $username, $password);
 
         if ($stmt->execute()) {

@@ -1145,7 +1145,7 @@ $doc_stmt->close();
     <div class="container-fluid px-4">
         <div class="page-header">
             <h2><i class="fas fa-edit"></i>Edit Blog</h2>
-            <a href="<?= $_SESSION['author_type'] === 'admin' ? './dashboard/admin/blogs_management.php' : './dashboard/users/blog_management.php' ?>" class="back-button">
+            <a href="<?= $_SESSION['author_type'] === 'admin' ? './dashboard/admin/blogs_management.php' : ( $_SESSION['author_type'] === 'penulis' ? './dashboard/penulis/blog_management.php' : './dashboard/users/blog_management.php') ?>" class="back-button">
                 <i class="fas fa-arrow-left"></i>
                 <span>Kembali</span>
             </a>

@@ -35,6 +35,8 @@ if (isset($_GET['id'])) {
 // Redirect based on author type
 if ($_SESSION['author_type'] === 'admin') {
     header("Location: ./dashboard/admin/blogs_management.php");
+} else if ($_SESSION['author_type'] === 'penulis') {
+    header("Location: ./dashboard/penulis/blog_management.php");
 } else {
     header("Location: ./dashboard/users/blog_management.php");
 }

@@ -8,8 +8,8 @@ if (!isset($_SESSION['author_id']) || $_SESSION['author_type'] !== 'admin') {
     exit;
 }
 
-// Ambil semua user
-$result = $conn->query("SELECT * FROM users ORDER BY id DESC");
+// Ambil semua penulis
+$result = $conn->query("SELECT * FROM penulis ORDER BY id DESC");
 ?>
 
 <!DOCTYPE html>
@@ -233,11 +233,11 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <h2>Dashboard Admin</h2>
-                    <p>Kelola seluruh pengguna dan artikel</p>
+                    <p>Kelola seluruh penulis dan artikel</p>
                 </div>
                 <div>
-                    <a href="add_user.php" class="btn btn-success">
-                        <i class="bi bi-person-plus"></i> Tambah User Baru
+                    <a href="add_penulis.php" class="btn btn-success">
+                        <i class="bi bi-person-plus"></i> Tambah Penulis Baru
                     </a>
                     <a href="../../../index.php" class="btn btn-outline-light ms-2">
                         <i class="bi bi-house-door-fill"></i> HOME
@@ -268,13 +268,13 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
                                     <td><?= htmlspecialchars($row['username']) ?></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <a href="user_detail.php?id=<?= $row['id'] ?>" class="btn btn-info btn-sm" title="Detail">
+                                            <a href="penulis_detail.php?id=<?= $row['id'] ?>" class="btn btn-info btn-sm" title="Detail">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            <a href="edit_user.php?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm" title="Edit">
+                                            <a href="edit_penulis.php?id=<?= $row['id'] ?>" class="btn btn-warning btn-sm" title="Edit">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
-                                            <a href="#" class="btn btn-danger btn-sm delete-user" data-id="<?php echo $row['id']; ?>" data-name="<?php echo htmlspecialchars($row['username']); ?>" title="Hapus">
+                                            <a href="delete_penulis.php" class="btn btn-danger btn-sm delete-penulis" data-id="<?php echo $row['id']; ?>" data-name="<?php echo htmlspecialchars($row['username']); ?>" title="Hapus">
                                                 <i class="bi bi-trash"></i>
                                             </a>
                                         </div>
@@ -321,14 +321,14 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
             });
 
             // Sweet Alert Delete Confirmation
-            $('.delete-user').on('click', function(e) {
+            $('.delete-penulis').on('click', function(e) {
                 e.preventDefault();
                 const userId = $(this).data('id');
                 const userName = $(this).data('name');
                 
                 Swal.fire({
                     title: 'Apakah Anda yakin?',
-                    text: `Anda akan menghapus user "${userName}"`,
+                    text: `Anda akan menghapus penulis "${userName}"`,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
@@ -337,7 +337,7 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
                     cancelButtonText: 'Batal'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = `delete_user.php?id=${userId}`;
+                        window.location.href = `delete_penulis.php?id=${userId}`;
                     }
                 });
             });

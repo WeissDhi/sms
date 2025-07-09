@@ -2,44 +2,44 @@
 session_start();
 include '../../config.php';
 
-if (!isset($_SESSION['author_id']) || $_SESSION['author_type'] !== 'user') {
+if (!isset($_SESSION['author_id']) || $_SESSION['author_type'] !== 'penulis') {
     header("Location: ../../login.php");
     exit;
 }
 
-$user_id = $_SESSION['author_id'];
+$penulis_id = $_SESSION['author_id'];
 
-// Get user details
-$user_query = $conn->prepare("SELECT * FROM users WHERE id = ?");
-$user_query->bind_param("i", $user_id);
-$user_query->execute();
-$user = $user_query->get_result()->fetch_assoc();
+// Get penulis details
+$penulis_query = $conn->prepare("SELECT * FROM penulis WHERE id = ?");
+$penulis_query->bind_param("i", $penulis_id);
+$penulis_query->execute();
+$penulis = $penulis_query->get_result()->fetch_assoc();
 
-// Get user statistics
+// Get penulis statistics
 $stats_query = "
     SELECT 
-        (SELECT COUNT(*) FROM blogs WHERE author_id = ? AND author_type = 'user') as total_articles,
-        (SELECT COUNT(*) FROM blogs WHERE author_id = ? AND author_type = 'user' AND status = 'published') as published_articles,
-        (SELECT COUNT(*) FROM blogs WHERE author_id = ? AND author_type = 'user' AND status = 'draft') as draft_articles,
-        (SELECT COUNT(*) FROM comment WHERE user_id = ?) as total_comments,
-        (SELECT SUM(views) FROM blogs WHERE author_id = ? AND author_type = 'user') as total_views
+        (SELECT COUNT(*) FROM blogs WHERE author_id = ? AND author_type = 'penulis') as total_articles,
+        (SELECT COUNT(*) FROM blogs WHERE author_id = ? AND author_type = 'penulis' AND status = 'published') as published_articles,
+        (SELECT COUNT(*) FROM blogs WHERE author_id = ? AND author_type = 'penulis' AND status = 'draft') as draft_articles,
+        (SELECT COUNT(*) FROM comment WHERE penulis_id = ?) as total_comments,
+        (SELECT SUM(views) FROM blogs WHERE author_id = ? AND author_type = 'penulis') as total_views
 ";
 $stats_stmt = $conn->prepare($stats_query);
-$stats_stmt->bind_param("iiiii", $user_id, $user_id, $user_id, $user_id, $user_id);
+$stats_stmt->bind_param("iiiii", $penulis_id, $penulis_id, $penulis_id, $penulis_id, $penulis_id);
 $stats_stmt->execute();
 $stats = $stats_stmt->get_result()->fetch_assoc();
 
-// Get user's own comments
+// Get penulis's own comments
 $recent_comments_query = "
     SELECT c.*, b.title as blog_title 
     FROM comment c 
     JOIN blogs b ON c.blog_id = b.id 
-    WHERE c.user_id = ? AND c.status = 'active'
+    WHERE c.penulis_id = ? AND c.status = 'active'
     ORDER BY c.created_at DESC 
     LIMIT 10
 ";
 $recent_comments_stmt = $conn->prepare($recent_comments_query);
-$recent_comments_stmt->bind_param("i", $user_id);
+$recent_comments_stmt->bind_param("i", $penulis_id);
 $recent_comments_stmt->execute();
 $recent_comments = $recent_comments_stmt->get_result();
 
@@ -48,48 +48,48 @@ $articles_query = "
     SELECT b.*, c.category as category_name 
     FROM blogs b 
     LEFT JOIN category c ON b.category_id = c.id 
-    WHERE b.author_id = ? AND b.author_type = 'user' 
+    WHERE b.author_id = ? AND b.author_type = 'penulis' 
     ORDER BY b.created_at DESC 
     LIMIT 5
 ";
 $articles_stmt = $conn->prepare($articles_query);
-$articles_stmt->bind_param("i", $user_id);
+$articles_stmt->bind_param("i", $penulis_id);
 $articles_stmt->execute();
 $recent_articles = $articles_stmt->get_result();
 
-// Get comments on user's articles
+// Get comments on penulis's articles
 $article_comments_query = "
     SELECT c.*, b.title as blog_title, 
-           CASE WHEN a.id IS NOT NULL THEN a.first_name ELSE u.fname END as commenter_name
+           CASE WHEN a.id IS NOT NULL THEN a.first_name ELSE p.fname END as commenter_name
     FROM comment c 
     JOIN blogs b ON c.blog_id = b.id 
-    LEFT JOIN users u ON c.user_id = u.id
-    LEFT JOIN admin a ON c.user_id = a.id
-    WHERE b.author_id = ? AND b.author_type = 'user' AND c.status = 'active'
+    LEFT JOIN penulis p ON c.penulis_id = p.id
+    LEFT JOIN admin a ON c.penulis_id = a.id
+    WHERE b.author_id = ? AND b.author_type = 'penulis' AND c.status = 'active'
     ORDER BY c.created_at DESC 
     LIMIT 10
 ";
 $article_comments_stmt = $conn->prepare($article_comments_query);
-$article_comments_stmt->bind_param("i", $user_id);
+$article_comments_stmt->bind_param("i", $penulis_id);
 $article_comments_stmt->execute();
 $article_comments = $article_comments_stmt->get_result();
 
-// Get replies to user's comments
+// Get replies to penulis's comments
 $comment_replies_query = "
     SELECT c.*, b.title as blog_title, 
-           CASE WHEN a.id IS NOT NULL THEN a.first_name ELSE u.fname END as replier_name,
+           CASE WHEN a.id IS NOT NULL THEN a.first_name ELSE p.fname END as replier_name,
            pc.comment as parent_comment
     FROM comment c 
     JOIN blogs b ON c.blog_id = b.id 
     JOIN comment pc ON c.parent_id = pc.comment_id
-    LEFT JOIN users u ON c.user_id = u.id
-    LEFT JOIN admin a ON c.user_id = a.id
-    WHERE pc.user_id = ? AND c.status = 'active'
+    LEFT JOIN penulis p ON c.penulis_id = p.id
+    LEFT JOIN admin a ON c.penulis_id = a.id
+    WHERE pc.penulis_id = ? AND c.status = 'active'
     ORDER BY c.created_at DESC 
     LIMIT 10
 ";
 $comment_replies_stmt = $conn->prepare($comment_replies_query);
-$comment_replies_stmt->bind_param("i", $user_id);
+$comment_replies_stmt->bind_param("i", $penulis_id);
 $comment_replies_stmt->execute();
 $comment_replies = $comment_replies_stmt->get_result();
 
@@ -98,12 +98,12 @@ $top_articles_query = "
     SELECT b.*, c.category as category_name 
     FROM blogs b 
     LEFT JOIN category c ON b.category_id = c.id 
-    WHERE b.author_id = ? AND b.author_type = 'user' 
+    WHERE b.author_id = ? AND b.author_type = 'penulis' 
     ORDER BY b.views DESC 
     LIMIT 3
 ";
 $top_articles_stmt = $conn->prepare($top_articles_query);
-$top_articles_stmt->bind_param("i", $user_id);
+$top_articles_stmt->bind_param("i", $penulis_id);
 $top_articles_stmt->execute();
 $top_articles = $top_articles_stmt->get_result();
 
@@ -114,12 +114,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $new_fname = trim($_POST['fname']);
         $new_username = trim($_POST['username']);
 
-        $update_stmt = $conn->prepare("UPDATE users SET fname = ?, username = ? WHERE id = ?");
-        $update_stmt->bind_param("ssi", $new_fname, $new_username, $user_id);
+        $update_stmt = $conn->prepare("UPDATE penulis SET fname = ?, username = ? WHERE id = ?");
+        $update_stmt->bind_param("ssi", $new_fname, $new_username, $penulis_id);
         if ($update_stmt->execute()) {
             $update_message = 'Profil berhasil diperbarui!';
-            $user['fname'] = $new_fname;
-            $user['username'] = $new_username;
+            $penulis['fname'] = $new_fname;
+            $penulis['username'] = $new_username;
         } else {
             $update_message = 'Gagal memperbarui profil.';
         }
@@ -130,8 +130,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['update_password'])) {
         $new_password = $_POST['new_password'];
 
-        $pass_stmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
-        $pass_stmt->bind_param("si", $new_password, $user_id);
+        $pass_stmt = $conn->prepare("UPDATE penulis SET password = ? WHERE id = ?");
+        $pass_stmt->bind_param("si", $new_password, $penulis_id);
         if ($pass_stmt->execute()) {
             $update_message = 'Password berhasil diubah!';
         } else {
@@ -272,7 +272,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body class="bg-light">
     <?php include '../components/navbar.php' ?>
-    <?php include '../components/user-sidebar.php' ?>
+    <?php include '../components/penulis-sidebar.php' ?>
 
     <?php if ($update_message): ?>
         <div class="alert alert-info alert-dismissible fade show m-3" role="alert">
@@ -285,9 +285,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <h1 class="mb-2"><?= htmlspecialchars($user['fname']) ?></h1>
+                    <h1 class="mb-2"><?= htmlspecialchars($penulis['fname']) ?></h1>
                     <p class="mb-0">
-                        <i class="bi bi-person-circle"></i> <?= htmlspecialchars($user['username']) ?>
+                        <i class="bi bi-person-circle"></i> <?= htmlspecialchars($penulis['username']) ?>
                         <button type="button" class="btn btn-light btn-sm ms-3" data-bs-toggle="modal" data-bs-target="#editProfileModal">
                             <i class="bi bi-pencil"></i> Edit Profil
                         </button>
@@ -356,7 +356,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <div class="d-flex justify-content-between align-items-start">
                                     <div>
                                         <h5 class="mb-1">
-                                            <a href="../../view_detail.php?id=<?= $article['id'] ?>" class="text-decoration-none">
+                                            <a href="../../../<?= htmlspecialchars($article['slug']) ?>" class="text-decoration-none">
                                                 <?= strip_tags($article['title']) ?>
                                             </a>
                                         </h5>
@@ -532,7 +532,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?php while ($article = $top_articles->fetch_assoc()): ?>
                             <div class="article-item">
                                 <h6 class="mb-1">
-                                    <a href="../../view_detail.php?id=<?= $article['id'] ?>" class="text-decoration-none">
+                                    <a href="../../../<?= htmlspecialchars($article['slug']) ?>" class="text-decoration-none">
                                         <?= strip_tags($article['title']) ?>
                                     </a>
                                 </h6>
@@ -598,11 +598,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <form method="POST" id="profileForm">
                         <div class="mb-3">
                             <label class="form-label">Nama Lengkap</label>
-                            <input type="text" class="form-control" name="fname" value="<?= htmlspecialchars($user['fname']) ?>" required>
+                            <input type="text" class="form-control" name="fname" value="<?= htmlspecialchars($penulis['fname']) ?>" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Username</label>
-                            <input type="text" class="form-control" name="username" value="<?= htmlspecialchars($user['username']) ?>" required>
+                            <input type="text" class="form-control" name="username" value="<?= htmlspecialchars($penulis['username']) ?>" required>
                         </div>
                         <button type="submit" name="update_profile" class="btn btn-primary">Simpan Perubahan</button>
                     </form>

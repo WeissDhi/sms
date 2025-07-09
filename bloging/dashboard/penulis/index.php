@@ -2,8 +2,8 @@
 session_start();
 include '../../config.php';
 
-// Cek apakah user login dan bertipe 'user'
-if (!isset($_SESSION['author_id']) || $_SESSION['author_type'] !== 'user') {
+// Cek apakah user login dan bertipe 'penulis'
+if (!isset($_SESSION['author_id']) || $_SESSION['author_type'] !== 'penulis') {
     header("Location: ../../login.php");
     exit;
 }
@@ -11,7 +11,7 @@ if (!isset($_SESSION['author_id']) || $_SESSION['author_type'] !== 'user') {
 $user_id = (int) $_SESSION['author_id'];
 
 // Ambil data profil user
-$user_query = $conn->prepare("SELECT * FROM users WHERE id = ?");
+$user_query = $conn->prepare("SELECT * FROM penulis WHERE id = ?");
 $user_query->bind_param("i", $user_id);
 $user_query->execute();
 $user = $user_query->get_result()->fetch_assoc();
@@ -25,12 +25,12 @@ if (!$user) {
 // Get user statistics
 $stats_query = "
     SELECT 
-        (SELECT COUNT(*) FROM blogs WHERE author_id = ? AND author_type = 'user') as total_blogs,
-        (SELECT COUNT(*) FROM blogs WHERE author_id = ? AND author_type = 'user' AND status = 'published') as published_blogs,
-        (SELECT COUNT(*) FROM blogs WHERE author_id = ? AND author_type = 'user' AND status = 'draft') as draft_blogs,
-        (SELECT COUNT(*) FROM comment WHERE user_id = ?) as total_comments,
+        (SELECT COUNT(*) FROM blogs WHERE author_id = ? AND author_type = 'penulis') as total_blogs,
+        (SELECT COUNT(*) FROM blogs WHERE author_id = ? AND author_type = 'penulis' AND status = 'published') as published_blogs,
+        (SELECT COUNT(*) FROM blogs WHERE author_id = ? AND author_type = 'penulis' AND status = 'draft') as draft_blogs,
+        (SELECT COUNT(*) FROM comment WHERE penulis_id = ?) as total_comments,
         (SELECT COUNT(*) FROM post_like WHERE liked_by = ?) as total_likes,
-        (SELECT SUM(views) FROM blogs WHERE author_id = ? AND author_type = 'user') as total_views
+        (SELECT SUM(views) FROM blogs WHERE author_id = ? AND author_type = 'penulis') as total_views
 ";
 $stats_stmt = $conn->prepare($stats_query);
 $stats_stmt->bind_param("iiiiii", $user_id, $user_id, $user_id, $user_id, $user_id, $user_id);
@@ -42,7 +42,7 @@ $articles_query = "
     SELECT b.*, c.category as category_name 
     FROM blogs b 
     LEFT JOIN category c ON b.category_id = c.id 
-    WHERE b.author_id = ? AND b.author_type = 'user' 
+    WHERE b.author_id = ? AND b.author_type = 'penulis' 
     ORDER BY b.created_at DESC 
     LIMIT 5
 ";
@@ -56,7 +56,7 @@ $comments_query = "
     SELECT c.*, b.title as blog_title 
     FROM comment c 
     JOIN blogs b ON c.blog_id = b.id 
-    WHERE c.user_id = ? 
+    WHERE c.penulis_id = ? 
     ORDER BY c.created_at DESC 
     LIMIT 5
 ";
@@ -221,7 +221,7 @@ $recent_comments = $comments_stmt->get_result();
 
 <body class="bg-light">
     <?php include '../components/navbar.php' ?>
-    <?php include '../components/user-sidebar.php' ?>
+    <?php include '../components/penulis-sidebar.php' ?>
 
     <div class="dashboard-header">
         <div class="container">

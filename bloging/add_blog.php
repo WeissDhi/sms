@@ -1072,6 +1072,8 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                                         if (result.isConfirmed) {
                                             if (window.authorType === 'admin') {
                                                 window.location.href = './dashboard/admin/blogs_management.php';
+                                            } else if (window.authorType === 'penulis') {
+                                                window.location.href = './dashboard/penulis/blog_management.php';
                                             } else {
                                                 window.location.href = './dashboard/users/blog_management.php';
                                             }
@@ -1216,7 +1218,7 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
     <div class="container-fluid px-4">
         <div class="page-header">
             <h2><i class="fas fa-plus-circle"></i>Tambah Blog Baru</h2>
-            <a href="<?= $_SESSION['author_type'] === 'admin' ? './dashboard/admin/blogs_management.php' : './dashboard/users/blog_management.php' ?>" class="back-button">
+            <a href="<?= $_SESSION['author_type'] === 'admin' ? './dashboard/admin/blogs_management.php' : ( $_SESSION['author_type'] === 'penulis' ? './dashboard/penulis/blog_management.php' : './dashboard/users/blog_management.php') ?>" class="back-button">
                 <i class="fas fa-arrow-left"></i>
                 <span>Kembali</span>
             </a>
