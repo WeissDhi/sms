@@ -300,7 +300,7 @@ include './components/navbar.php';
                     <div class="card-body" style="background: #EEEEEE; color: #2C2C2C;">
                         <p>Ikdar kairo terdiri dari beberapa susunan pengurus. Diantaranya: dewan penasehat, majlis permusyawaratan anggota, ketua, wakil, sekretaris, wakil sekretaris, bendahara, wakil benhadara, divisi pemberdayaan sumber daya manusia. divisi keilmuan, divisi media, divisi perekonomian, divisi olahraga, divisi pengelola asset dan sekretariat.</p>
                         <p>Ikdar Kairo adalah salah satu cabang Ikdar yang berada di luar negeri, memiliki hubungan dengan Ikdar-Ikdar cabang luar negeri yang terkoordinasikan oleh departement luar negeri, salah satu departement pada bidang social yang ada pada struktur Ikdar Pusat. Ikdar Kairo beranggotakan seluruh alumni Ponpes Daarul Rahman, dan beberapa alumni Ponpes Forum Kerjasama Antar Pesantren Alumni Daarul Rahman (FORMADA).</p>
-                        <p>Ikdar secara umum dan Ikdar Kairo secara khusus sudah berperan dan berkiprah di berbagai element penting di Nusantara maupun mancanegara, peran alumnsi yang sangat luar biasa hebatnya bisa menjaring relasi ke segala pihak penting yang ada di Nusantara maupun mancanegara.</p>
+                        <p>Ikdar secara umum dan Ikdar Kairo secara khusus sudah berperan dan berkiprah di berbagai element penting di Nusantara maupun mancanegara, peran alumni yang sangat luar biasa hebatnya bisa menjaring relasi ke segala pihak penting yang ada di Nusantara maupun mancanegara.</p>
                     </div>
                 </div>
                 <!-- Card 3: Kesimpulan -->
@@ -310,7 +310,7 @@ include './components/navbar.php';
                         <h5 class="mb-0">Kesimpulan</h5>
                     </div>
                     <div class="card-body" style="background: #EEEEEE; color: #2C2C2C;">
-                        <p>Ikdar Kairo bukan sekadar organisasi alumni, melainkan rumah besar bagi santri Daarul Rahman dan beberapa alumni Ponpes FORMADA di perantauan. Sejak berdiri pada tahun 2001, Ikdar Kairo terus berkontribusi di berbagai element penting Masisir, menjalin relasi strategis, serta membina lader-kader berkualitas. Melalui program intelektual, sosial, ekonomi, dan olahraga, Ikdar Kairo hadir sebagai wadah bagi para anggotanya untuk tumbuh dan berkembang, sekaligus menjaga nilai-nilai pesantren di Tengah perkembangan zaman. Dengan semangat gotong royong dan visi yang kuat, Ikdar Kairo bukan hanya tempat berkumpul, tetapi juga tempat berkontribusi untuk agama, bangsa, dan masa depan yang lebih gemilang.</p>
+                        <p>Ikdar Kairo bukan sekadar organisasi alumni, melainkan rumah besar bagi santri Daarul Rahman dan beberapa alumni Ponpes FORMADA di perantauan. Sejak berdiri pada tahun 2001, Ikdar Kairo terus berkontribusi di berbagai element penting Masisir, menjalin relasi strategis, serta membina kader-kader berkualitas. Melalui program intelektual, sosial, ekonomi, dan olahraga, Ikdar Kairo hadir sebagai wadah bagi para anggotanya untuk tumbuh dan berkembang, sekaligus menjaga nilai-nilai pesantren di Tengah perkembangan zaman. Dengan semangat gotong royong dan visi yang kuat, Ikdar Kairo bukan hanya tempat berkumpul, tetapi juga tempat berkontribusi untuk agama, bangsa, dan masa depan yang lebih gemilang.</p>
                     </div>
                 </div>
             </div>
@@ -385,7 +385,7 @@ include './components/navbar.php';
                     <div class="card-body p-5" style="background: #EEEEEE; color: #2C2C2C;">
                         <h2 class="h3 mb-4 text-center" style="color: #2C2C2C;"></h2>
                         <p class="lead mb-4">
-                            <strong>Syukron Makmun Society-Mesir</strong> adalah sebuah blog Islami yang bertujuan menyebarkan hikmah, ilmu, dan inspirasi dari negeri Mesir. Blog ini menjadi wadah untuk berbagi catatan spiritual, kisah para ulama, serta pengalaman belajar Islam di salah satu pusat peradaban Islam terbesar.
+                            <strong>Syukron Ma'mun Society-Mesir</strong> adalah sebuah blog Islami yang bertujuan menyebarkan hikmah, ilmu, dan inspirasi dari negeri Mesir. Blog ini menjadi wadah untuk berbagi catatan spiritual, kisah para ulama, serta pengalaman belajar Islam di salah satu pusat peradaban Islam terbesar.
                         </p>
                         <p class="mb-4">
                             Kami berharap setiap konten yang kami hadirkan dapat menambah wawasan, menenangkan hati, dan memperkuat keimanan para pembaca. Semua tulisan disusun dengan semangat dakwah dan berbasis pada sumber-sumber Islam yang terpercaya seperti Al-Qur'an, Hadis, dan penjelasan para ulama.

@@ -69,7 +69,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
+                                <div class="input-group">
+                                    <input type="password" class="form-control rounded-start-3 border-end-0" id="password" name="password" required>
+                                    <span class="input-group-text bg-white border-start-0 rounded-end-3" id="togglePassword" style="cursor:pointer;">
+                                        <i class="bi bi-eye" id="eyeIcon"></i>
+                                    </span>
+                                </div>
                             </div>
                             <div class="d-flex justify-content-between">
                                 <a href="user_management.php" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Kembali</a>
@@ -82,5 +87,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            eyeIcon.classList.toggle('bi-eye');
+            eyeIcon.classList.toggle('bi-eye-slash');
+        });
+    </script>
+    <style>
+        .input-group .input-group-text {
+            border-left: 0 !important;
+        }
+        .input-group .form-control:focus {
+            z-index: 2;
+        }
+    </style>
 </body>
 </html> 

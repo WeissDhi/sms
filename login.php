@@ -67,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="apple-touch-icon" href="img/sms.png">
     <title>Login - Bloging</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body {
             background: #FAFAF0; /* Ivory */
@@ -138,6 +139,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border: none;
         }
 
+        .input-group .input-group-text {
+            border-left: 0 !important;
+            border-top-right-radius: .7rem !important;
+            border-bottom-right-radius: .7rem !important;
+        }
+        .input-group .form-control:focus {
+            z-index: 2;
+        }
+
         @media (max-width: 992px) {
             .divider {
                 display: none;
@@ -184,8 +194,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
                             <div class="input-group">
-                                <input type="password" id="password" name="password" class="form-control" required>
-                                <span class="input-group-text bg-white border-start-0" id="togglePassword" style="cursor:pointer;">
+                                <input type="password" id="password" name="password" class="form-control border-end-0 rounded-start-3" required>
+                                <span class="input-group-text bg-white border-start-0 rounded-end-3" id="togglePassword" style="cursor:pointer;">
                                     <i class="bi bi-eye" id="eyeIcon"></i>
                                 </span>
                             </div>

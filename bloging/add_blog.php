@@ -205,7 +205,7 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
         .form-section:last-child {
             border-bottom: none;
             margin-bottom: 0;
-            padding-bottom: 0;
+            padding-bottom: 2.5rem;
         }
 
         .section-title {
@@ -559,7 +559,8 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
         .invalid-feedback {
             color: #dc3545;
             font-size: 0.95rem;
-            margin-top: 0.75rem;
+            margin-top: 1.5rem;
+            margin-bottom: 2rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -616,7 +617,8 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
-            padding: 1rem 0;
+            padding: 1rem 2rem 1rem 0;
+            gap: 1.5rem;
         }
 
         .page-header h2 {
@@ -632,6 +634,11 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
         .page-header h2 i {
             font-size: 2.2rem;
             color: var(--secondary-color);
+            margin-left: 1.5rem;
+        }
+
+        .back-button {
+            margin-left: 1.5rem;
         }
 
         .document-section {
@@ -1290,7 +1297,8 @@ if (!isset($_SESSION['author_id']) || !isset($_SESSION['author_type'])) {
                             <input type="hidden" name="cropped_image" id="cropped_image">
                             <div class="preview-label">
                                 <i class="fas fa-info-circle"></i>
-                                Format: JPG, PNG, GIF, WEBP (Max. 5MB)
+                                Format: JPG, PNG, GIF, WEBP (Max. 5MB)<br>
+                                Rasio gambar 16:9
                             </div>
                         </div>
                     </div>
