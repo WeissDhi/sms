@@ -353,7 +353,7 @@ if (!$result_trending) {
         </div>
       </div>
       <div class="row">
-        <div class="col-lg-4 col-md-6 mb-4">
+        <div class="col-lg-4 offset-lg-2 col-md-6 mb-4">
           <div class="stat-card text-center">
             <div class="stat-icon">
               <i class="fa fa-file-text-o"></i>
@@ -369,15 +369,6 @@ if (!$result_trending) {
             </div>
             <div class="stat-number"><?= number_format($total_views) ?></div>
             <div class="stat-label">Total Views</div>
-          </div>
-        </div>
-        <div class="col-lg-4 col-md-6 mb-4">
-          <div class="stat-card text-center">
-            <div class="stat-icon">
-              <i class="fa fa-users"></i>
-            </div>
-            <div class="stat-number"><?= number_format($total_authors) ?></div>
-            <div class="stat-label">Penulis Aktif</div>
           </div>
         </div>
       </div>
@@ -615,35 +606,9 @@ if (!$result_trending) {
 <?php if (session_status() === PHP_SESSION_NONE) {
   session_start();
 } ?>
-<!-- Tombol Tambah Artikel -->
-<a href="<?= isset($_SESSION['author_id']) && in_array($_SESSION['author_type'], ['user', 'admin']) ? 'bloging/add_blog.php' : 'login.php' ?>"
-  class="btn-tambah-artikel">
-  + Tambah Artikel
-</a>
 
 
 <style>
-  .btn-tambah-artikel {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background-color: #2E7D32;
-    /* Forest green */
-    color: white;
-    padding: 14px 20px;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: bold;
-    box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);
-    z-index: 9999;
-    transition: background-color 0.3s ease;
-  }
-
-  .btn-tambah-artikel:hover {
-    background-color: #1B5E20;
-    /* Darker forest green */
-  }
-
   .card {
     transition: all 0.4s ease;
     border: 3px solid #2E7D32;
@@ -754,6 +719,8 @@ if (!$result_trending) {
     border: 3px solid #2E7D32;
     /* Forest green */
     transition: all 0.4s ease;
+    height: 100%;
+    /* Samakan tinggi card dengan .category-card */
   }
 
   .stat-card:hover {

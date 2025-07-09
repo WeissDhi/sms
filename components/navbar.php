@@ -140,7 +140,7 @@ if (!function_exists('renderCategoryDropdown')) {
                         </ul>
                     </li>
 
-                    <li class="nav-item"><a class="nav-link fw-semibold d-flex align-items-center gap-1" href="tentangkami.php"><i class="bi bi-info-circle"></i> Tentang Kami</a></li>
+                    <li class="nav-item"><a class="nav-link fw-semibold d-flex align-items-center gap-1" href="tentangkami.php"><i class="bi bi-info-circle"></i> Profil Kami</a></li>
                 </ul>
 
                 <ul class="navbar-nav ms-auto align-items-center gap-2">

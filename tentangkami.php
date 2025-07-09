@@ -27,7 +27,7 @@ include './components/navbar.php';
     <!-- meta character set -->
     <meta charset="UTF-8" />
     <!-- Site Title -->
-    <title>Syukron Makmun Society-Mesir - Tentang Kami</title>
+    <title>Syukron Ma'mun Society-Mesir - Tentang Kami</title>
 
     <link
         href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700"
@@ -266,7 +266,7 @@ include './components/navbar.php';
     <!-- Hero Section -->
     <section class="hero-section text-center">
         <div class="container">
-            <h1 class="display-3 fw-bold mb-4">Syukron Makmun Society-Mesir</h1>
+            <h1 class="display-3 fw-bold mb-4">Syukron Ma'mun Society-Mesir</h1>
             <p class="lead fs-4">Blog Islami dari Negeri Para Ulama</p>
             <div class="mt-4">
                 <span class="badge bg-success p-2 px-4 fs-6">Sejak 2025</span>
@@ -276,6 +276,46 @@ include './components/navbar.php';
 
     <!-- Main Content -->
     <div class="container">
+        <!-- IKDAR Kairo Section (Color Palette Alami Elegan) -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-10 mx-auto" style="max-width: 900px;">
+                <!-- Card 1: Sejarah Singkat -->
+                <div class="card shadow-sm mb-4 overflow-hidden" style="border-radius: 16px; background: #EEEEEE; color: #2C2C2C; border-left: 8px solid #C5E1A5;">
+                    <div class="card-header d-flex align-items-center" style="background: #2E7D32; color: #fff; border-radius: 16px 16px 0 0; border-bottom: 1px solid #C5E1A5;">
+                        <i class="fas fa-history me-2"></i>
+                        <h5 class="mb-0">Sejarah Singkat</h5>
+                    </div>
+                    <div class="card-body" style="background: #EEEEEE; color: #2C2C2C;">
+                        <p>Ikdar Kairo didirikan pada tahun 2001 oleh para pendahulu alumni Daarul Rahman yang melanjutkan study di Universitas Al-Azhar Kairo yang diinisiasi oleh KH. Ahmad Wildan sekaligus di ketuai oleh beliau dan di support oleh para alumni Daarul Rahman yang berada di Kairo pada saat itu. Saat itu Ikdar Kairo beranggotakan sekitar 20-30 orang. Setelah didirikan, Ikdar Kairo secara umum adalah organisasi perkumpulan santri-santri alumni Daarul Rahman yang melanjutkan study nya di Kairo, pada saat itu sekretariat Ikdar Kairo bertempat di Hay Rob’ah.</p>
+                        <p>Diantara tujuan didirikannya Ikdar Kairo adalah untuk mewadahi para santri alumni Daarul Rahman yang sedang berada nun jauh di bumi kinanah. Selain itu, membangun koneksi dan jaringan antara Ikdar-Ikdar cabang luar negeri lainnya. Lalu, tempat untuk saling membantu dan gotong royong satu sama lain, juga mempermudah pesantren dalam memantau para alumni yang berdinamika di bumi perantauan.</p>
+                        <p>Seiring berjalannya waktu, Ikdar Kairo secara keorganisasian terus berkembang dari segala aspek, baik dari segi kuantitas, kualitas, administrasi, dan lain sebagainya. Secara administrasi, setelah ada beberapa pesantren alumni Daarul Rahman, Ikdar Kairo menaungi santri-santri pesantren alumni Daarul Rahman yang secara populasi belum terlalu memadai untuk mendirikan organisasi almamter.</p>
+                    </div>
+                </div>
+                <!-- Card 2: Struktur Organisasi -->
+                <div class="card shadow-sm mb-4 overflow-hidden" style="border-radius: 16px; background: #EEEEEE; color: #2C2C2C; border-left: 8px solid #C5E1A5;">
+                    <div class="card-header d-flex align-items-center" style="background: #2E7D32; color: #fff; border-radius: 16px 16px 0 0; border-bottom: 1px solid #C5E1A5;">
+                        <i class="fas fa-sitemap me-2"></i>
+                        <h5 class="mb-0">Struktur Organisasi, Kepengurusan & Keanggotaan</h5>
+                    </div>
+                    <div class="card-body" style="background: #EEEEEE; color: #2C2C2C;">
+                        <p>Ikdar kairo terdiri dari beberapa susunan pengurus. Diantaranya: dewan penasehat, majlis permusyawaratan anggota, ketua, wakil, sekretaris, wakil sekretaris, bendahara, wakil benhadara, divisi pemberdayaan sumber daya manusia. divisi keilmuan, divisi media, divisi perekonomian, divisi olahraga, divisi pengelola asset dan sekretariat.</p>
+                        <p>Ikdar Kairo adalah salah satu cabang Ikdar yang berada di luar negeri, memiliki hubungan dengan Ikdar-Ikdar cabang luar negeri yang terkoordinasikan oleh departement luar negeri, salah satu departement pada bidang social yang ada pada struktur Ikdar Pusat. Ikdar Kairo beranggotakan seluruh alumni Ponpes Daarul Rahman, dan beberapa alumni Ponpes Forum Kerjasama Antar Pesantren Alumni Daarul Rahman (FORMADA).</p>
+                        <p>Ikdar secara umum dan Ikdar Kairo secara khusus sudah berperan dan berkiprah di berbagai element penting di Nusantara maupun mancanegara, peran alumnsi yang sangat luar biasa hebatnya bisa menjaring relasi ke segala pihak penting yang ada di Nusantara maupun mancanegara.</p>
+                    </div>
+                </div>
+                <!-- Card 3: Kesimpulan -->
+                <div class="card shadow-sm mb-4 overflow-hidden" style="border-radius: 16px; background: #EEEEEE; color: #2C2C2C; border-left: 8px solid #C5E1A5;">
+                    <div class="card-header d-flex align-items-center" style="background: #2E7D32; color: #fff; border-radius: 16px 16px 0 0; border-bottom: 1px solid #C5E1A5;">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        <h5 class="mb-0">Kesimpulan</h5>
+                    </div>
+                    <div class="card-body" style="background: #EEEEEE; color: #2C2C2C;">
+                        <p>Ikdar Kairo bukan sekadar organisasi alumni, melainkan rumah besar bagi santri Daarul Rahman dan beberapa alumni Ponpes FORMADA di perantauan. Sejak berdiri pada tahun 2001, Ikdar Kairo terus berkontribusi di berbagai element penting Masisir, menjalin relasi strategis, serta membina lader-kader berkualitas. Melalui program intelektual, sosial, ekonomi, dan olahraga, Ikdar Kairo hadir sebagai wadah bagi para anggotanya untuk tumbuh dan berkembang, sekaligus menjaga nilai-nilai pesantren di Tengah perkembangan zaman. Dengan semangat gotong royong dan visi yang kuat, Ikdar Kairo bukan hanya tempat berkumpul, tetapi juga tempat berkontribusi untuk agama, bangsa, dan masa depan yang lebih gemilang.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Vision & Mission -->
         <div class="row mb-5">
             <div class="col-md-6">
@@ -336,10 +376,14 @@ include './components/navbar.php';
 
         <!-- About Content -->
         <div class="row justify-content-center mb-5">
-            <div class="col-lg-10">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body p-5">
-                        <h2 class="h3 mb-4 text-center">Tentang Kami</h2>
+            <div class="col-lg-10 mx-auto" style="max-width: 900px;">
+                <div class="card border-0 shadow-sm mb-4 overflow-hidden" style="border-radius: 16px; background: #EEEEEE; color: #2C2C2C; border-left: 8px solid #C5E1A5;">
+                    <div class="card-header d-flex align-items-center" style="background: #2E7D32; color: #fff; border-radius: 16px 16px 0 0; border-bottom: 1px solid #C5E1A5;">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <h5 class="mb-0">Tentang Kami</h5>
+                    </div>
+                    <div class="card-body p-5" style="background: #EEEEEE; color: #2C2C2C;">
+                        <h2 class="h3 mb-4 text-center" style="color: #2C2C2C;"></h2>
                         <p class="lead mb-4">
                             <strong>Syukron Makmun Society-Mesir</strong> adalah sebuah blog Islami yang bertujuan menyebarkan hikmah, ilmu, dan inspirasi dari negeri Mesir. Blog ini menjadi wadah untuk berbagi catatan spiritual, kisah para ulama, serta pengalaman belajar Islam di salah satu pusat peradaban Islam terbesar.
                         </p>
@@ -356,10 +400,14 @@ include './components/navbar.php';
 
         <!-- Social Media Section -->
         <div class="row justify-content-center mb-5">
-            <div class="col-lg-8">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body p-5 text-center">
-                        <h3 class="h4 mb-4">Ikuti Kami di Media Sosial</h3>
+            <div class="col-lg-8 mx-auto" style="max-width: 900px;">
+                <div class="card border-0 shadow-sm mb-4 overflow-hidden" style="border-radius: 16px; background: #EEEEEE; color: #2C2C2C; border-left: 8px solid #C5E1A5;">
+                    <div class="card-header d-flex align-items-center" style="background: #2E7D32; color: #fff; border-radius: 16px 16px 0 0; border-bottom: 1px solid #C5E1A5;">
+                        <i class="fas fa-share-alt me-2"></i>
+                        <h5 class="mb-0">Ikuti Kami di Media Sosial</h5>
+                    </div>
+                    <div class="card-body p-5 text-center" style="background: #EEEEEE; color: #2C2C2C;">
+                        <h3 class="h4 mb-4" style="color: #2C2C2C;"></h3>
                         <p class="lead mb-4">Dapatkan update terbaru dan konten inspiratif melalui media sosial kami</p>
                         <div class="row justify-content-center">
                             <div class="col-md-6 mb-3">
