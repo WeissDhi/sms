@@ -108,54 +108,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     <i class="bi bi-people"></i> Manajemen Penulis
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link <?php echo ($current_page == 'pengguna_management.php') ? 'active' : ''; ?>" href="../../dashboard/admin/pengguna_management.php">
+                    <i class="bi bi-person-gear"></i> Manajemen Pengguna
+                </a>
+            </li>
         </ul>
     </div>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const sidebarElement = document.getElementById('sidebar');
-        const bsSidebar = bootstrap.Offcanvas.getOrCreateInstance(sidebarElement);
-
-        // Tutup offcanvas ketika klik di luar sidebar
-        document.addEventListener('click', function(event) {
-            if (bsSidebar._isShown) {
-                const isClickInside = 
-                    sidebarElement.contains(event.target) ||
-                    event.target.closest('.btn[data-bs-toggle="offcanvas"]') ||
-                    event.target.closest('.dropdown') ||
-                    event.target.closest('.dropdown-menu');
-                if (!isClickInside) {
-                    bsSidebar.hide();
-                }
-            }
-        });
-
-        // Ambil semua offcanvas
-        document.querySelectorAll('.offcanvas').forEach(function(offcanvas) {
-            offcanvas.addEventListener('shown.bs.offcanvas', function () {
-                // Tambahkan event listener pada backdrop
-                const backdrop = document.querySelector('.offcanvas-backdrop');
-                if (backdrop) {
-                    // Hapus event listener lama agar tidak dobel
-                    backdrop.onclick = null;
-                    backdrop.addEventListener('click', function() {
-                        // Paksa tutup offcanvas
-                        var bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvas);
-                        if (bsOffcanvas) bsOffcanvas.hide();
-                    }, { once: true });
-                }
-            });
-        });
-    });
-
-    document.addEventListener('hidden.bs.offcanvas', function () {
-        // Paksa hapus backdrop jika masih ada
-        document.querySelectorAll('.offcanvas-backdrop').forEach(function(backdrop) {
-            backdrop.parentNode.removeChild(backdrop);
-        });
-        // Pastikan body tidak punya class 'offcanvas-backdrop'
-        document.body.classList.remove('offcanvas-backdrop');
-        document.body.style.overflow = '';
-    });
-</script>

@@ -14,9 +14,9 @@ $user_id = (int) $_SESSION['author_id'];
 $user_query = $conn->prepare("SELECT * FROM penulis WHERE id = ?");
 $user_query->bind_param("i", $user_id);
 $user_query->execute();
-$user = $user_query->get_result()->fetch_assoc();
+$user_data = $user_query->get_result()->fetch_assoc();
 
-if (!$user) {
+if (!$user_data) {
     session_destroy();
     header("Location: ../../login.php");
     exit;
@@ -227,7 +227,8 @@ $recent_comments = $comments_stmt->get_result();
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <h1 class="mb-2">Selamat Datang, <?= htmlspecialchars($user['fname']) ?>!</h1>
+                    <?php if (!is_array($user_data)) { var_dump($user_data); die('User data is not array!'); } ?>
+                    <h1 class="mb-2">Selamat Datang, <?= htmlspecialchars($user_data['fname']) ?>!</h1>
                     <p class="mb-0">Kelola blog dan artikel Anda di sini</p>
                 </div>
                 <div class="col-md-4 text-md-end mt-3 mt-md-0">

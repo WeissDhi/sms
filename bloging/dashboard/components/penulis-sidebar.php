@@ -122,18 +122,19 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const sidebarElement = document.getElementById('sidebar');
-        const bsSidebar = bootstrap.Offcanvas.getOrCreateInstance(sidebarElement);
+        // const bsSidebar = bootstrap.Offcanvas.getOrCreateInstance(sidebarElement); // Dihapus agar tidak error di Bootstrap 5
 
         // Tutup offcanvas ketika klik di luar sidebar
         document.addEventListener('click', function(event) {
-            if (bsSidebar._isShown) {
+            if (sidebarElement.classList.contains('show')) { // Check if the sidebar is shown
                 const isClickInside = 
                     sidebarElement.contains(event.target) ||
                     event.target.closest('.btn[data-bs-toggle="offcanvas"]') ||
                     event.target.closest('.dropdown') ||
                     event.target.closest('.dropdown-menu');
                 if (!isClickInside) {
-                    bsSidebar.hide();
+                    const bsOffcanvas = bootstrap.Offcanvas.getInstance(sidebarElement);
+                    if (bsOffcanvas) bsOffcanvas.hide();
                 }
             }
         });
